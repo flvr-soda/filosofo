@@ -1,61 +1,93 @@
-
-{ config, lib, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   imports =
     [ 
-#      (import .disko.nix{device="dev/nvme0n1";})
       ./hardware-configuration.nix
-      ./impermanence.nix
     ];
 
-  nix = {
-      settings = {
-        experimental-features = ["nix-command" "flakes"];
-        auto-optimise-store = true;
-      };
-      gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 7d";
-      };
+
+  system.stateVersion = "25.05"; # DON'T CHANGE THIS
+
+
+  # Nix and nixpkgs settings
+  nix.settings.experimental-features = ["nix-command" "flakes"];  
+  nix.settings.auto-optimise-store = true;   
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
   };
 
+  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.initrd.kernelModules = ["amdgpu"];
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  
-
-  users.users."soda" = {
-    isNormalUser = true;
-    shell = pkgs.fish;
-    initialPassword = "soda";
-    extraGroups = [ "wheel" "networkmanager"]; 
+  # Bootloader and boot options.
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
   };
 
+  # Networking options
+  networking = {
+    networkmanager.enable = true;
+    hostName = "filosofo";
+  };
 
   virtualisation.docker.enable = true;
- 
 
-  # Select internationalisation properties.
-  time.timeZone = "America/Caracas";
-  i18n.defaultLocale = "en_US.UTF-8";
+  # Enable the X11 windowing system.
+  services.xserver.enable = true;
 
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "es_VE.UTF-8";
-    LC_IDENTIFICATION = "es_VE.UTF-8";
-    LC_MEASUREMENT = "es_VE.UTF-8";
-    LC_MONETARY = "es_VE.UTF-8";
-    LC_NAME = "es_VE.UTF-8";
-    LC_NUMERIC = "es_VE.UTF-8";
-    LC_PAPER = "es_VE.UTF-8";
-    LC_TELEPHONE = "es_VE.UTF-8";
-    LC_TIME = "es_VE.UTF-8";
+  # Enable the GNOME Desktop Environment.
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
+
+  # STYLIX JUNK
+  stylix.enable = true;
+  stylix.polarity = "dark";
+  # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  stylix.targets.gnome.enable = true;
+  stylix.base16Scheme = {
+    base00 = "282828";
+    base01 = "3c3836";
+    base02 = "504945";
+    base03 = "665c54";
+    base04 = "bdae93";
+    base05 = "d5c4a1";
+    base06 = "ebdbb2";
+    base07 = "fbf1c7";
+    base08 = "fb4934";
+    base09 = "fe8019";
+    base0A = "fabd2f";
+    base0B = "b8bb26";
+    base0C = "8ec07c";
+    base0D = "83a598";
+    base0E = "d3869b";
+    base0F = "d65d0e";
   };
+
+  # Enable sound with pipewire.
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+
+  # User account
+  users.users.soda = {
+    isNormalUser = true;
+    description = "Soda";
+    extraGroups = [ "networkmanager" "wheel" ];
+  };
+  # User with Home Manager
   programs.fuse.userAllowOther = true;
   home-manager = {
     extraSpecialArgs = {inherit inputs;};
@@ -64,60 +96,48 @@
     };
   };
 
-  security.rtkit.enable = true; 
-  # services
-  services = {
-    upower.enable = true;
-    gvfs.enable = true;
-    udisks2.enable = true;
-    openssh.enable = true;
-    blueman.enable = true; 
-  # enable sddm as a wayland display manager 
-    displayManager.sddm.enable = true;
-    displayManager.sddm.wayland.enable = true;
+  home-manager.backupFileExtension = ".backup";
 
-  # Enable printing
-    printing.enable = true;
+  # Program enabling and settings
+  programs = {
+    firefox.enable = true;
 
-  # enable sound with pipewire
-    pipewire ={
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      jack.enable = true;
+    steam = {
+      enable = true;
+      gamescopeSession.enable = true;
+    };
+
+    nh = {
+      enable = true;
     };
   };
-  home.packages = with pkgs; [
-    #dev
-    vscodium
+
+  # Add system packages here
+  environment.systemPackages = with pkgs; [ 
+    wget
+    alejandra
+    nixd
     git
-    blender
-    #system
-    kitty
-    btop
-    ark
-    yazi
-    dolphin
-    #internet
-    qbittorrent
-    brave
-    #media
-    obs-studio
-    imv
-    ffmpeg
-    geeqie
-    vlc
-    #gaming
-    lutris
-    bottles
-    steam-run
+    obsidian
+    qbittorrent-enhanced
+    vscode
+    eza
+
+  # Pen testing pkgs
+    metasploit
+    sqlmap
+    nmap
+    burpsuite
+    proxychains
+    john
+    medusa
+    theharvester
+    wireshark
+    wireshark-cli
+    aircrack-ng
   ];
 
-  networking = {
-    hostName = "seizure";
-    networkmanager.enable = true;   
-  };
-
+  # Graphical settings
   hardware = {    
     enableAllFirmware = true;
     graphics = {
@@ -130,54 +150,37 @@
       ];
     };
   };
+
+  # My services
+   services = {
+     openssh.enable = true;
+     printing.enable = true;
+   };
+
+  # Configure keymap in X11
+  services.xserver.xkb = {
+    layout = "latam";
+    variant = "";
+  };
+
+  # Configure console keymap
+  console.keyMap = "la-latin1";
+
+  # Select internationalisation properties.
+  time.timeZone = "America/Caracas";
   
-  programs = {
-    fish.enable = true;
-    hyprland = {
-      enable = true;
-      xwayland.enable = true;
-    };
-    steam = {
-      enable = true;
-      gamescopeSession.enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
-    };    
-  };
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-hyprland
-    ];
-  };
-
-  # Fonts
-  fonts = {
-    packages = with pkgs; [
-      source-code-pro
-      noto-fonts
-      noto-fonts-cjk-sans
-      twitter-color-emoji
-      font-awesome
-      powerline-fonts
-      nerd-fonts._0xproto
-      nerd-fonts.droid-sans-mono
-    ];
-    fontconfig = {
-      hinting.autohint = true;
-    };
-  };
-
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    WLR_NO_HARDWARE_CURSOR = "1";    
-  };
+  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "es_VE.UTF-8";
+    LC_IDENTIFICATION = "es_VE.UTF-8";
+    LC_MEASUREMENT = "es_VE.UTF-8";
+    LC_MONETARY = "es_VE.UTF-8";
+    LC_NAME = "es_VE.UTF-8";
+    LC_NUMERIC = "es_VE.UTF-8";
+    LC_PAPER = "es_VE.UTF-8";
+    LC_TELEPHONE = "es_VE.UTF-8";
+    LC_TIME = "es_VE.UTF-8";
+  }; 
 
 
-
-
-
-  system.stateVersion = "24.11"; # Did you read the comment?
 }

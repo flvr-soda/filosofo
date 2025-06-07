@@ -1,55 +1,72 @@
-{ pkgs, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
-{ 
-  imports = [
-    inputs.impermanence.nixosModules.home-manager.impermanence
+{
+  # Paths and users home manager should manage
+  home.username = "soda";
+  home.homeDirectory = "/home/soda";
 
-  ];
-
-  home.stateVersion = "23.11"; # Please read the comment before changing.
+  home.stateVersion = "25.05"; # Do not change this shit
+  
+  nixpkgs.config.allowUnfree = true;
 
   programs = {
+
+    firefox ={
+      enable = true;
+      profiles.soda = {
+        settings = {
+          "dom.security.https_only_mode" = true;
+          "browser.download.panel.shown" = true;
+          "identity.fxaccounts.enabled" = false;
+          "signon.rememberSignons" = false;
+        };
+        userChrome = ''                         
+          /* some css */                        
+        '';  
+        extensions.packages = with inputs.firefox-addons.packages."x86_64-linux"; [
+          # MUST
+          bitwarden
+          ublock-origin
+
+          # MAYBE
+          #tridactyl
+        ];
+      };
+    };
+
     git = {
       enable = true;
-      userName = "iearmada";
+      userName = "flvr-soda";
       userEmail = "flavoredsoda@proton.me";
+      lfs.enable = true;
     };
     vscode = {
       enable = true;
-      package = pkgs.vscodium;
-      extensions = with pkgs.vscode-extensions; [
-        vscodevim.vim
+      package = pkgs.vscode;
+      profiles.default.extensions = with pkgs.vscode-extensions; [
         yzhang.markdown-all-in-one
         jnoortheen.nix-ide
         ms-python.python
-#        gitkraken.gitlens 
+        ms-azuretools.vscode-docker
+        ms-vscode-remote.remote-ssh
       ];
     };
   };
 
-  home = {
-    persistence."/home/soda" = {
-      directories = [
-        "Downloads"
-        "Music"
-        "Pictures"
-        "Documents"
-        "Videos"
-        "VirtualBox VMs"
-        ".gnupg"
-        ".ssh"
-        ".nixops"
-        ".local/share/keyrings"
-        ".local/share/direnv"
-        {
-        directory = ".local/share/Steam";
-        method = "symlink";
-        }
-      ];
-      files = [
-        ".screenrc"
-      ];
-      allowOther = true;
-    };
+  # Install environment packages here
+  home.packages = [
+
+  ];
+
+  # Manage dotfiles here
+  home.file = {
+
   };
+
+  # Manage environment variables here
+  home.sessionVariables = {
+ 
+  };
+
+  programs.home-manager.enable = true;
 }
