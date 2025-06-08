@@ -9,6 +9,8 @@
   
   nixpkgs.config.allowUnfree = true;
 
+  qt.enable = true;
+
   programs = {
 
     firefox ={
@@ -46,6 +48,8 @@
       profiles.default.extensions = with pkgs.vscode-extensions; [
         yzhang.markdown-all-in-one
         jnoortheen.nix-ide
+        eamodio.gitlens
+        kamadorueda.alejandra
         ms-python.python
         ms-azuretools.vscode-docker
         ms-vscode-remote.remote-ssh

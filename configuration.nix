@@ -43,14 +43,15 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   # STYLIX JUNK
   stylix.enable = true;
   stylix.polarity = "dark";
   # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
-  stylix.targets.gnome.enable = true;
+
   stylix.base16Scheme = {
     base00 = "282828";
     base01 = "3c3836";
@@ -114,14 +115,30 @@
 
   # Add system packages here
   environment.systemPackages = with pkgs; [ 
-    wget
-    alejandra
     nixd
-    git
     obsidian
     qbittorrent-enhanced
-    vscode
+    postgresql
+
+    wget
     eza
+    cmake
+    cava
+    btop
+    gcc
+    neovim
+
+  # KDE
+    kdePackages.kcalc
+    kdePackages.kcolorchooser
+    kdePackages.kolourpaint
+    kdePackages.ksystemlog 
+    kdePackages.sddm-kcm
+    kdiff3
+    hardinfo2
+    haruna
+    wayland-utils
+    wl-clipboard  
 
   # Pen testing pkgs
     metasploit
