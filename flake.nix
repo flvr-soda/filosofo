@@ -1,14 +1,12 @@
 # ================================================================ #
 # =                           Filósofo                           = #
 # ================================================================ #
-
 {
   description = "Filósofo's flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-gruvboxicons.url = "github:nixos/nixpkgs/21808d22b1cda1898b71cf1a1beb524a97add2c4";
-    
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,9 +22,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    disko = {
-      url = "github:nix-community/disko";
+    plasma-manager = {
+      url = "github:pjones/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     firefox-addons = {
@@ -35,15 +34,52 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
-   
-    nixosConfigurations.seizure = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./configuration.nix
-        inputs.home-manager.nixosModules.default
-        inputs.stylix.nixosModules.stylix
-      ];
+  outputs = inputs @ {
+    nixpkgs,
+    home-manager,
+    plasma-manager,
+    stylix,
+    ...
+  }: let
+    # User Variables
+    hostname = "filosofo";
+    username = "soda";
+    gitUsername = "flvr-soda";
+    gitEmail = "flavoredsoda@proton.me";
+    theLocale = "en_US.UTF-8";
+    theLCVariables = "es_VE.UTF-8";
+    theTimezone = "America/Caracas";
+  in {
+    nixosConfigurations = {
+      "${hostname}" = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          inherit username;
+          inherit hostname;
+          inherit theTimezone;
+          inherit theLocale;
+          inherit theLCVariables;
+        };
+        modules = [
+          ./configuration.nix
+          home-manager.nixosModules.home-manager
+          stylix.nixosModules.stylix
+          {
+            home-manager.extraSpecialArgs = {
+              inherit username;
+              inherit gitUsername;
+              inherit gitEmail;
+              inherit inputs;
+              inherit plasma-manager;
+              inherit hostname;
+            };
+            home-manager.useGlobalPkgs = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.useUserPackages = true;
+            #home-manager.users.${username} = import ./home/${username};
+          }
+        ];
+      };
     };
   };
 }
