@@ -22,12 +22,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    plasma-manager = {
-      url = "github:pjones/plasma-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
-
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,7 +31,6 @@
   outputs = inputs @ {
     nixpkgs,
     home-manager,
-    plasma-manager,
     stylix,
     ...
   }: let
@@ -70,13 +63,11 @@
               inherit gitUsername;
               inherit gitEmail;
               inherit inputs;
-              inherit plasma-manager;
               inherit hostname;
             };
-            home-manager.useGlobalPkgs = true;
             home-manager.backupFileExtension = "backup";
             home-manager.useUserPackages = true;
-            #home-manager.users.${username} = import ./home/${username};
+            home-manager.users."${username}" = import ./home.nix;
           }
         ];
       };

@@ -1,6 +1,6 @@
 {
-  config,
   pkgs,
+  config,
   inputs,
   username,
   gitUsername,
@@ -18,6 +18,7 @@
   # STYLIX JUNK
   stylix.enable = true;
   stylix.polarity = "dark";
+  stylix.targets.firefox.profileNames = ["soda"];
   stylix.targets.kde.enable = true;
   stylix.targets.qt.enable = true;
   stylix.targets.gtk.enable = true;
@@ -41,7 +42,7 @@
   };
 
   qt.enable = true;
-  #qt.platformTheme.name = "kde";
+  gtk.enable = true;
 
   programs = {
     firefox = {
@@ -60,10 +61,8 @@
           # MUST
           bitwarden
           ublock-origin
-
-          # MAYBE
-          #tridactyl
-          #privacy-badger
+          tridactyl
+          privacy-badger
         ];
       };
     };
@@ -74,6 +73,9 @@
       userEmail = "${gitEmail}";
       lfs.enable = true;
     };
+
+    gh.enable = true;
+
     vscode = {
       enable = true;
       package = pkgs.vscode;
@@ -83,16 +85,18 @@
         eamodio.gitlens
         kamadorueda.alejandra
         ms-python.python
+        ms-vscode.cpptools
         ms-azuretools.vscode-docker
         ms-vscode-remote.remote-ssh
       ];
-      userSettings = {
+
+      profiles.default.userSettings = {
         "nix.enableLanguageServer" = true;
-        #"nix.serverPath" = "nil";
         "nix.serverPath" = "nixd";
         "security.workspace.trust.banner" = "never";
       };
     };
+
   };
 
   programs.home-manager.enable = true;

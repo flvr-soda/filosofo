@@ -1,5 +1,4 @@
 {
-  config,
   username,
   hostname,
   theTimezone,
@@ -7,7 +6,6 @@
   theLCVariables,
   pkgs,
   inputs,
-  lib,
   ...
 }: {
   imports = [
@@ -70,12 +68,12 @@
 
   # User with Home Manager
   programs.fuse.userAllowOther = true;
-  home-manager = {
-    extraSpecialArgs = {inherit inputs;};
-    users = {
-      "soda" = import ./home.nix;
-    };
-  };
+#  home-manager = {
+#    extraSpecialArgs = {inherit inputs;};
+#    users = {
+#      "soda" = import ./home.nix;
+#    };
+#  };
 
   # Program enabling and settings
   programs = {
@@ -87,10 +85,6 @@
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
     };
-
-    nh = {
-      enable = true;
-    };
   };
 
   # Add system packages here
@@ -98,9 +92,12 @@
     nixd
     obsidian
     qbittorrent-enhanced
+    bottles
+    vscode
 
     # Cli tools
     wget
+    neofetch
     eza
     cmake
     cava
@@ -110,8 +107,6 @@
     base16-schemes
 
     # KDE
-    kdePackages.breeze
-    kdePackages.breeze-gtk
     kdePackages.kcalc
     kdePackages.kcolorchooser
     kdePackages.kolourpaint
@@ -182,7 +177,7 @@
   time.timeZone = "${theTimezone}";
   i18n.defaultLocale = "${theLocale}";
   i18n.extraLocaleSettings = {
-    LC_ADDRESS = "${theLCVariables}";
+    LC_ADDRESS = "${theLocale}";
     LC_IDENTIFICATION = "${theLCVariables}";
     LC_MEASUREMENT = "${theLCVariables}";
     LC_MONETARY = "${theLCVariables}";
@@ -190,6 +185,6 @@
     LC_NUMERIC = "${theLCVariables}";
     LC_PAPER = "${theLCVariables}";
     LC_TELEPHONE = "${theLCVariables}";
-    LC_TIME = "${theLCVariables}";
+    LC_TIME = "${theLocale}";
   };
 }
