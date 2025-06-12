@@ -5,7 +5,6 @@
   theLocale,
   theLCVariables,
   pkgs,
-  inputs,
   ...
 }: {
   imports = [
@@ -65,15 +64,7 @@
     description = "Soda";
     extraGroups = ["networkmanager" "wheel" "docker"];
   };
-
-  # User with Home Manager
   programs.fuse.userAllowOther = true;
-#  home-manager = {
-#    extraSpecialArgs = {inherit inputs;};
-#    users = {
-#      "soda" = import ./home.nix;
-#    };
-#  };
 
   # Program enabling and settings
   programs = {

@@ -1,6 +1,5 @@
 {
   pkgs,
-  config,
   inputs,
   username,
   gitUsername,
@@ -96,7 +95,6 @@
         "security.workspace.trust.banner" = "never";
       };
     };
-
   };
 
   programs.home-manager.enable = true;
