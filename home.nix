@@ -18,7 +18,7 @@
   stylix.enable = true;
   stylix.polarity = "dark";
   stylix.targets.firefox.profileNames = ["soda"];
-  stylix.targets.kde.enable = true;
+  stylix.targets.gnome.enable = true;
   stylix.targets.qt.enable = true;
   stylix.targets.gtk.enable = true;
   stylix.base16Scheme = {
@@ -57,7 +57,6 @@
           /* some css */
         '';
         extensions.packages = with inputs.firefox-addons.packages."x86_64-linux"; [
-          # MUST
           bitwarden
           ublock-origin
           tridactyl
