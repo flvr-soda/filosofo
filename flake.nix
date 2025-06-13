@@ -7,6 +7,16 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,6 +42,8 @@
     nixpkgs,
     home-manager,
     stylix,
+    sops-nix,
+    disko,
     ...
   }: let
     # User Variables
@@ -55,6 +67,8 @@
         };
         modules = [
           ./configuration.nix
+          sops-nix.nixosModules.sops
+          disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           stylix.nixosModules.stylix
           {

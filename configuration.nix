@@ -14,6 +14,7 @@
   system.stateVersion = "25.05"; # DON'T CHANGE THIS
 
   # Nix and nixpkgs settings
+  nix.settings.allowed-users = ["@wheel"];
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nix.settings.auto-optimise-store = true;
   nix.gc = {
@@ -30,6 +31,7 @@
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     loader = {
+      systemd-boot.configurationLimit = 7;
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
@@ -39,6 +41,7 @@
   networking = {
     networkmanager.enable = true;
     hostName = "${hostname}";
+    firewall.enable = true;
   };
 
   # VIRTUALIZATION WITH DOCKER JUNK
@@ -52,6 +55,8 @@
   };
 
   services.xserver.enable = true; # Enable the X11 windowing system.
+
+  security.sudo.execWheelOnly = true; # Limit sudo usage to user in the wheel group
 
   # Enable the Desktop Environment.
   services.displayManager.gdm.enable = true;
@@ -109,13 +114,14 @@
 
     # Cli tools
     wget
-    neofetch
+    home-manager
+    sops
+    fastfetch
     eza
     cmake
     cava
     btop
     gcc
-    neovim
     base16-schemes
     wayland-utils
     wl-clipboard
@@ -148,10 +154,19 @@
     };
   };
 
-  # My services
-  services = {
-    openssh.enable = true;
-    printing.enable = true;
+  services.printing.enable = true;
+
+  services.openssh = {
+    settings.PasswordAuthentication = false;
+    allowSFTP = false; # Don't set this if you need sftp
+    settings.kbdInteractiveAuthentication = false;
+    extraConfig = ''
+      AllowTcpForwarding yes
+      X11Forwarding no
+      AllowAgentForwarding no
+      AllowStreamLocalForwarding no
+      AuthenticationMethods publickey
+    '';
   };
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland

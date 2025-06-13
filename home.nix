@@ -17,7 +17,7 @@
   # STYLIX JUNK
   stylix.enable = true;
   stylix.polarity = "dark";
-  stylix.targets.firefox.profileNames = ["soda"];
+  stylix.targets.firefox.profileNames = ["${username}"];
   stylix.targets.gnome.enable = true;
   stylix.targets.qt.enable = true;
   stylix.targets.gtk.enable = true;
@@ -44,9 +44,13 @@
   gtk.enable = true;
 
   programs = {
+    neovim = {
+      enable = true;
+    };
+
     firefox = {
       enable = true;
-      profiles.soda = {
+      profiles.${username} = {
         settings = {
           "dom.security.https_only_mode" = true;
           "browser.download.panel.shown" = true;
@@ -57,7 +61,6 @@
           /* some css */
         '';
         extensions.packages = with inputs.firefox-addons.packages."x86_64-linux"; [
-          bitwarden
           ublock-origin
           tridactyl
           privacy-badger
