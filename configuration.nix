@@ -5,6 +5,7 @@
   theLocale,
   theLCVariables,
   pkgs,
+  lib,
   ...
 }: {
   imports = [
@@ -14,16 +15,16 @@
   system.stateVersion = "25.05"; # DON'T CHANGE THIS
 
   # Nix and nixpkgs settings
-  nix.settings.allowed-users = ["@wheel"];
+  nixpkgs.config.allowUnfree = true; # Allow unfree packages
+  nix.settings.allowed-users = ["@wheel"]; # Only wheel users get access to nix
   nix.settings.experimental-features = ["nix-command" "flakes"];
-  nix.settings.auto-optimise-store = true;
+  nix.optimise.automatic = true;
+  nix.optimise.dates = ["03:45"];
   nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 7d";
   };
-
-  nixpkgs.config.allowUnfree = true; # Allow unfree packages
 
   documentation.nixos.enable = false; # No documentation
 
@@ -53,14 +54,6 @@
       setSocketVariable = true;
     };
   };
-
-  services.xserver.enable = true; # Enable the X11 windowing system.
-
-  security.sudo.execWheelOnly = true; # Limit sudo usage to user in the wheel group
-
-  # Enable the Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
 
   stylix.enable = true;
   stylix.polarity = "dark";
@@ -103,16 +96,22 @@
     };
   };
 
+  environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
+
+  environment.defaultPackages = lib.mkForce []; # remove default packages like perl and rsync
+
   # Add system packages here
   environment.systemPackages = with pkgs; [
-    nixd
+    # Desktop apps
     obsidian
     qbittorrent-enhanced
-    bottles
     vscode
     wine
+    kitty
 
     # Cli tools
+    nixd
+    nano
     wget
     home-manager
     sops
@@ -126,16 +125,17 @@
     wayland-utils
     wl-clipboard
 
-    # Pen testing pkgs
+    # Cybersecurity stuff
+    clamav
+    wireshark
+    burpsuite
     metasploit
     sqlmap
     nmap
-    burpsuite
     proxychains
     john
     medusa
     theharvester
-    wireshark
     wireshark-cli
     aircrack-ng
   ];
@@ -154,7 +154,12 @@
     };
   };
 
+  # Enable the Desktop Environment.
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
+
   services.printing.enable = true;
+  services.xserver.enable = true; # Enable the X11 windowing system.
 
   services.openssh = {
     settings.PasswordAuthentication = false;
@@ -169,11 +174,11 @@
     '';
   };
 
-  environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
+  security.sudo.execWheelOnly = true; # Limit sudo usage to user in the wheel group
 
   # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
+  services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
     alsa.enable = true;

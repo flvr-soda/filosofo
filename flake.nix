@@ -67,6 +67,8 @@
         };
         modules = [
           ./configuration.nix
+          #          inputs.disko.nixosModules.default
+          #          (import ./disko.nix {device = "/dev/sda";})
           sops-nix.nixosModules.sops
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
