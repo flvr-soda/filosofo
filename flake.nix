@@ -1,6 +1,7 @@
-# ================================================================ #
-# =                           Filósofo                           = #
-# ================================================================ #
+# ___  _  _    //          __
+#| __|(_)| | ___  ___ ___  / _| ___
+#| _| | || |/ _ \(_-// _ \|  _|/ _ \
+#|_|  |_||_|\___//__/\___/|_|  \___/
 {
   description = "Filósofo's flake";
 
@@ -9,6 +10,11 @@
 
     disko = {
       url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -67,8 +73,8 @@
         };
         modules = [
           ./configuration.nix
-          #          inputs.disko.nixosModules.default
-          #          (import ./disko.nix {device = "/dev/sda";})
+          #inputs.disko.nixosModules.default
+          #(import ./disko.nix {device = "/dev/sda";})
           sops-nix.nixosModules.sops
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
