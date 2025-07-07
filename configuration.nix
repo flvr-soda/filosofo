@@ -13,14 +13,21 @@
     ./hardware-configuration.nix
   ];
 
-  system.stateVersion = "25.05"; # DON'T CHANGE THIS
+  system.stateVersion = "25.05"; # For the life of you, do NOT change this shit
 
   nixpkgs.config.allowUnfree = true; # Allow unfree packages
   documentation.nixos.enable = false; # No documentation
 
   nix = {
-    settings.allowed-users = ["@wheel"]; # Only wheel users get access to nix
-    settings.experimental-features = ["nix-command" "flakes"];
+    settings = {
+      allowed-users = ["@wheel"]; # Only wheel users get access to nix
+      experimental-features = ["nix-command" "flakes"];
+      # Cachix
+      substituters = ["https://hyprland.cachix.org"];
+      trusted-substituters = ["https://hyprland.cachix.org"];
+      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    };
+
     optimise.automatic = true;
     optimise.dates = ["03:45"];
     gc.automatic = true;
@@ -32,6 +39,9 @@
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = ["quiet" "splash" "loglevel=3"];
+    initrd.systemd.enable = true;
+    plymouth.enable = true;
+    plymouth.theme = "text";
     loader = {
       timeout = 2;
       systemd-boot.configurationLimit = 7;
@@ -74,10 +84,14 @@
 
   # Program enabling and settings
   programs = {
+    dconf.enable = true;
+
     hyprland = {
       enable = true;
-      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
       withUWSM = false;
+      xwayland.enable = true;
+      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+      portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
     };
 
     steam = {
@@ -89,7 +103,7 @@
   };
 
   environment.sessionVariables = {
-    #WLR_NO_HARDWARE_CURSORS = "1";
+    WLR_NO_HARDWARE_CURSORS = "1";
     NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
   };
@@ -97,49 +111,26 @@
   environment.defaultPackages = lib.mkForce []; # remove default packages
 
   environment.systemPackages = with pkgs; [
-    obsidian
-    qbittorrent-enhanced
-    vscode
-    kitty
-
-    podman-compose
-    podman-tui
-    distrobox
-
-    nixd
-    home-manager
-    sops
-
+    # Core system utilities
     coreutils
     utillinux
-    wayland-utils
+    wayland-utils # Important for Wayland debugging/info
 
+    # Networking & Security
     openssh
     openvpn
-
-    fastfetch
-    cava
-
-    btop
-    eza
-    bat
-    ripgrep
-    ffmpeg
-    yazi
-    bash-completion
-
-    p7zip
-    unrar
-
-    cmake
-    gcc
-
     curl
     wget
 
-    wine
-    protonup
-    winetricks
+    # Development Tools
+    cmake
+    gcc
+    podman-compose
+    podman-tui
+    distrobox
+    nixd
+    home-manager # Keep home-manager here as it's a system-level tool managing user configs
+    sops
   ];
 
   # Graphical settings
@@ -163,6 +154,7 @@
 
   services.printing.enable = true;
   services.xserver.enable = true; # Enable the X11 windowing system.
+  services.upower.enable = true;
 
   services.openssh = {
     settings.PasswordAuthentication = false;
@@ -176,6 +168,12 @@
       AuthenticationMethods publickey
     '';
   };
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
+    cm_unicode
+    corefonts
+  ];
 
   security = {
     sudo.execWheelOnly = true; # Limit sudo usage to user in the wheel group

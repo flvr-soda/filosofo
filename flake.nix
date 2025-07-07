@@ -1,9 +1,11 @@
-# ___  _  _    //          __
-#| __|(_)| | ___  ___ ___  / _| ___
-#| _| | || |/ _ \(_-// _ \|  _|/ _ \
-#|_|  |_||_|\___//__/\___/|_|  \___/
+/*
+ ___  _  _    //          __
+| __|(_)| | ___  ___ ___  / _| ___
+| _| | || |/ _ \(_-// _ \|  _|/ _ \
+|_|  |_||_|\___//__/\___/|_|  \___/
+*/
 {
-  description = "Filósofo's flake";
+  description = "A Filósofo's NixOS flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -94,5 +96,61 @@
         ];
       };
     };
+    # --- Cybersecurity Dev Shell ---
+    # This defines a development environment that you can enter using 'nix develop'
+    devShells.x86_64-linux.default = let
+      pkgs = import nixpkgs {system = "x86_64-linux";};
+    in
+      pkgs.mkShell {
+        buildInputs = with pkgs; [
+          # Network Scanning & Reconnaissance
+          nmap
+          whois
+          theharvester
+          sqlmap
+          dnsenum
+          gobuster
+          nikto
+
+          # Wireless Hacking
+          aircrack-ng
+          kismet
+          bettercap
+
+          # Proxy & Anonymity
+          proxychains
+          tor
+          torsocks
+
+          # Password Cracking & Hashing
+          john
+          medusa
+          hashcat
+          hashcat-utils
+
+          # Exploitation & Vulnerability Analysis
+          metasploit-framework
+          burpsuite
+          ghidra-bin
+          ncrack
+
+          # Packet Analysis & Forensics
+          wireshark-cli
+          wireshark
+
+          # General Utilities (helpful in any dev shell)
+          git
+          tmux
+          neovim
+          jq
+          fzf
+        ];
+
+        # shellHook runs commands when you enter the dev shell
+        shellHook = ''
+          echo "HACK SOME CRAP!"
+        '';
+      };
+    # --- End of Cybersecurity Dev Shell ---
   };
 }
