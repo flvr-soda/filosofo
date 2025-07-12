@@ -15,7 +15,12 @@
   randomLogoScript = pkgs.writeShellApplication {
     name = "fastfetch-random-logo";
     # Ensure necessary tools are available in the script's path
-    runtimeInputs = [pkgs.fastfetch pkgs.findutils pkgs.gnugrep pkgs.coreutils]; # coreutils for `xargs`
+    runtimeInputs = with pkgs; [
+      fastfetch
+      findutils
+      gnugrep
+      coreutils
+    ];
 
     text = ''
       # Define the paths to the asset directories in the Nix store.
@@ -54,33 +59,59 @@
     '';
   };
 
-  # AI generated wrapper script for wallpaper cycling (TO DO: PYWAL INTEGRATION)
+  # New AI generated wallpaper management script
   wallChange = pkgs.writeShellApplication {
-    name = "next-wallpaper";
-    runtimeInputs = [pkgs.swww pkgs.findutils pkgs.gnugrep pkgs.coreutils];
+    name = "next-wallpaper"; # The command name users will type
+    runtimeInputs = with pkgs; [
+      swww # For setting the wallpaper
+      findutils # For 'find' command
+      gnugrep # For 'grep' command (used indirectly by some pywal setups or for robustness)
+      coreutils # For 'sort', 'shuf', 'mkdir', 'dirname', 'read', etc.
+      bash # The shell itself
+      imagemagick # Used by pywal to get image information
+      python3Packages.pywal # For generating color themes
+    ];
 
     text = ''
       #!${pkgs.bash}/bin/bash
-      set -euxo pipefail # Added for robust error checking and debugging output
+      set -euxo pipefail # Exit on error, unset variables, show commands, pipefail
 
+      # --- Configuration Variables (from Nix arguments) ---
+      # These are Nix variables that *should* be interpolated by Nix
       WALL_DIR_1="${wall1}"
       WALL_DIR_2="${wall2}"
+
+      # --- Cache and State Management ---
       # Use XDG_CACHE_HOME if available, otherwise default to ~/.cache
+      # Bash parameter expansion: need to escape '$' to prevent Nix interpolation
       CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}"
       STATE_FILE="$CACHE_DIR/swww_current_wallpaper_index"
       WALLPAPER_LIST_FILE="$CACHE_DIR/swww_wallpaper_list"
+      PYWAL_CACHE_DIR="$CACHE_DIR/wal" # pywal's default cache location
 
+      # --- Executables ---
+      # This is a Nix variable, so it's not escaped
+      SWWW_EXEC="${pkgs.swww}/bin/swww"
+      WAL_EXEC="${pkgs.python3Packages.pywal}/bin/wal"
+
+      # --- Debugging ---
       echo "DEBUG: WALL_DIR_1=$WALL_DIR_1"
       echo "DEBUG: WALL_DIR_2=$WALL_DIR_2"
       echo "DEBUG: STATE_FILE=$STATE_FILE"
       echo "DEBUG: WALLPAPER_LIST_FILE=$WALLPAPER_LIST_FILE"
+      echo "DEBUG: CACHE_DIR=$CACHE_DIR"
 
+      # Ensure cache directory exists
       mkdir -p "$(dirname "$STATE_FILE")"
+      mkdir -p "$PYWAL_CACHE_DIR"
 
+      # --- Wallpaper List Generation ---
       # Generate a sorted list of all wallpapers if it doesn't exist or is empty.
+      # This makes 'next'/'prev' predictable.
       if [ ! -s "$WALLPAPER_LIST_FILE" ]; then
           echo "DEBUG: Wallpaper list file is missing or empty. Regenerating..."
           # Use -iname for case-insensitivity, which is more portable than -iregex.
+          # Find paths and sort them
           find "$WALL_DIR_1" "$WALL_DIR_2" -type f \( \
               -iname "*.jpg" -o \
               -iname "*.jpeg" -o \
@@ -98,13 +129,14 @@
       # Read the list of wallpapers safely into the ALL_WALLPAPERS array
       mapfile -t ALL_WALLPAPERS < "$WALLPAPER_LIST_FILE"
 
-      # Remove empty lines that might result from the mapfile command
+      # Remove potential empty lines that might result from the mapfile command
+      # Bash array expansion for keys: need to escape '$'
       for i in "''${!ALL_WALLPAPERS[@]}"; do
         [ -n "''${ALL_WALLPAPERS[$i]}" ] || unset "ALL_WALLPAPERS[$i]"
       done
 
-
-      NUM_WALLPAPERS=''${#ALL_WALLPAPERS[@]}
+      # Bash array length expansion: need to escape '$'
+      NUM_WALLPAPERS="''${#ALL_WALLPAPERS[@]}"
       echo "DEBUG: Number of wallpapers found: $NUM_WALLPAPERS"
 
       if (( NUM_WALLPAPERS == 0 )); then
@@ -112,60 +144,78 @@
           exit 1
       fi
 
+      # --- Determine Current/Next/Previous Index ---
       CURRENT_INDEX=0
       # Check if state file exists and has content
       if [ -s "$STATE_FILE" ]; then
           # Read the index and validate it
           read -r temp_index < "$STATE_FILE"
           echo "DEBUG: Read temp_index from state file: '$temp_index'"
+          # Bash regex and arithmetic: needs proper escaping for '$'
           if [[ "$temp_index" =~ ^[0-9]+$ ]] && (( temp_index >= 0 && temp_index < NUM_WALLPAPERS )); then
               CURRENT_INDEX=$temp_index
               echo "DEBUG: Valid index from state file: $CURRENT_INDEX"
           else
               echo "DEBUG: Invalid index ('$temp_index') or out of bounds. Resetting to random."
-              CURRENT_INDEX=$(( RANDOM % NUM_WALLPAPERS ))
+              CURRENT_INDEX="''$(( RANDOM % NUM_WALLPAPERS ))" # Bash arithmetic: escape '$'
           fi
       else
           echo "DEBUG: State file not found or empty. Starting with random index."
-          CURRENT_INDEX=$(( RANDOM % NUM_WALLPAPERS ))
+          CURRENT_INDEX="''$(( RANDOM % NUM_WALLPAPERS ))" # Bash arithmetic: escape '$'
       fi
       echo "DEBUG: Final CURRENT_INDEX before setting wallpaper: $CURRENT_INDEX"
 
+      # Bash parameter expansion for positional argument: escape '$'
       ACTION="''${1:-}" # Use parameter expansion to avoid errors if $1 is not set
       echo "DEBUG: Action: $ACTION"
 
       NEW_INDEX=$CURRENT_INDEX
       if [ "$ACTION" = "next" ]; then
-          NEW_INDEX=$(( (CURRENT_INDEX + 1) % NUM_WALLPAPERS ))
+          NEW_INDEX="''$(( (CURRENT_INDEX + 1) % NUM_WALLPAPERS ))" # Bash arithmetic: escape '$'
       elif [ "$ACTION" = "prev" ]; then
-          NEW_INDEX=$(( (CURRENT_INDEX - 1 + NUM_WALLPAPERS) % NUM_WALLPAPERS ))
+          NEW_INDEX="''$(( (CURRENT_INDEX - 1 + NUM_WALLPAPERS) % NUM_WALLPAPERS ))" # Bash arithmetic: escape '$'
+      else
+          # If no action (or invalid action), keep current index.
+          # This allows initial random choice or re-applying current without changing.
+          echo "DEBUG: No 'next' or 'prev' action specified. Keeping current wallpaper."
       fi
       echo "DEBUG: NEW_INDEX after action: $NEW_INDEX"
 
-
+      # Bash array element access: escape '$'
       NEW_WALLPAPER="''${ALL_WALLPAPERS[$NEW_INDEX]}"
       echo "DEBUG: NEW_WALLPAPER: $NEW_WALLPAPER"
 
+      # --- Apply Pywal Theme ---
+      echo "DEBUG: Applying pywal theme for: $NEW_WALLPAPER"
+      # Ensure pywal's cache is clean for consistent results or use -n
+      # You might want '-n' to avoid changing themes if the wallpaper hasn't changed
+      # or if you prefer explicit theme application. For this, we'll re-apply always.
+      "$WAL_EXEC" -i "$NEW_WALLPAPER" --saturate 0.8 --backend wal > /dev/null
 
-      # --- START OF THE MAIN FIX ---
-      # Safely build the command using a bash array
+      # If you use specific template files with pywal, ensure they are copied to ~/.cache/wal/templates
+      # and then run wal with -t flag. For simplicity, we stick to default for now.
 
+      # --- Set Wallpaper with swww ---
+      echo "DEBUG: Setting wallpaper with swww..."
       swww_args=()
       swww_args+=("img")
       swww_args+=("$NEW_WALLPAPER") # The wallpaper path is now a separate, safe element
 
-      # Define transition settings
+      # Define transition settings (customize these to your liking)
       SELECTED_TRANSITION_TYPE="grow"
       TRANSITION_FPS="60"
       TRANSITION_DURATION="0.7"
       TRANSITION_STEP="90"
-      TRANSITION_ANGLE=""
-      TRANSITION_BEZIER=""
-      TRANSITION_POS=""
+      TRANSITION_ANGLE=""      # Can be e.g., "45" for some types
+      TRANSITION_BEZIER=""     # E.g., ".43,1.19,1,.4" for custom easing
+      TRANSITION_POS=""        # E.g., "center", "top-left"
 
       # Set conditional options
       if [ "$SELECTED_TRANSITION_TYPE" = "grow" ]; then
-          TRANSITION_POS="center"
+          TRANSITION_POS="center" # Common for 'grow' transition
+      fi
+      if [ "$SELECTED_TRANSITION_TYPE" = "wave" ]; then
+          TRANSITION_ANGLE="30" # Example for 'wave'
       fi
 
       # Add arguments to the array
@@ -186,15 +236,14 @@
       fi
 
       # Execute the command safely
-      # The ''${swww_args[@]} expansion ensures every element is treated as a distinct argument
-      echo "DEBUG: Executing swww command: ''${pkgs.swww}/bin/swww" "''${swww_args[@]}"
-      "''${pkgs.swww}/bin/swww" "''${swww_args[@]}"
+      echo "DEBUG: Executing swww command: $SWWW_EXEC" "''${swww_args[@]}"
+      "$SWWW_EXEC" "''${swww_args[@]}"
 
-      # --- END OF THE MAIN FIX ---
-
+      # --- Save State ---
       echo "$NEW_INDEX" > "$STATE_FILE"
 
       echo "Wallpaper set to: $NEW_WALLPAPER (Index: $NEW_INDEX) with transition: $SELECTED_TRANSITION_TYPE"
+      echo "Pywal theme applied."
     '';
   };
 in {
