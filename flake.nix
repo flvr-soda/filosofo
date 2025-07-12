@@ -62,40 +62,46 @@
     theLocale = "en_US.UTF-8";
     theLCVariables = "es_VE.UTF-8";
     theTimezone = "America/Caracas";
+    # Define common special args
+    commonSpecialArgs = {inherit inputs username gitUsername gitEmail hostname theTimezone theLocale theLCVariables;};
+    # Hosts definition
+    hosts = {
+      "filosofo-laptop" = {
+        isDesktop = true; # Used to enable/disable desktop-specific configs (like Hyprland)
+        isServer = false;
+        device = "/dev/sda";
+      };
+      "filosofo-desktop" = {
+        isDesktop = true;
+        isServer = false;
+        device = "/dev/nvme0n1";
+      };
+      "filosofo-server" = {
+        isDesktop = false;
+        isServer = true;
+        device = "/dev/sda"; # adjust
+      };
+    };
   in {
-    nixosConfigurations = {
-      "${hostname}" = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          inherit username;
-          inherit hostname;
-          inherit theTimezone;
-          inherit theLocale;
-          inherit theLCVariables;
-        };
+    nixosConfigurations = nixpkgs.lib.mapAttrs (hostname: hostAttrs:
+      nixpkgs.lib.nixosSystem {
+        specialArgs = commonSpecialArgs // hostAttrs;
         modules = [
-          ./configuration.nix
-          #inputs.disko.nixosModules.default
-          #(import ./disko.nix {device = "/dev/sda";})
+          ./hosts/${hostname}/configuration.nix
           sops-nix.nixosModules.sops
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           stylix.nixosModules.stylix
           {
-            home-manager.extraSpecialArgs = {
-              inherit username;
-              inherit gitUsername;
-              inherit gitEmail;
-              inherit inputs;
-              inherit hostname;
-            };
+            home-manager.extraSpecialArgs = commonSpecialArgs // hostAttrs;
             home-manager.backupFileExtension = "backup";
             home-manager.useUserPackages = true;
-            home-manager.users."${username}" = import ./home.nix;
+            home-manager.users."${username}" = import ./hosts/${hostname}/home.nix;
           }
         ];
-      };
-    };
+      })
+    hosts;
+
     # --- Cybersecurity Dev Shell ---
     # This defines a development environment that you can enter using 'nix develop'
     devShells.x86_64-linux.default = let
@@ -138,7 +144,7 @@
           wireshark-cli
           wireshark
 
-          # General Utilities (helpful in any dev shell)
+          # General Utilities
           git
           tmux
           neovim
@@ -148,7 +154,7 @@
 
         # shellHook runs commands when you enter the dev shell
         shellHook = ''
-          echo "HACK SOME CRAP!"
+          echo "I rot, but beautifully"
         '';
       };
     # --- End of Cybersecurity Dev Shell ---

@@ -1,13 +1,58 @@
 {
   pkgs,
   inputs,
+  lib,
   username,
   gitUsername,
   gitEmail,
+  isDesktop,
+  isServer,
   ...
 }: let
-  wall1 = "${./host/assets/staticwall}";
-  wall2 = "${./host/assets/animatedwall}";
+  wall1 = "${inputs.self}/assets/staticwall";
+  wall2 = "${inputs.self}/assets/animatedwall";
+  # AI generated wrapper script for random logos in fastfetch
+  fastfetchRandomLogoScript = pkgs.writeShellApplication {
+    name = "fastfetch-random-logo";
+    # Ensure necessary tools are available in the script's path
+    runtimeInputs = [pkgs.fastfetch pkgs.findutils pkgs.gnugrep pkgs.gnushuf pkgs.coreutils]; # coreutils for `xargs`
+
+    text = ''
+      # Define the paths to the asset directories in the Nix store.
+      # These paths are fixed at build time due to how Nix works,
+      # but they correctly point to the assets copied into the store.
+      ascii_dir="${inputs.self}/assets/ascii"
+      png_dir="${inputs.self}/assets/png"
+
+      # Find all .txt files in ascii_dir and .png files in png_dir
+      # -print0 and xargs -0 are used for robust handling of filenames with spaces or special characters.
+      all_logos_list=$(
+        find "$ascii_dir" -type f -name "*.txt" -print0 || true
+        find "$png_dir" -type f -name "*.png" -print0 || true
+      )
+
+      # Check if any logos were found
+      if [ -z "$all_logos_list" ]; then
+        echo "No logo files found in $ascii_dir or $png_dir. Using default fastfetch logo." >&2
+        exec "${pkgs.fastfetch}/bin/fastfetch" "$@"
+        exit $?
+      fi
+
+      # Randomly pick one logo from the combined list
+      # shuf -n 1 needs the input to be newline-separated or null-separated.
+      # xargs -0 takes null-separated input and passes it as arguments, then printf converts to newline.
+      random_logo=$(echo "$all_logos_list" | xargs -0 printf '%s\n' | shuf -n 1)
+
+      if [ -z "$random_logo" ]; then
+        echo "Failed to pick a random logo. Using default fastfetch logo." >&2
+        exec "${pkgs.fastfetch}/bin/fastfetch" "$@"
+        exit $?
+      fi
+
+      # Execute fastfetch with the randomly chosen logo, passing through all arguments
+      exec "${pkgs.fastfetch}/bin/fastfetch" --logo-source "$random_logo" "$@"
+    '';
+  };
 in {
   # Paths and users home manager should manage
   home.username = "${username}";
@@ -41,6 +86,8 @@ in {
     # Terminal-based tools and utilities
     cool-retro-term # A cool retro terminal emulator
     fastfetch # Modern system info tool
+    asciiquarium
+    ascii-image-converter
     cava # Command-line audio visualizer
     cmatrix # The Matrix effect in your terminal
     btop # Advanced process monitoring
@@ -73,7 +120,7 @@ in {
   qt.enable = true;
   gtk.enable = true;
 
-  wayland.windowManager.hyprland = {
+  wayland.windowManager.hyprland = lib.mkIf isDesktop {
     enable = true;
     xwayland.enable = true;
     systemd.variables = ["--all"];
@@ -85,7 +132,6 @@ in {
         "dunst"
         "udiskie"
         "nm-applet"
-        "waybar"
       ];
       general = {
         gaps_in = 5;
@@ -132,9 +178,11 @@ in {
       bind =
         [
           "$mod, B, exec, firefox"
-          "$mod, return, kitty"
-          "$mod, C, code"
+          "$mod, return, exec, kitty"
+          "$mod, C, exec, code"
+          "$mod, A, exec, rofi-wayland -show drun"
           "$mod SHIFT, M, exec, btop"
+
           "$mod, Q, killactive"
           "$mod SHIFT, F, togglefloating"
           "$mod, F, fullscreen"
@@ -182,6 +230,7 @@ in {
         ld = "eza -lhD --icons=auto"; # long list dirs
         lt = "eza --icons=auto --tree"; # list folder as tree
         vc = "code";
+        ff = "fastfetch-random-logo";
       };
     };
 
@@ -232,7 +281,7 @@ in {
       enable = true;
       settings = {
         logo = {
-          source = "./host/assets/ascii/pentagram.txt";
+          source = "null";
           height = 20;
           padding = {
             right = 1;

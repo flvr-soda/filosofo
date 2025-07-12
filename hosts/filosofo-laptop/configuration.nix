@@ -40,8 +40,6 @@
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = ["quiet" "splash" "loglevel=3"];
     initrd.systemd.enable = true;
-    plymouth.enable = true;
-    plymouth.theme = "text";
     loader = {
       timeout = 2;
       systemd-boot.configurationLimit = 7;
@@ -70,18 +68,23 @@
   users.extraGroups.podman.members = ["${username}"];
 
   # System wide stylix
+  /*
   stylix.enable = true;
   stylix.polarity = "dark";
   stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
+  */
 
   # User account
   programs.fuse.userAllowOther = true;
-  users.users."${username}" = {
-    isNormalUser = true;
-    description = "Soda";
-    extraGroups = ["networkmanager" "wheel"];
+  users = {
+    defaultUserShell = pkgs.fish;
+    users."${username}" = {
+      isNormalUser = true;
+      description = "DOLL CARNAGE";
+      extraGroups = ["networkmanager" "wheel"];
+      useDefaultShell = true;
+    };
   };
-
   # Program enabling and settings
   programs = {
     dconf.enable = true;
@@ -102,39 +105,39 @@
     };
   };
 
-  environment.sessionVariables = {
-    WLR_NO_HARDWARE_CURSORS = "1";
-    NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+  environment = {
+    defaultPackages = lib.mkForce []; # remove default packages
+
+    sessionVariables = {
+      WLR_NO_HARDWARE_CURSORS = "1";
+      NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+    };
+
+    systemPackages = with pkgs; [
+      # Core system utilities
+      coreutils
+      utillinux
+      wayland-utils # Important for Wayland debugging/info
+
+      # Networking & Security
+      openssh
+      openvpn
+      curl
+      wget
+
+      # Development Tools
+      cmake
+      gcc
+      podman-compose
+      podman-tui
+      distrobox
+      nixd
+      home-manager # Keep home-manager here as it's a system-level tool managing user configs
+      sops
+    ];
   };
-
-  environment.defaultPackages = lib.mkForce []; # remove default packages
-
-  environment.systemPackages = with pkgs; [
-    # Core system utilities
-    coreutils
-    utillinux
-    wayland-utils # Important for Wayland debugging/info
-
-    # Networking & Security
-    openssh
-    openvpn
-    curl
-    wget
-
-    # Development Tools
-    cmake
-    gcc
-    podman-compose
-    podman-tui
-    distrobox
-    nixd
-    home-manager # Keep home-manager here as it's a system-level tool managing user configs
-    sops
-  ];
-
   # Graphical settings
-  #services.xserver.videoDrivers = ["amdgpu"];
   hardware = {
     enableAllFirmware = true;
     graphics = {
@@ -169,12 +172,18 @@
     '';
   };
 
-  fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-    cm_unicode
-    corefonts
-  ];
-
+  fonts = {
+    fontconfig.enable = true;
+    packages = with pkgs; [
+      nerdfonts.jetbrains-mono
+      nerdfonts.fira-code
+      nerdfonts.hack
+      nerdfonts.cascadia-code
+      noto-fonts-color-emoji
+      cm_unicode
+      corefonts
+    ];
+  };
   security = {
     sudo.execWheelOnly = true; # Limit sudo usage to user in the wheel group
     apparmor = {
@@ -208,16 +217,18 @@
 
   # Internationalisation properties.
   time.timeZone = "${theTimezone}";
-  i18n.defaultLocale = "${theLocale}";
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "${theLocale}";
-    LC_IDENTIFICATION = "${theLCVariables}";
-    LC_MEASUREMENT = "${theLCVariables}";
-    LC_MONETARY = "${theLCVariables}";
-    LC_NAME = "${theLCVariables}";
-    LC_NUMERIC = "${theLCVariables}";
-    LC_PAPER = "${theLCVariables}";
-    LC_TELEPHONE = "${theLCVariables}";
-    LC_TIME = "${theLocale}";
+  i18n = {
+    defaultLocale = "${theLocale}";
+    extraLocaleSettings = {
+      LC_ADDRESS = "${theLocale}";
+      LC_IDENTIFICATION = "${theLCVariables}";
+      LC_MEASUREMENT = "${theLCVariables}";
+      LC_MONETARY = "${theLCVariables}";
+      LC_NAME = "${theLCVariables}";
+      LC_NUMERIC = "${theLCVariables}";
+      LC_PAPER = "${theLCVariables}";
+      LC_TELEPHONE = "${theLCVariables}";
+      LC_TIME = "${theLocale}";
+    };
   };
 }

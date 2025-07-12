@@ -17,6 +17,7 @@
               mountpoint = "/boot";
               mountOptions = [
                 "defaults"
+                "noatime"
               ];
             };
           };
@@ -32,26 +33,28 @@
                 "--perf-no_write_workqueue"
               ];
               # https://0pointer.net/blog/unlocking-luks2-volumes-with-tpm2-fido2-pkcs11-security-hardware-on-systemd-248.html
-              settings = {crypttabExtraOpts = ["fido2-device=auto" "token-timeout=10"];};
+              settings = {
+                crypttabExtraOpts = ["fido2-device=auto" "token-timeout=10"];
+              };
               content = {
                 type = "btrfs";
-                extraArgs = ["-L" "nixos" "-f"];
+                extraArgs = ["-L" "nixos" "-f"]; # -f is for a force overwrite BE MINDFUL
                 subvolumes = {
                   "/root" = {
                     mountpoint = "/";
-                    mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                    mountOptions = ["subvol=root" "compress=zstd" "noatime" "discard"];
                   };
                   "/home" = {
                     mountpoint = "/home";
-                    mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    mountOptions = ["subvol=home" "compress=zstd" "noatime" "discard"];
                   };
                   "/nix" = {
                     mountpoint = "/nix";
-                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    mountOptions = ["subvol=nix" "compress=zstd" "noatime" "discard"];
                   };
                   "/log" = {
                     mountpoint = "/var/log";
-                    mountOptions = ["subvol=log" "compress=zstd" "noatime"];
+                    mountOptions = ["subvol=log" "compress=zstd" "noatime" "discard"];
                   };
                 };
               };
