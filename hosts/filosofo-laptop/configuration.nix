@@ -88,7 +88,7 @@
   # Program enabling and settings
   programs = {
     dconf.enable = true;
-
+    fish.enable = true;
     hyprland = {
       enable = true;
       withUWSM = false;
@@ -175,10 +175,10 @@
   fonts = {
     fontconfig.enable = true;
     packages = with pkgs; [
-      nerdfonts.jetbrains-mono
-      nerdfonts.fira-code
-      nerdfonts.hack
-      nerdfonts.cascadia-code
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.fira-code
+      nerd-fonts.hack
+      cascadia-code
       noto-fonts-color-emoji
       cm_unicode
       corefonts

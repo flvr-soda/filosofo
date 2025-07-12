@@ -15,7 +15,7 @@
   randomLogoScript = pkgs.writeShellApplication {
     name = "fastfetch-random-logo";
     # Ensure necessary tools are available in the script's path
-    runtimeInputs = [pkgs.fastfetch pkgs.findutils pkgs.gnugrep pkgs.gnushuf pkgs.coreutils]; # coreutils for `xargs`
+    runtimeInputs = [pkgs.fastfetch pkgs.findutils pkgs.gnugrep pkgs.coreutils]; # coreutils for `xargs`
 
     text = ''
       # Define the paths to the asset directories in the Nix store.
@@ -57,14 +57,14 @@
   # AI generated wrapper script for wallpaper cycling (TO DO: PYWAL INTEGRATION)
   wallChange = pkgs.writeShellApplication {
     name = "next-wallpaper";
-    runtimeInputs = [pkgs.swww pkgs.findutils pkgs.gnugrep pkgs.gnusort pkgs.coreutils];
+    runtimeInputs = [pkgs.swww pkgs.findutils pkgs.gnugrep pkgs.coreutils];
 
     text = ''
-      #!''${pkgs.bash}/bin/bash
+      #!${pkgs.bash}/bin/bash
       set -euxo pipefail # Added for robust error checking and debugging output
 
-      WALL_DIR_1="''${wall1}"
-      WALL_DIR_2="''${wall2}"
+      WALL_DIR_1="${wall1}"
+      WALL_DIR_2="${wall2}"
       # Use XDG_CACHE_HOME if available, otherwise default to ~/.cache
       CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}"
       STATE_FILE="$CACHE_DIR/swww_current_wallpaper_index"
@@ -401,22 +401,90 @@ in {
         name = "JetBrainsMono Nerd Font";
         size = 10;
       };
-      background_opacity = "0.75";
+      settings = {
+        background_opacity = 0.8;
+      };
     };
 
     waybar = lib.mkIf isDesktop {
       enable = true;
-      systemd.enable = true;
-      config = {
-        layer = "top";
-        position = "top";
-        modules-left = ["hyprland/workspaces" "hyprland/window"];
-        modules-center = ["clock"];
-        modules-right = ["network" "pulseaudio" "battery" "tray"];
-      };
-      font = {
-        name = "JetBrainsMono Nerd Font";
-        size = 12;
+      #systemd.enable = true;
+
+      settings = {
+        "main-bar" = {
+          # You can name your bar whatever you like, e.g., "top-bar", "laptop-bar"
+          layer = "top";
+          position = "top";
+          height = 30;
+          spacing = 5;
+
+          modules-left = ["hyprland/workspaces" "hyprland/window"];
+          modules-center = ["clock"];
+          modules-right = ["cpu" "memory" "battery" "pulseaudio" "network" "tray"];
+
+          "hyprland/workspaces" = {
+            format = "{icon}";
+            format-icons = {
+              "1" = "";
+              "2" = "";
+              "3" = "";
+              "urgent" = "";
+              "focused" = "";
+              "default" = "";
+            };
+          };
+
+          clock = {
+            format = " {:%H:%M}   {:%Y-%m-%d}";
+            tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          };
+
+          pulseaudio = {
+            format = "{icon} {volume}%";
+            format-muted = " Muted";
+            format-icons = {
+              default = ["" "" ""];
+            };
+            on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+          };
+
+          battery = {
+            format = "{icon} {capacity}%";
+            format-charging = "充電 {capacity}%"; # Unicode for charging symbol
+            format-plugged = "電源 {capacity}%"; # Unicode for plugged in symbol
+            format-alt = "{time} {icon}";
+            format-full = " {capacity}%";
+            format-icons = ["" "" "" "" ""];
+            states = {
+              good = 90;
+              warning = 30;
+              critical = 15;
+            };
+            tooltip-format = "{time} left";
+          };
+
+          tray = {
+            icon-size = 18;
+            spacing = 10;
+          };
+
+          network = {
+            format-wifi = " {essid}";
+            format-ethernet = " {ifname}";
+            format-disconnected = " No Network";
+            tooltip-format = "{ifname}: {ipaddr}";
+          };
+
+          cpu = {
+            format = " {usage}%";
+            tooltip = false;
+          };
+
+          memory = {
+            format = " {used:0.1f}G";
+            tooltip = false;
+          };
+        };
       };
     };
 
