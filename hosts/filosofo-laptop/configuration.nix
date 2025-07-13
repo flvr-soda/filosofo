@@ -80,7 +80,7 @@
     defaultUserShell = pkgs.fish;
     users."${username}" = {
       isNormalUser = true;
-      description = "DOLL CARNAGE";
+      description = "??????";
       extraGroups = ["networkmanager" "wheel"];
       useDefaultShell = true;
     };
@@ -152,24 +152,42 @@
   };
 
   # Enable the Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  services = {
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
 
-  services.printing.enable = true;
-  services.xserver.enable = true; # Enable the X11 windowing system.
-  services.upower.enable = true;
+    printing.enable = true;
+    xserver.enable = true; # Enable the X11 windowing system.
+    upower.enable = true;
 
-  services.openssh = {
-    settings.PasswordAuthentication = false;
-    allowSFTP = false; # Don't set this if you need sftp
-    settings.kbdInteractiveAuthentication = false;
-    extraConfig = ''
-      AllowTcpForwarding yes
-      X11Forwarding no
-      AllowAgentForwarding no
-      AllowStreamLocalForwarding no
-      AuthenticationMethods publickey
-    '';
+    openssh = {
+      settings.PasswordAuthentication = false;
+      allowSFTP = false; # Don't set this if you need sftp
+      settings.kbdInteractiveAuthentication = false;
+      extraConfig = ''
+        AllowTcpForwarding yes
+        X11Forwarding no
+        AllowAgentForwarding no
+        AllowStreamLocalForwarding no
+        AuthenticationMethods publickey
+      '';
+    };
+
+    # Configure keymap in X11
+    xserver.xkb = {
+      layout = "latam";
+      variant = "";
+    };
+
+    # AUDIO WITH PIPEWIRE
+    pulseaudio.enable = false;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
   };
 
   fonts = {
@@ -185,6 +203,7 @@
     ];
   };
   security = {
+    rtkit.enable = true; # Enable sound with pipewire.
     sudo.execWheelOnly = true; # Limit sudo usage to user in the wheel group
     apparmor = {
       enable = true;
@@ -194,23 +213,6 @@
         apparmor-profiles
       ];
     };
-  };
-
-  # Enable sound with pipewire.
-  security.rtkit.enable = true;
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "latam";
-    variant = "";
   };
 
   console.keyMap = "la-latin1"; # Configure console keymap
