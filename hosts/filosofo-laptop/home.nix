@@ -309,7 +309,7 @@ in {
       ];
 
       input = {
-        kb_layout = "la,us"; # US and Spanish layouts
+        kb_layout = "es,us"; # US and Spanish layouts
         kb_variant = ",";
         kb_options = "grp:alt_shift_toggle"; # Toggle layouts with Alt+Shift
       };
