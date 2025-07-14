@@ -6,144 +6,114 @@
   gitUsername,
   gitEmail,
   isDesktop,
-  isServer,
+  config,
   ...
 }: let
-  wall1 = "${inputs.self}/assets/staticwall";
-  wall2 = "${inputs.self}/assets/animatedwall";
-  # AI generated wrapper script for random logos in fastfetch
-  fastfetchRandomLogoScript = pkgs.writeShellApplication {
-    name = "fastfetch-random-logo";
-    # Ensure necessary tools are available in the script's path
-    runtimeInputs = [pkgs.fastfetch pkgs.findutils pkgs.gnugrep pkgs.gnushuf pkgs.coreutils]; # coreutils for `xargs`
-
-    text = ''
-      # Define the paths to the asset directories in the Nix store.
-      # These paths are fixed at build time due to how Nix works,
-      # but they correctly point to the assets copied into the store.
-      ascii_dir="${inputs.self}/assets/ascii"
-      png_dir="${inputs.self}/assets/png"
-
-      # Find all .txt files in ascii_dir and .png files in png_dir
-      # -print0 and xargs -0 are used for robust handling of filenames with spaces or special characters.
-      all_logos_list=$(
-        find "$ascii_dir" -type f -name "*.txt" -print0 || true
-        find "$png_dir" -type f -name "*.png" -print0 || true
-      )
-
-      # Check if any logos were found
-      if [ -z "$all_logos_list" ]; then
-        echo "No logo files found in $ascii_dir or $png_dir. Using default fastfetch logo." >&2
-        exec "${pkgs.fastfetch}/bin/fastfetch" "$@"
-        exit $?
-      fi
-
-      # Randomly pick one logo from the combined list
-      # shuf -n 1 needs the input to be newline-separated or null-separated.
-      # xargs -0 takes null-separated input and passes it as arguments, then printf converts to newline.
-      random_logo=$(echo "$all_logos_list" | xargs -0 printf '%s\n' | shuf -n 1)
-
-      if [ -z "$random_logo" ]; then
-        echo "Failed to pick a random logo. Using default fastfetch logo." >&2
-        exec "${pkgs.fastfetch}/bin/fastfetch" "$@"
-        exit $?
-      fi
-
-      # Execute fastfetch with the randomly chosen logo, passing through all arguments
-      exec "${pkgs.fastfetch}/bin/fastfetch" --logo-source "$random_logo" "$@"
-    '';
-  };
+  wallpaperDir = "${config.home.homeDirectory}/pictures/wallpapers";
+  logoDir = "${config.home.homeDirectory}/pictures/logos";
 in {
-  # Paths and users home manager should manage
-  home.username = "${username}";
-  home.homeDirectory = "/home/${username}";
-
-  home.stateVersion = "25.05"; # Do not change this shit either
-
   nixpkgs.config.allowUnfree = true;
 
+  home = {
+    # Paths and users home manager should manage
+    username = "${username}";
+    homeDirectory = "/home/${username}";
+    stateVersion = "25.05"; # Do not change this shit either};
+    packages = with pkgs; [
+      # Applications for general use and productivity
+      obsidian
+      qbittorrent-enhanced
+      vlc
+      texstudio
+      komikku
+      wpsoffice
+      miktex
+      kew
+      kiwix
+      imagemagick
+      pywal
+
+      # Terminal-based tools and utilities
+      cool-retro-term # A cool retro terminal emulator
+      fastfetch # Modern system info tool
+      tree
+      cava # Command-line audio visualizer
+      cmatrix # The Matrix effect in your terminal
+      btop # Advanced process monitoring
+      yazi # TUI file manager
+      eza
+      bat
+      ripgrep
+      ffmpeg # Essential multimedia converter
+
+      # Wayland-specific desktop tools
+      dunst # Notification daemon
+      swww # Wallpaper utility
+      clipse # Clipboard manager (ensure this is a Wayland-compatible one if needed)
+      grim
+      grimblast # Screenshot utility for Wayland
+      slurp
+      swaylock
+      wl-clipboard
+
+      # Compression/Archive tools
+      p7zip
+      unrar
+
+      # Windows compatibility and gaming tools
+      wine
+      protonup
+      winetricks
+    ];
+  };
+
   # STYLIX JUNK
-  stylix.enable = true;
-  stylix.polarity = "dark";
-  stylix.targets.firefox.profileNames = ["${username}"];
-  stylix.targets.qt.enable = true;
-  stylix.targets.gtk.enable = true;
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
+  /*
+  stylix = {
+    enable = true;
+    polarity = "dark";
+    targets.firefox.profileNames = ["${username}"];
+    targets.qt.enable = true;
+    targets.gtk.enable = true;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
+  };
+  */
 
-  home.packages = with pkgs; [
-    # Applications for general use and productivity
-    obsidian
-    qbittorrent-enhanced
-    vlc
-    texstudio
-    komikku
-    wpsoffice
-    miktex
-    kew
-    kiwix
-    imagemagick
+  qt = {
+    enable = true;
+  };
 
-    # Terminal-based tools and utilities
-    cool-retro-term # A cool retro terminal emulator
-    fastfetch # Modern system info tool
-    asciiquarium
-    ascii-image-converter
-    cava # Command-line audio visualizer
-    cmatrix # The Matrix effect in your terminal
-    btop # Advanced process monitoring
-    yazi # TUI file manager
-    eza
-    bat
-    ripgrep
-    ffmpeg # Essential multimedia converter
-
-    # Wayland-specific desktop tools
-    dunst # Notification daemon
-    rofi-wayland # Application launcher/switcher (Wayland compatible)
-    swww # Wallpaper utility
-    clipse # Clipboard manager (ensure this is a Wayland-compatible one if needed)
-    grimblast # Screenshot utility for Wayland
-
-    # Compression/Archive tools
-    p7zip
-    unrar
-
-    # Windows compatibility and gaming tools
-    wine
-    protonup
-    winetricks
-
-    # Utility for automounting removable media
-    udiskie
-  ];
-
-  qt.enable = true;
-  gtk.enable = true;
+  gtk = {
+    enable = true;
+  };
 
   wayland.windowManager.hyprland = lib.mkIf isDesktop {
     enable = true;
     xwayland.enable = true;
     systemd.variables = ["--all"];
-
     settings = {
       exec-once = [
         "swww init"
-        "swww img $(find ${wall1} ${wall2} -type f \\( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' -o -name '*.gif' \\) | shuf -n 1)"
+
         "dunst"
         "udiskie"
+        "waybar"
         "nm-applet"
       ];
+
       general = {
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
+        layout = "dwindle";
       };
 
       decoration = {
-        shadow_offset = "0 5";
-        "col.shadow" = "rgba(00000099)";
         blur = {
           enabled = true;
+          size = 8;
+          passes = 2;
+          vibrancy = 0.1696;
         };
       };
 
@@ -180,12 +150,17 @@ in {
           "$mod, B, exec, firefox"
           "$mod, return, exec, kitty"
           "$mod, C, exec, code"
-          "$mod, A, exec, rofi-wayland -show drun"
-          "$mod SHIFT, M, exec, btop"
+          "$mod, A, exec, rofi -show drun"
+          "$mod, L, exec, swaylock"
+
+          "$mod SHIFT, B, exec, kitty -e btop"
+          "$mod, K, exec, kitty -e kew"
+          "$mod, E, exec, kitty -e yazi"
 
           "$mod, Q, killactive"
           "$mod SHIFT, F, togglefloating"
           "$mod, F, fullscreen"
+          "$mod, M, exit,"
 
           "$mod, left, movefocus, l"
           "$mod, right, movefocus, r"
@@ -196,6 +171,14 @@ in {
           "$mod SHIFT, l, movewindow, r"
           "$mod SHIFT, k, movewindow, u"
           "$mod SHIFT, j, movewindow, d"
+
+          # Screenshots
+          ", Print, exec, grimblast copy screen"
+          "$mod, Print, exec, grimblast copy area"
+
+          # Scroll through workspaces with mouse wheel
+          "$mod, mouse_down, workspace, e+1" # Next workspace
+          "$mod, mouse_up, workspace, e-1" # Previous workspace
         ]
         ++ (
           # workspaces
@@ -217,10 +200,67 @@ in {
         "$mod, mouse:273, resizewindow"
         "$mod ALT, mouse:272, resizewindow"
       ];
+
+      input = {
+        kb_layout = "es,us"; # US and Spanish layouts
+        kb_variant = ",";
+        kb_options = "grp:alt_shift_toggle"; # Toggle layouts with Alt+Shift
+      };
     };
   };
 
   programs = {
+    pywal.enable = true;
+
+    rofi = {
+      enable = true;
+      package = pkgs.rofi-wayland;
+    };
+
+    swaylock = {
+      enable = true;
+      settings = {
+        daemonize = true;
+        show-failed-attempts = true;
+        clock = true;
+        screenshot = true;
+        "effect-blur" = "15x15"; # Strings for effect values
+        "effect-vignette" = "1:1"; # Strings for effect values
+        color = "1f1d2e80";
+        font = "Inter";
+        indicator = true;
+        "indicator-radius" = 200;
+        "indicator-thickness" = 20;
+        "line-color" = "1f1d2e";
+        "ring-color" = "191724";
+        "inside-color" = "1f1d2e";
+        "key-hl-color" = "eb6f92";
+        "separator-color" = "00000000";
+        "text-color" = "e0def4";
+        "text-caps-lock-color" = ""; # Empty string
+        "line-ver-color" = "eb6f92";
+        "ring-ver-color" = "eb6f92";
+        "inside-ver-color" = "1f1d2e";
+        "text-ver-color" = "e0def4";
+        "ring-wrong-color" = "31748f";
+        "text-wrong-color" = "31748f";
+        "inside-wrong-color" = "1f1d2e";
+        "inside-clear-color" = "1f1d2e";
+        "text-clear-color" = "e0def4";
+        "ring-clear-color" = "9ccfd8";
+        "line-clear-color" = "1f1d2e";
+        "line-wrong-color" = "1f1d2e";
+        "bs-hl-color" = "31748f";
+        grace = 2;
+        "grace-no-mouse" = true;
+        "grace-no-touch" = true;
+        datestr = "%a, %B %e";
+        timestr = "%I:%M %p";
+        "fade-in" = 0.3; # Numbers for float values
+        "ignore-empty-password" = true;
+      };
+    };
+
     fish = {
       enable = true;
       shellAliases = {
@@ -230,21 +270,89 @@ in {
         ld = "eza -lhD --icons=auto"; # long list dirs
         lt = "eza --icons=auto --tree"; # list folder as tree
         vc = "code";
-        ff = "fastfetch-random-logo";
       };
     };
 
-    kitty.enable = true;
-
-    waybar = {
+    kitty = {
       enable = true;
-      systemd.enable = true;
-      settings = {
+      font = {
+        name = "JetBrainsMono Nerd Font";
+        size = 10;
       };
+      settings = {
+        background_opacity = 0.8;
+      };
+    };
+
+    waybar = lib.mkIf isDesktop {
+      enable = true;
     };
 
     starship = {
       enable = true;
+      enableBashIntegration = true; # Ensures Starship is initialized in Bash
+      enableZshIntegration = true; # Ensures Starship is initialized in Zsh
+      enableNushellIntegration = false; # Set to true if you use Nushell
+      enableFishIntegration = true; # Set to true if you use Fish
+
+      settings = {
+        # The main prompt format defines the order of modules and colors.
+        format = "$all";
+
+        # Define the overall prompt character styling
+        character = {
+          success_symbol = "[>](bold green)";
+          error_symbol = "[>](bold red)";
+        };
+
+        # Show the current directory
+        directory = {
+          format = "[ $path](bold blue)";
+          truncation_symbol = "…/";
+        };
+
+        # Git branch and status
+        git_branch = {
+          symbol = " ";
+          format = "[$symbol$branch](bold purple) ";
+        };
+
+        git_status = {
+          format = "([$all_status$stashed](purple))";
+          # Configure icons for different states
+          stashed = "$";
+          staged = "+";
+          deleted = "✘";
+          renamed = "»";
+          modified = "!";
+          untracked = "?";
+        };
+
+        # Host module (useful for SSH sessions)
+        hostname = {
+          ssh_only = false;
+          format = "[@$hostname](bold cyan) ";
+        };
+
+        # Display current username (optional, useful for root/sudo sessions)
+        username = {
+          style_user = "bold yellow";
+          show_always = false; # Only show if not standard user
+        };
+
+        # Time taken for the last command
+        cmd_duration = {
+          format = "[$duration](italic white) ";
+        };
+
+        # Nix environment detection
+        nix_shell = {
+          format = "([Nix: $name](bold blue))";
+        };
+
+        rust = {symbol = "🦀 ";};
+        python = {symbol = "🐍 ";};
+      };
     };
 
     git = {
@@ -279,125 +387,6 @@ in {
 
     fastfetch = {
       enable = true;
-      settings = {
-        logo = {
-          source = "null";
-          height = 20;
-          padding = {
-            right = 1;
-          };
-        };
-        display = {
-          size = {
-            binaryPrefix = "si";
-          };
-          separator = "  ";
-        };
-        modules = [
-          {
-            type = "custom";
-            format = "┌──────────────────────────────────────────┐";
-          }
-          {
-            type = "chassis";
-            key = "  󰇺 Chassis";
-            format = "{1} {2} {3}";
-          }
-          {
-            type = "os";
-            key = "  󰣇 OS";
-            format = "{2}";
-            keyColor = "red";
-          }
-          {
-            type = "kernel";
-            key = "   Kernel";
-            format = "{2}";
-            keyColor = "red";
-          }
-          {
-            type = "packages";
-            key = "  󰏗 Packages";
-            keyColor = "green";
-          }
-          {
-            type = "display";
-            key = "  󰍹 Display";
-            format = "{1}x{2} @ {3}Hz [{7}]";
-            keyColor = "green";
-          }
-          {
-            type = "terminal";
-            key = "   Terminal";
-            keyColor = "yellow";
-          }
-          {
-            type = "wm";
-            key = "  󱗃 WM";
-            format = "{2}";
-            keyColor = "yellow";
-          }
-          {
-            type = "custom";
-            format = "└──────────────────────────────────────────┘";
-          }
-          "break"
-          {
-            type = "title";
-            key = "  ";
-            format = "{6} {7} {8}";
-          }
-          {
-            type = "custom";
-            format = "┌──────────────────────────────────────────┐";
-          }
-          {
-            type = "cpu";
-            format = "{1} @ {7}";
-            key = "   CPU";
-            keyColor = "blue";
-          }
-          {
-            type = "gpu";
-            format = "{1} {2}";
-            key = "  󰊴 GPU";
-            keyColor = "blue";
-          }
-          {
-            type = "gpu";
-            format = "{3}";
-            key = "   GPU Driver";
-            keyColor = "magenta";
-          }
-          {
-            type = "memory";
-            key = "   Memory ";
-            keyColor = "magenta";
-          }
-          {
-            type = "disk";
-            key = "  󱦟 OS Age ";
-            folders = "/";
-            keyColor = "red";
-            format = "{days} days";
-          }
-          {
-            type = "uptime";
-            key = "  󱫐 Uptime ";
-            keyColor = "red";
-          }
-          {
-            type = "custom";
-            format = "└──────────────────────────────────────────┘";
-          }
-          {
-            type = "colors";
-            paddingLeft = 2;
-            symbol = "circle";
-          }
-          "break"
-        ];
-      };
     };
 
     vscode = {
