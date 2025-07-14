@@ -11,10 +11,6 @@
   isServer,
   ...
 }: {
-  imports = [
-    ./hardware-configuration.nix
-  ];
-
   system.stateVersion = "25.05"; # Do NOT change this
 
   nixpkgs.config.allowUnfree = true; # Allow unfree packages
