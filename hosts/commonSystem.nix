@@ -149,6 +149,7 @@
   };
 
   # Services
+  services.power-profiles-daemon.enable = false;
   services = {
     displayManager.gdm.enable = lib.mkIf isDesktop true;
     dbus.enable = true;
