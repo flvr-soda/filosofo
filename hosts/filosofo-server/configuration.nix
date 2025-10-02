@@ -59,14 +59,6 @@
     };
   };
 
-  # File system mount points
-  fileSystems = {
-    "/mnt/media" = {
-      device = "/dev/disk/by-label/media";
-      fsType = "ext4";
-    };
-  };
-
   # Security settings
   security.sudo.extraRules = [
     {

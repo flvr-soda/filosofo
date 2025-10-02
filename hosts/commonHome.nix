@@ -8,11 +8,7 @@
   isDesktop,
   config,
   ...
-}: let
-  wallpaperDir = "${config.home.homeDirectory}/pictures/wallpapers";
-  logoDir = "${config.home.homeDirectory}/pictures/logos";
-  waybarConfigDir = "${config.home.homeDirectory}/.config/waybar";
-in {
+}: {
   nixpkgs.config.allowUnfree = true;
 
   home = {
@@ -20,6 +16,9 @@ in {
     username = "${username}";
     homeDirectory = "/home/${username}";
     stateVersion = "25.05"; # Do not change this
+
+    file = {
+    };
 
     packages = with pkgs; [
       # Applications for general use and productivity
@@ -34,6 +33,7 @@ in {
       kiwix
       imagemagick
       pywal
+      sphinx
 
       # Terminal-based tools and utilities
       cool-retro-term # A cool retro terminal emulator
@@ -50,13 +50,14 @@ in {
 
       # Wayland-specific desktop tools
       dunst # Notification daemon
+      libnotify # Notification library
       swww # Wallpaper utility
       clipse # Clipboard manager (ensure this is a Wayland-compatible one if needed)
       grim
       grimblast # Screenshot utility for Wayland
       slurp
-      swaylock
-      wl-clipboard
+      swaylock # Screen locker for Wayland
+      wl-clipboard # Clipboard utilities for Wayland
 
       # Compression/Archive tools
       p7zip
@@ -67,25 +68,19 @@ in {
       protonup
       winetricks
     ];
-
-    # STYLIX configuration (commented out for now)
-    /*
-    stylix = {
-      enable = true;
-      polarity = "dark";
-      targets.firefox.profileNames = ["${username}"];
-      targets.qt.enable = true;
-      targets.gtk.enable = true;
-      base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
-    };
-    */
-  };
-  qt = {
-    enable = true;
   };
 
   gtk = {
     enable = true;
+    iconTheme = {
+      package = pkgs.gruvbox-plus-icons;
+      name = "gruvbox-plus-icons";
+    };
+    cursorTheme = {
+      package = pkgs.bibata-cursors;
+      name = "bibata-cursors-breeze";
+      size = 23;
+    };
   };
 
   wayland.windowManager.hyprland = lib.mkIf isDesktop {
@@ -94,12 +89,19 @@ in {
     systemd.variables = ["--all"];
     settings = {
       exec-once = [
-        "swww init"
+        "swww-daemon"
         "dunst"
         "udiskie"
         "waybar"
-        "nm-applet"
+        "nm-applet --indicator"
       ];
+
+      window = {
+        # Opacity for the currently active (focused) window
+        active_opacity = 0.9;
+        # Opacity for inactive (unfocused) windows
+        inactive_opacity = 0.8;
+      };
 
       general = {
         gaps_in = 5;
@@ -150,7 +152,7 @@ in {
           "$mod, B, exec, firefox"
           "$mod, return, exec, kitty"
           "$mod, C, exec, code"
-          "$mod, A, exec, rofi -show drun"
+          "$mod, A, exec, rofi -show drun -show icons"
           "$mod, L, exec, swaylock"
 
           "$mod SHIFT, B, exec, kitty -e btop"
@@ -286,10 +288,6 @@ in {
 
     waybar = lib.mkIf isDesktop {
       enable = true;
-      settings = {
-        configFile = "${waybarConfigDir}/config.jsonc";
-        styleFile = "${waybarConfigDir}/style.css";
-      };
     };
 
     starship = {
@@ -405,330 +403,14 @@ in {
         ms-vscode.cpptools
         ms-azuretools.vscode-docker
         ms-vscode-remote.remote-ssh
+        hoovercj.vscode-power-mode
+        theqtcompany.qt-qml
       ];
       profiles.default.userSettings = {
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nixd";
         "security.workspace.trust.banner" = "never";
       };
-    };
-  };
-
-  environment = {
-    home.file.".config/waybar/config.jsonc" = {
-      text = ''
-        {
-            "margin": "5 20 0 20",
-            "modules-left": ["custom/updates", "custom/spotify", "custom/cava"],
-            "modules-center": ["clock"],
-            "modules-right": ["network", "pulseaudio", "backlight", "battery", "tray"],
-
-            //***************************
-            //*  Modules configuration  *
-            //***************************
-
-            "custom/updates": {
-                "format": "   ",
-                "interval": 7200,
-                "on-click": "dolphin",
-                "signal": 8
-            },
-
-            "custom/spotify": {
-                "format": "  {}",
-                "interval": 5,
-                "on-click": "flatpak run com.spotify.Client",
-                "exec": "~/.config/waybar/scripts/spotify.sh"
-            },
-
-            "clock": {
-                "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-                "format": "{:%a | %d %b | %I:%M %p}"
-            },
-
-            "custom/cava": {
-                "format": "{}",
-                "exec": "~/.config/waybar/scripts/cava.sh"
-            },
-
-            "network": {
-                "format-wifi": "󰤨  {essid} ({signalStrength}%)",
-                "format-ethernet": "󰈁 Ethernet",
-                "format-disconnected": "󰤭 Disconnected",
-                "on-click": "/home/lostfromlight/.config/waybar/scripts/nmtui.sh"
-            },
-
-            "pulseaudio": {
-                "reverse-scrolling": 1,
-                "format": "{volume}% {icon}",
-                "format-bluetooth": "{volume}% {icon}",
-                "format-muted": " {format_source}",
-                "format-source-muted": "Mute 🚫",
-                "format-icons": {
-                    "headphone": "",
-                    "default": ["🕨", "🕩", "🕪"]
-                },
-                "on-click": "pavucontrol",
-                "min-length": 13
-            },
-
-            "backlight": {
-                "device": "intel_backlight",
-                "format": "{percent}% {icon}",
-                "format-icons": ["🌑", "🌒", "🌓", "🌔", "🌕"],
-                "min-length": 5
-            },
-
-            "battery": {
-                "states": {
-                    "warning": 30,
-                    "critical": 15
-                },
-                "format": " {capacity}% {icon} ",
-                "format-charging": "{capacity}% ",
-                "format-plugged": "{capacity}% ",
-                "format-alt": "{time} {icon}",
-                "format-icons": ["▁", "▂", "▃", "▄", "▅"]
-            },
-
-            "tray": {
-                "icon-size": 16,
-                "spacing": 4
-            }
-        }
-      '';
-    };
-
-    home.file.".config/waybar/style.css" = {
-      text = ''
-        * {
-            border: none;
-            border-radius: 0;
-            font-family: JetBrainsMono Nerd Font, monospace;
-            font-size: 14px;
-            min-height: 0px;
-        }
-
-        window#waybar {
-            background: transparent;
-        }
-
-        window#waybar.hidden {
-            opacity: 0.2;
-        }
-
-        #custom-updates {
-            padding-left: 10px;
-            padding-right: 10px;
-            border-radius: 5px 20px 5px 20px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #custom-updates:hover {
-        	border-radius: 20px 5px 20px 5px;
-        	background: #484a4a;
-        }
-
-        #custom-spotify {
-        	margin-left: 8px;
-        	padding-left: 10px;
-            padding-right: 10px;
-            border-radius: 5px 20px 5px 20px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease-in-out,
-        	border-radius 0.3s ease-in-out;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #custom-spotify:hover {
-        	border-radius: 20px 5px 20px 5px;
-        	background: #484a4a;
-        }
-
-
-        #clock {
-            padding-left: 16px;
-            padding-right: 16px;
-            border-radius: 5px 5px 20px 20px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #clock:hover {
-        	border-radius: 20px 20px 5px 5px;
-        	background: #484a4a;
-        }
-
-        #custom-cava {
-        	margin-left: 8px;
-        }
-
-        #network {
-        	margin-right: 8px;
-        	padding-right: 15px;
-        	padding-left: 15px;
-        	border-radius: 20px 5px 20px 5px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-
-        #network:hover {
-        	border-radius: 5px 20px 5px 20px;
-        	background: #484a4a;
-        }
-
-        #pulseaudio {
-            margin-right: 8px;
-            border-radius: 20px 5px 20px 5px;
-            padding-left: 0px;
-            padding-right: 0px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #pulseaudio:hover {
-        	border-radius: 5px 20px 5px 20px;
-        	background: #484a4a;
-        }
-
-        #backlight {
-            margin-right: 8px;
-            padding-left: 10px;
-            padding-right: 10px;
-            border-radius: 20px 5px 20px 5px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #backlight:hover {
-        	border-radius: 5px 20px 5px 20px;
-        	background: #484a4a;
-        }
-
-
-        #battery {
-            margin-right: 8px;
-            padding-left: 1px;
-            padding-right: 1px;
-            border-radius: 20px 5px 20px 5px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #battery:hover {
-        	border-radius: 5px 20px 5px 20px;
-        	background: #484a4a;
-        }
-
-
-        #battery.charging {
-            color: #ffffff;
-        	padding-right: 9px;
-        	padding-left: 9px;
-            /*background-color: #26A65B;*/
-            background-color: #0f1c17;
-            border: solid 3px;
-            border-color: #484a4a;
-        }
-
-        #battery.warning:not(.charging) {
-            background-color: #0f1c17;
-            color: #ff0000;
-            border-color: #ff0000;
-        }
-
-        #battery.critical:not(.charging) {
-            background-color: #0f1c17;
-            color: #ffffff;
-            border-color: #ad2626;
-            animation-name: blink;
-            animation-duration: 0.5s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
-        }
-
-        #tooltip {
-            background-color: #181818;
-        }
-
-        #tray {
-            padding-left: 16px;
-            padding-right: 16px;
-        	margin-right: 8px;
-            border-radius: 20px 10px 10px 5px;
-            border: solid 3px;
-            border-color: #484a4a;
-            transition: background 0.3s ease,
-        	border-radius 0.3s ease;
-            color: #ffffff;
-            background: #0f1c17;
-        }
-
-        #tray:hover {
-        	border-radius: 5px 20px 5px 20px;
-        	background: #484a4a;
-        }
-
-        @keyframes blink {
-            to {
-                background-color: #eb4034;
-                color: #484a4a;
-            }
-        }
-      '';
-    };
-
-    home.file.".config/waybar/scripts/cava.sh" = {
-      text = ''
-
-      '';
-      executable = true;
-    };
-
-    home.file.".config/waybar/scripts/spotify.sh" = {
-      text = ''
-        #!/bin/sh
-
-        status=$(playerctl --player=spotify status 2>/dev/null)
-
-        if [[ "$status" == "Playing" ]] || [[ "$status" == "Paused" ]]; then
-            artist=$(playerctl --player=spotify metadata artist)
-            title=$(playerctl --player=spotify metadata title)
-            echo "$artist - $title"
-        else
-            echo ""
-        fi
-      '';
-      executable = true;
     };
   };
 

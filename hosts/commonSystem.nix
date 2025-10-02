@@ -35,8 +35,6 @@
   # Bootloader and boot options.
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelParams = ["quiet" "splash" "loglevel=3"];
-    initrd.systemd.enable = true;
     loader = {
       timeout = 2;
       systemd-boot.configurationLimit = 7;
@@ -100,6 +98,7 @@
 
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Hint electron apps to use Wayland
+      WLR_NO_HARDWARE_CURSORS = "1"; # Disable hardware cursors for better compatibility
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
     };
 
