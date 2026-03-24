@@ -35,10 +35,10 @@
       # The target system architecture: 64-bit Linux.
       system = "x86_64-linux";
 
-      # Make all inputs (such as firefox-addons) available to module scope.
+      # Make all inputs available to module scope.
       specialArgs = { inherit inputs; };
 
-      # List of modules to include in this system. These are evaluated in order.
+      # List of modules to include in this system.
       modules = [
         # Main NixOS system configuration.
         ./NixOS/configuration.nix
