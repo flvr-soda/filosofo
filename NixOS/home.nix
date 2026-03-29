@@ -5,8 +5,8 @@
   config,
   ...
 }: {
+  
   nixpkgs.config.allowUnfree = true;
-
   home = {
     # Paths and users home manager should manage
     username = "isma";
@@ -46,7 +46,7 @@
 
       # Windows compatibility and gaming tools
       wine
-      protonup
+      protonup-ng
       winetricks
     ];
   };
@@ -76,8 +76,10 @@
 
     git = {
       enable = true;
-      userName = "flvr-soda";
-      userEmail = "iearmada@proton.me";
+      settings.user = {
+        name = "flvr-soda";
+        mail = "iearmada@proton.me";
+      };
       lfs.enable = true;
     };
 
@@ -90,10 +92,6 @@
           "identity.fxaccounts.enabled" = false;
           "signon.rememberSignons" = false;
         };
-        extensions.packages = with inputs.firefox-addons.packages."x86_64-linux"; [
-          ublock-origin
-          privacy-badger
-        ];
       };
     };
 
@@ -108,9 +106,6 @@
         ms-vscode.cpptools
         ms-vscode-remote.remote-ssh
         ms-toolsai.jupyter
-        d9once.pokechi
-        tomoki1207.pdf
-
       ];
       profiles.default.userSettings = {
         "nix.enableLanguageServer" = true;

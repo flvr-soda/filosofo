@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -7,13 +7,11 @@
     ];
 
   # Nix settings
+  nixpkgs.config.allowUnfree = true;
   nix = {
     settings = {
       experimental-features = ["nix-command" "flakes"]; 
       allowed-users = ["@wheel"]; # Restrict Nix usage to wheel group
-      substituters = ["https://hyprland.cachix.org"];
-      trusted-substituters = ["https://hyprland.cachix.org"];
-      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
 
     optimise.automatic = true;
@@ -48,10 +46,11 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
+  # Enable kde desktop environment
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true; # For Wayland support
+  
   services.printing.enable = true; # Enable CUPS to print documents.
 
   # Enable sound with pipewire.
@@ -108,7 +107,7 @@
     systemPackages = with pkgs; [
       # Core system utilities
       coreutils
-      utillinux
+      util-linux
       udiskie
       pciutils
 
@@ -126,6 +125,7 @@
       sqlmap
       wireshark
       aircrack-ng
+      
 
       # Development tools
       vim
