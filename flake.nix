@@ -15,15 +15,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    alejandra ={
-      url = "github:kamadorueda/alejandra/4.0.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   # This section defines what outputs this flake provides.
-  outputs = { self, nixpkgs, home-manager, alejandra, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
 
     # Define a NixOS system configuration named 'filosofo'
     nixosConfigurations.filosofo = inputs.nixpkgs.lib.nixosSystem {
