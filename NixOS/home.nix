@@ -78,10 +78,8 @@
 
     git = {
       enable = true;
-      settings.user = {
-        name = "flvr-soda";
-        mail = "iearmada@proton.me";
-      };
+      userName = "flvr-soda";
+      userMail = "iearmada@proton.me";
       lfs.enable = true;
     };
 
@@ -104,6 +102,8 @@
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nixd";
         "security.workspace.trust.banner" = "never";
+        "files.autoSave" = "afterDelay";
+        "editor.minimap.autohide" = "mouseover";
       };
     };
 
