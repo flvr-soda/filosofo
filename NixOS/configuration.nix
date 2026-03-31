@@ -58,8 +58,16 @@
   # Enable kde desktop environment
   services ={
     desktopManager.plasma6.enable = true;
-    displayManager.sddm.enable = true;
-    displayManager.sddm.wayland.enable = true; # For Wayland support
+    displayManager = {
+      sddm = {
+        enable = true;
+        wayland.enable = true; # For Wayland support
+      };
+      autoLogin = {
+        enable = true;    
+        user = "isma"; 
+      };
+    };
   };
 
   # Exclude unwanted default kde apps
