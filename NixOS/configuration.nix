@@ -1,4 +1,4 @@
-{ config,
+{
   pkgs,
   lib, 
   ... 
@@ -33,9 +33,14 @@
   hardware = {
   # Bluetooth settings
     bluetooth = {
-        enable = true;
-        powerOnBoot = true;
-    };
+      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Enable = "Source,Sink,Media,Socket";
+        };
+      };
+  };
 
   # Graphic settings
     enableAllFirmware = true;
@@ -76,6 +81,8 @@
   ];
     
   services.printing.enable = true; # Enable CUPS to print documents.
+    
+  services.flatpak.enable = true; # nix-flatpak setup
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -119,6 +126,7 @@
       gamescopeSession.enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
+      extraCompatPackages = with pkgs; [ proton-ge-bin ];
     };
   };
 
@@ -138,27 +146,13 @@
       util-linux
       udiskie
       pciutils
-
-      # Networking & security
       openssh
       openvpn
       curl
       wget
-
-      # Cybersecurity
-      proxychains
-      medusa
-      nmap
-      whois
-      sqlmap
-      wireshark
-      aircrack-ng
-      
-
-      # Development tools
+      # Misc
       vim
       gcc
-      nixd
       home-manager
     ];
   };
@@ -172,8 +166,9 @@
 
   # Openssh settings
   services.openssh = {
+    settings.PermitRootLogin = "no";
     settings.PasswordAuthentication = false;
-    allowSFTP = false; # Disable SFTP unless explicitly needed
+    allowSFTP = false; # Disable SFTP unless explicitly needed (WHY? IDK)
     settings.kbdInteractiveAuthentication = false;
     extraConfig = ''
       AllowTcpForwarding yes
@@ -208,6 +203,6 @@
     LC_TIME = "es_VE.UTF-8";
   };
 
-  system.stateVersion = "25.05"; # DO NOT CHANGE 
+  system.stateVersion = "25.05"; # DO NOT CHANGE  F*CK
 
 }

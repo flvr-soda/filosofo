@@ -1,11 +1,9 @@
 {
   pkgs,
   inputs,
-  lib,
-  config,
   ...
 }:{
-  
+  nixpkgs.overlays = [ inputs.nur.overlays.default ];
   nixpkgs.config.allowUnfree = true;
   home = {
     # Paths and users home manager should manage
@@ -24,6 +22,7 @@
       kiwix
       imagemagick
       sphinx
+      nixd
 
       # Terminal-based tools and utilities
       fastfetch # Modern system info tool
@@ -38,7 +37,13 @@
       ffmpeg # Essential multimedia converter
 
       # Cybersecurity
-      tor
+      proxychains
+      medusa
+      nmap
+      whois
+      sqlmap
+      wireshark
+      aircrack-ng
 
       # Compression/Archive tools
       p7zip
@@ -78,9 +83,16 @@
 
     git = {
       enable = true;
-      userName = "flvr-soda";
-      userMail = "iearmada@proton.me";
       lfs.enable = true;
+      settings = {
+        user = {
+          name = "flvr-soda";  
+          email = "iearmada@proton.me";  
+          useConfigOnly = false;
+        };
+        init.defaultBranch = "main";  # Default branch name
+        url."ssh://git@github.com/".insteadOf = "https://github.com/";
+      };
     };
 
     firefox = {
@@ -92,6 +104,10 @@
           "identity.fxaccounts.enabled" = false;
           "signon.rememberSignons" = false;
         };
+        extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+          ublock-origin
+          bitwarden
+        ];
       };
     };
 

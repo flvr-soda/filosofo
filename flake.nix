@@ -15,10 +15,15 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nur = {
+      url = "github:nix-community/nur";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # This section defines what outputs this flake provides.
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, nur, ... }@inputs: {
 
     # Define a NixOS system configuration named 'filosofo'
     nixosConfigurations.filosofo = inputs.nixpkgs.lib.nixosSystem {
@@ -34,19 +39,10 @@
         home-manager.nixosModules.home-manager
         {
           home-manager.users.isma = import ./NixOS/home.nix;
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.backupFileExtension = "backup";
         }
       ];
     };
-
-    homeConfigurations = {
-      isma = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; };
-        modules = [ ./NixOS/home.nix ];
-
-      };
-    };
-
   };
-  
 }
