@@ -1,8 +1,10 @@
-{ config, pkgs, lib, ... }:
-
-{
+{ config,
+  pkgs,
+  lib, 
+  ... 
+}:{
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
     ];
 
@@ -27,8 +29,15 @@
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
   };
-
+  
   hardware = {
+  # Bluetooth settings
+    bluetooth = {
+        enable = true;
+        powerOnBoot = true;
+    };
+
+  # Graphic settings
     enableAllFirmware = true;
     graphics = {
       enable = true;
@@ -47,10 +56,17 @@
   services.xserver.enable = true;
 
   # Enable kde desktop environment
-  services.desktopManager.plasma6.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true; # For Wayland support
-  
+  services ={
+    desktopManager.plasma6.enable = true;
+    displayManager.sddm.enable = true;
+    displayManager.sddm.wayland.enable = true; # For Wayland support
+  };
+
+  # Exclude unwanted default kde apps
+  environment.plasma6.excludePackages = with pkgs; [
+    kdePackages.elisa # Music player
+  ];
+    
   services.printing.enable = true; # Enable CUPS to print documents.
 
   # Enable sound with pipewire.
@@ -78,6 +94,7 @@
     };
   };
 
+  # Users
   users.users.isma = {
     isNormalUser = true;
     description = "Isma";
@@ -85,6 +102,7 @@
     shell = pkgs.fish;
   };
 
+  # System programs settings
   programs = {
     fish.enable = true;
 
@@ -104,6 +122,8 @@
       WLR_NO_HARDWARE_CURSORS = "1"; # Disable hardware cursors for better compatibility
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
     };
+    
+    # My system packages
     systemPackages = with pkgs; [
       # Core system utilities
       coreutils
@@ -135,6 +155,13 @@
     ];
   };
 
+  # Ollama as a systemd service for local AI models
+  services.ollama = {
+    enable = true;
+    # Preload models, see https://ollama.com/library
+    loadModels = [ "tinyllama" "deepseek-r1:1.5b" "qwen3.5"];
+  };
+
   # Openssh settings
   services.openssh = {
     settings.PasswordAuthentication = false;
@@ -151,7 +178,7 @@
 
   # Configure keymap in X11
   services.xserver.xkb = {
-    layout = "latam, us";
+    layout = "latam";
     variant = "";
   };
 

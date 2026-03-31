@@ -4,7 +4,7 @@
   lib,
   config,
   ...
-}: {
+}:{
   
   nixpkgs.config.allowUnfree = true;
   home = {
@@ -50,6 +50,8 @@
       winetricks
     ];
   };
+
+  # User program settings
   programs = {
     fish = {
       enable = true;
@@ -98,15 +100,6 @@
     vscode = {
       enable = true;
       package = pkgs.vscodium;
-      profiles.default.extensions = with pkgs.vscode-extensions; [
-        yzhang.markdown-all-in-one
-        jnoortheen.nix-ide
-        eamodio.gitlens
-        ms-python.python
-        ms-vscode.cpptools
-        ms-vscode-remote.remote-ssh
-        ms-toolsai.jupyter
-      ];
       profiles.default.userSettings = {
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nixd";
