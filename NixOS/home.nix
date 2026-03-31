@@ -116,6 +116,7 @@
       package = pkgs.vscodium;
       profiles.default.userSettings = {
         "nix.enableLanguageServer" = true;
+        "git.autofetch" = true;
         "nix.serverPath" = "nixd";
         "security.workspace.trust.banner" = "never";
         "files.autoSave" = "afterDelay";
