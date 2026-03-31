@@ -9,18 +9,21 @@
 
   # Input sources for this flake
   inputs = {
-    # Use the unstable channel of nixpkgs as the main package source.
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Home Manager for managing user home environments declaratively.
     home-manager = {
       url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    alejandra ={
+      url = "github:kamadorueda/alejandra/4.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   # This section defines what outputs this flake provides.
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, alejandra, ... }@inputs: {
 
     # Define a NixOS system configuration named 'filosofo'
     nixosConfigurations.filosofo = inputs.nixpkgs.lib.nixosSystem {
@@ -32,14 +35,21 @@
 
       # List of modules to include in this system.
       modules = [
-        # Main NixOS system configuration.
         ./NixOS/configuration.nix
-        # Enables Home Manager as a NixOS module.
         home-manager.nixosModules.home-manager
         {
           home-manager.users.isma = import ./NixOS/home.nix;
+          home-manager.backupFileExtension = "backup";
         }
       ];
+    };
+
+    homeConfigurations = {
+      isma = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; };
+        modules = [ ./NixOS/home.nix ];
+
+      };
     };
 
   };
