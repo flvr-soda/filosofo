@@ -16,6 +16,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nur = {
       url = "github:nix-community/nur";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,7 +28,7 @@
   };
 
   # This section defines what outputs this flake provides.
-  outputs = { self, nixpkgs, home-manager, nur, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, nur, antigravity-nix, ... }@inputs: {
 
     # Define a NixOS system configuration named 'filosofo'
     nixosConfigurations.filosofo = inputs.nixpkgs.lib.nixosSystem {

@@ -3,7 +3,10 @@
   inputs,
   ...
 }:{
-  nixpkgs.overlays = [ inputs.nur.overlays.default ];
+  nixpkgs.overlays = [ 
+    inputs.antigravity-nix.overlays.default
+    inputs.nur.overlays.default 
+  ];
   nixpkgs.config.allowUnfree = true;
   home = {
     # Paths and users home manager should manage
@@ -21,8 +24,8 @@
       kew
       kiwix
       imagemagick
-      sphinx
       nixd
+      google-antigravity
 
       # Terminal-based tools and utilities
       fastfetch # Modern system info tool
