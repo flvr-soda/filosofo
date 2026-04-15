@@ -3,10 +3,7 @@
   lib, 
   ... 
 }:{
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+
 
   # Nix settings
   nixpkgs.config.allowUnfree = true;
@@ -202,6 +199,8 @@
     LC_TELEPHONE = "es_VE.UTF-8";
     LC_TIME = "es_VE.UTF-8";
   };
+
+
 
   system.stateVersion = "25.05"; # DO NOT CHANGE  F*CK
 
