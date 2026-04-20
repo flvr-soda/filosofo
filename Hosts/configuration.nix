@@ -154,7 +154,7 @@
     ];
   };
 
-  # Ollama as a systemd service for local AI models
+  # Ollama as a systemd service for local AI models - TO BE REMOVED TOO MUCH RAM ON BOTH MACHINES  
   services.ollama = {
     enable = true;
     # Preload models, see https://ollama.com/library
