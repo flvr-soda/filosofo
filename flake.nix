@@ -5,14 +5,18 @@
 |_|  |_||_|\___//__/\___/|_|  \___/
 */
 {
-  description = "A Filósofo's NixOS flake";
+  description = "A Filosofo's NixOS flake";
 
-  # Input sources for this flake
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    agenix = {
+      url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -27,50 +31,41 @@
     };
   };
 
-  # This section defines what outputs this flake provides.
-  outputs = { self, nixpkgs, home-manager, nur, antigravity-nix, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, agenix, ... }@inputs: {
+    nixosConfigurations = {
+      desktop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./host/desktop
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.isma = import ./home/isma;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.backupFileExtension = "backup";
+          }
+        ];
+      };
 
-    # Define a NixOS system configuration named 'desktop'
-    nixosConfigurations.desktop = inputs.nixpkgs.lib.nixosSystem {
-      # The target system architecture: 64-bit Linux.
-      system = "x86_64-linux";
-
-      # Make all inputs available to module scope.
-      specialArgs = { inherit inputs; };
-
-      # List of modules to include in this system.
-      modules = [
-        ./Hosts/configuration.nix
-        ./Hosts/desktop/hardware-configuration.nix
-        ./Hosts/desktop/configuration.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.users.isma = import ./Hosts/home.nix;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.backupFileExtension = "backup";
-        }
-      ];
-    };
-
-    # Define a NixOS system configuration named 'laptop'
-    nixosConfigurations.laptop = inputs.nixpkgs.lib.nixosSystem {
-      # The target system architecture: 64-bit Linux.
-      system = "x86_64-linux";
-
-      # Make all inputs available to module scope.
-      specialArgs = { inherit inputs; };
-
-      # List of modules to include in this system.
-      modules = [
-        ./Hosts/configuration.nix
-        ./Hosts/laptop/hardware-configuration.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.users.isma = import ./Hosts/home.nix;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.backupFileExtension = "backup";
-        }
-      ];
+      laptop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./host/laptop
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.isma = import ./home/isma;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.backupFileExtension = "backup";
+          }
+        ];
+      };
     };
   };
 }

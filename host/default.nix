@@ -1,34 +1,31 @@
 {
   pkgs,
-  lib, 
-  ... 
-}:{
-
-
-  # Nix settings
+  lib,
+  inputs,
+  config,
+  ...
+}: {
   nixpkgs.config.allowUnfree = true;
   nix = {
     settings = {
-      experimental-features = ["nix-command" "flakes"]; 
-      allowed-users = ["@wheel"]; # Restrict Nix usage to wheel group
+      experimental-features = [ "nix-command" "flakes" ];
+      allowed-users = [ "@wheel" ];
     };
 
     optimise.automatic = true;
-    optimise.dates = ["03:45"];
+    optimise.dates = [ "03:45" ];
     gc.automatic = true;
     gc.dates = "weekly";
     gc.options = "--delete-older-than 7d";
   };
 
-  # Bootloader.
-  boot ={
+  boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
   };
-  
+
   hardware = {
-  # Bluetooth settings
     bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -37,9 +34,7 @@
           Enable = "Source,Sink,Media,Socket";
         };
       };
-  };
-
-  # Graphic settings
+    };
     enableAllFirmware = true;
     graphics = {
       enable = true;
@@ -47,41 +42,34 @@
     };
   };
 
-  # Networking
   networking = {
     networkmanager.enable = true;
     hostName = "filosofo";
     firewall.enable = true;
   };
 
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
-
-  # Enable kde desktop environment
-  services ={
+  services = {
     desktopManager.plasma6.enable = true;
     displayManager = {
       sddm = {
         enable = true;
-        wayland.enable = true; # For Wayland support
+        wayland.enable = true;
       };
       autoLogin = {
-        enable = true;    
-        user = "isma"; 
+        enable = true;
+        user = "isma";
       };
     };
   };
 
-  # Exclude unwanted default kde apps
   environment.plasma6.excludePackages = with pkgs; [
-    kdePackages.elisa # Music player
+    kdePackages.elisa
   ];
-    
-  services.printing.enable = true; # Enable CUPS to print documents.
-    
-  services.flatpak.enable = true; # nix-flatpak setup
 
-  # Enable sound with pipewire.
+  services.printing.enable = true;
+  services.flatpak.enable = true;
+
   services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
@@ -91,7 +79,6 @@
     jack.enable = true;
   };
 
-  # Security settings
   security = {
     polkit.enable = true;
     rtkit.enable = true;
@@ -106,18 +93,24 @@
     };
   };
 
-  # Users
+  # ── Agenix secrets ──────────────────────────────────────────────────
+  age.secrets.user-password = {
+    file = ../secrets/user-password.age;
+    owner = "root";
+    group = "root";
+    mode = "0400";
+  };
+
   users.users.isma = {
     isNormalUser = true;
     description = "Isma";
     extraGroups = [ "networkmanager" "wheel" ];
     shell = pkgs.fish;
+    hashedPasswordFile = config.age.secrets.user-password.path;
   };
 
-  # System programs settings
   programs = {
     fish.enable = true;
-
     steam = {
       enable = true;
       gamescopeSession.enable = true;
@@ -127,18 +120,14 @@
     };
   };
 
-  environment ={
-    defaultPackages = lib.mkForce []; # Remove default packages
-
+  environment = {
+    defaultPackages = lib.mkForce [];
     sessionVariables = {
-      NIXOS_OZONE_WL = "1"; # Hint electron apps to use Wayland
-      WLR_NO_HARDWARE_CURSORS = "1"; # Disable hardware cursors for better compatibility
+      NIXOS_OZONE_WL = "1";
+      WLR_NO_HARDWARE_CURSORS = "1";
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
     };
-    
-    # My system packages
     systemPackages = with pkgs; [
-      # Core system utilities
       coreutils
       util-linux
       udiskie
@@ -147,25 +136,23 @@
       openvpn
       curl
       wget
-      # Misc
       vim
       gcc
       home-manager
+      inputs.agenix.packages.${pkgs.system}.default
     ];
   };
 
-  # Ollama as a systemd service for local AI models - TO BE REMOVED TOO MUCH RAM ON BOTH MACHINES  
   services.ollama = {
     enable = true;
-    # Preload models, see https://ollama.com/library
-    loadModels = [ "tinyllama" "deepseek-r1:1.5b" "qwen3.5"];
+    loadModels = [ "tinyllama" "deepseek-r1:1.5b" "qwen3.5" ];
   };
 
-  # Openssh settings
   services.openssh = {
+    enable = true;
     settings.PermitRootLogin = "no";
     settings.PasswordAuthentication = false;
-    allowSFTP = false; # Disable SFTP unless explicitly needed (WHY? IDK)
+    allowSFTP = false;
     settings.kbdInteractiveAuthentication = false;
     extraConfig = ''
       AllowTcpForwarding yes
@@ -176,16 +163,12 @@
     '';
   };
 
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "latam";
     variant = "";
   };
-
-  # Configure console keymap
   console.keyMap = "la-latin1";
 
-  # Select internationalisation properties.
   time.timeZone = "America/Caracas";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
@@ -200,8 +183,5 @@
     LC_TIME = "es_VE.UTF-8";
   };
 
-
-
-  system.stateVersion = "25.05"; # DO NOT CHANGE  F*CK
-
+  system.stateVersion = "25.05";
 }
