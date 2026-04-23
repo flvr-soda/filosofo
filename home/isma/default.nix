@@ -6,7 +6,6 @@
   imports = [
     ./programs/default.nix
     ./services/default.nix
-    ./themes/default.nix
   ];
 
   nixpkgs.overlays = [

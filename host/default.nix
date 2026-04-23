@@ -111,22 +111,10 @@
 
   programs = {
     fish.enable = true;
-    steam = {
-      enable = true;
-      gamescopeSession.enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
-      extraCompatPackages = with pkgs; [ proton-ge-bin ];
-    };
   };
 
   environment = {
     defaultPackages = lib.mkForce [];
-    sessionVariables = {
-      NIXOS_OZONE_WL = "1";
-      WLR_NO_HARDWARE_CURSORS = "1";
-      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
-    };
     systemPackages = with pkgs; [
       coreutils
       util-linux
@@ -141,11 +129,6 @@
       home-manager
       inputs.agenix.packages.${pkgs.system}.default
     ];
-  };
-
-  services.ollama = {
-    enable = true;
-    loadModels = [ "tinyllama" "deepseek-r1:1.5b" "qwen3.5" ];
   };
 
   services.openssh = {

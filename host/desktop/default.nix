@@ -12,16 +12,19 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
-  environment.systemPackages = with pkgs; [
-    jellyfin
-    jellyfin-web
-    jellyfin-ffmpeg
-  ];
-
-  services.jellyfin = {
+  programs.steam = {
     enable = true;
-    openFirewall = true;
-    user = "isma";
+    gamescopeSession.enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    extraCompatPackages = with pkgs; [ proton-ge-bin ];
+  };
+  environment = {
+    sessionVariables = {
+      NIXOS_OZONE_WL = "1";
+      WLR_NO_HARDWARE_CURSORS = "1";
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+    };
   };
 
   fileSystems."/home/isma/storage" = {
