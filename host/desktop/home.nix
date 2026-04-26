@@ -1,11 +1,29 @@
 {
   pkgs,
-  inputs,
   ...
-}: {
+}:
+let
+  mods = import ../modules;
+in {
   imports = [
-    ../common.nix
+    mods.home-shared
   ];
 
-  # Desktop-specific home configurations go here
+  home.packages = with pkgs; [
+    # Desktop-focused media/productivity stack.
+    qbittorrent-enhanced
+    vlc
+    texstudio
+    libreoffice
+    miktex
+    kiwix
+    imagemagick
+    ffmpeg
+    wine
+    protonup-ng
+    winetricks
+    google-antigravity
+    cava
+    cmatrix
+  ];
 }

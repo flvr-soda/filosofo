@@ -1,8 +1,15 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+let
+  mods = import ../modules;
+in {
   imports = [
-    ../default.nix
+    mods.system-base
+    mods.graphical
+    mods.gaming
     ./hardware-configuration.nix
   ];
+
+  networking.hostName = "filosofo-desktop";
 
   hardware.graphics = {
     extraPackages = with pkgs; [
@@ -12,20 +19,9 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
-  programs.steam = {
-    enable = true;
-    gamescopeSession.enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    extraCompatPackages = with pkgs; [ proton-ge-bin ];
-  };
-  environment = {
-    sessionVariables = {
-      NIXOS_OZONE_WL = "1";
-      WLR_NO_HARDWARE_CURSORS = "1";
-      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
-    };
-  };
+  environment.systemPackages = with pkgs; [
+    ollama
+  ];
 
   fileSystems."/home/isma/storage" = {
     device = "/dev/disk/by-uuid/06bd7b68-b2a4-431a-a48d-0371beed0a71";

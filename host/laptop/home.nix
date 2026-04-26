@@ -1,11 +1,27 @@
 {
   pkgs,
-  inputs,
   ...
-}: {
+}:
+let
+  mods = import ../modules;
+in {
   imports = [
-    ../common.nix
+    mods.home-shared
   ];
 
-  # Laptop-specific home configurations go here
+  home.packages = with pkgs; [
+    # Laptop is the primary cybersecurity workstation.
+    kew
+    nmap
+    whois
+    proxychains
+    wireshark
+    aircrack-ng
+    medusa
+    sqlmap
+    # Keep gaming utility parity.
+    wine
+    protonup-ng
+    winetricks
+  ];
 }

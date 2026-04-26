@@ -29,58 +29,8 @@
     inputs.antigravity-nix.overlays.default
   ];
 
-  hardware = {
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-        };
-      };
-    };
-    enableAllFirmware = true;
-    graphics = {
-      enable = true;
-      enable32Bit = true;
-    };
-  };
-
   networking = {
-    networkmanager.enable = true;
-    hostName = "filosofo";
     firewall.enable = true;
-  };
-
-  services.xserver.enable = true;
-  services = {
-    desktopManager.plasma6.enable = true;
-    displayManager = {
-      sddm = {
-        enable = true;
-        wayland.enable = true;
-      };
-      autoLogin = {
-        enable = true;
-        user = "isma";
-      };
-    };
-  };
-
-  environment.plasma6.excludePackages = with pkgs; [
-    kdePackages.elisa
-  ];
-
-  services.printing.enable = true;
-  services.flatpak.enable = true;
-
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
   };
 
   security = {
@@ -122,39 +72,32 @@
     systemPackages = with pkgs; [
       coreutils
       util-linux
-      udiskie
       pciutils
       openssh
       openvpn
       curl
       wget
-      openjdk
       vim
-      gcc
       home-manager
       inputs.agenix.packages.${pkgs.system}.default
     ];
   };
 
-  services.openssh = {
-    enable = true;
-    settings.PermitRootLogin = "no";
-    settings.PasswordAuthentication = false;
-    allowSFTP = false;
-    settings.KbdInteractiveAuthentication = false;
-    extraConfig = ''
-      AllowTcpForwarding yes
-      X11Forwarding no
-      AllowAgentForwarding no
-      AllowStreamLocalForwarding no
-      AuthenticationMethods publickey
-    '';
+  services.openssh.enable = true;
+  services.openssh.settings = {
+    PermitRootLogin = "no";
+    PasswordAuthentication = false;
+    KbdInteractiveAuthentication = false;
   };
+  services.openssh.allowSFTP = false;
+  services.openssh.extraConfig = ''
+    AllowTcpForwarding yes
+    X11Forwarding no
+    AllowAgentForwarding no
+    AllowStreamLocalForwarding no
+    AuthenticationMethods publickey
+  '';
 
-  services.xserver.xkb = {
-    layout = "latam";
-    variant = "";
-  };
   console.keyMap = "la-latin1";
 
   time.timeZone = "America/Caracas";

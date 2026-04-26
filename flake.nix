@@ -5,7 +5,7 @@
 |_|  |_||_|\___//__/\___/|_|  \___/
 */
 {
-  description = "A Filosofo's NixOS flake";
+  description = "A Filósofo's NixOS flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -64,6 +64,15 @@
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.backupFileExtension = "backup";
           }
+        ];
+      };
+
+      server = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./host/server
+          agenix.nixosModules.default
         ];
       };
     };
