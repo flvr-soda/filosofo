@@ -23,5 +23,9 @@ in {
     wine
     protonup-ng
     winetricks
+
+    libreoffice
+    google-antigravity
+    kiwix
   ];
 }
