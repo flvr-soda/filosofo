@@ -25,6 +25,10 @@
     loader.efi.canTouchEfiVariables = true;
   };
 
+  nixpkgs.overlays = [
+    inputs.antigravity-nix.overlays.default
+  ];
+
   hardware = {
     bluetooth = {
       enable = true;
@@ -93,7 +97,7 @@
     };
   };
 
-  # ── Agenix secrets ──────────────────────────────────────────────────
+  # Agenix secrets
   age.secrets.user-password = {
     file = ../secrets/user-password.age;
     owner = "root";
@@ -124,6 +128,7 @@
       openvpn
       curl
       wget
+      openjdk
       vim
       gcc
       home-manager
@@ -136,7 +141,7 @@
     settings.PermitRootLogin = "no";
     settings.PasswordAuthentication = false;
     allowSFTP = false;
-    settings.kbdInteractiveAuthentication = false;
+    settings.KbdInteractiveAuthentication = false;
     extraConfig = ''
       AllowTcpForwarding yes
       X11Forwarding no

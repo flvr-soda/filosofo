@@ -1,5 +1,53 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
+
+  home = {
+    username = "isma";
+    homeDirectory = "/home/isma";
+    stateVersion = "25.05";
+
+    packages = with pkgs; [
+      qbittorrent-enhanced
+      vlc
+      texstudio
+      libreoffice
+      miktex
+      kew
+      kiwix
+      imagemagick
+      nixd
+      google-antigravity
+      fastfetch
+      tree
+      cava
+      cmatrix
+      btop
+      yazi
+      eza
+      bat
+      ripgrep
+      ffmpeg
+      proxychains
+      medusa
+      nmap
+      whois
+      sqlmap
+      wireshark
+      aircrack-ng
+      p7zip
+      unrar
+      wine
+      protonup-ng
+      winetricks
+    ];
+  };
+
   programs = {
+    home-manager.enable = true;
+
     fish = {
       enable = true;
       interactiveShellInit = ''
@@ -44,7 +92,7 @@
           "identity.fxaccounts.enabled" = false;
           "signon.rememberSignons" = false;
         };
-        extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+        extensions.packages = with inputs.firefox-addons.packages.${pkgs.system}; [
           ublock-origin
           bitwarden
         ];

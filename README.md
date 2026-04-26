@@ -4,9 +4,24 @@ NixOS and Home Manager configuration organized by host and user profiles.
 
 ## Repository Layout
 
-- `flake.nix`: Main flake definition
-- `flake.lock`: Pinned dependency versions
-- `assets/`: Static assets (wallpapers and media)
-- `home/`: Home Manager configuration and user modules
-- `host/`: Machine-specific NixOS modules
-- `secrets/`: Encrypted secret definitions and `.age` files
+    flake.nix
+
+    assets/
+    └── Static assets
+
+    host/
+    ├── common.nix          ← Shared home config for isma
+    ├── default.nix         ← Shared system config
+    ├── desktop/
+    │   ├── default.nix
+    │   ├── hardware-configuration.nix
+    │   └── home.nix        ← imports ../common.nix
+    ├── laptop/
+    │   ├── default.nix
+    │   ├── hardware-configuration.nix
+    │   └── home.nix        ← imports ../common.nix
+    └── server/
+        └── default.nix
+        
+    secrets/
+        └── secrets.nix

@@ -1,5 +1,0 @@
-{
-  imports = [
-    ./isma/default.nix
-  ];
-}

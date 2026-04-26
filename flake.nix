@@ -25,13 +25,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur = {
-      url = "github:nix-community/nur";
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, home-manager, agenix, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, agenix, firefox-addons, antigravity-nix, ... }@inputs: {
     nixosConfigurations = {
       desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -43,7 +43,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.isma = import ./home/isma;
+            home-manager.users.isma = import ./host/desktop/home.nix;
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.backupFileExtension = "backup";
           }
@@ -60,7 +60,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.isma = import ./home/isma;
+            home-manager.users.isma = import ./host/laptop/home.nix;
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.backupFileExtension = "backup";
           }
