@@ -15,6 +15,7 @@ NixOS and Home Manager configuration organized by host and user profiles.
     │   ├── system-base.nix ← Shared system base config
     │   ├── graphical.nix   ← Shared desktop environment config
     │   ├── gaming.nix      ← Shared gaming config
+    │   ├── development.nix ← Shared development services/tools
     │   └── default.nix     ← Module index/registry
     ├── desktop/
     │   ├── default.nix

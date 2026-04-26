@@ -6,6 +6,7 @@ in {
     mods.system-base
     mods.graphical
     mods.gaming
+    mods.development
     ./hardware-configuration.nix
   ];
 
