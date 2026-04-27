@@ -10,22 +10,9 @@ in {
   ];
 
   home.packages = with pkgs; [
-    # Laptop is the primary cybersecurity workstation.
     kew
-    nmap
-    whois
-    proxychains
-    wireshark
-    aircrack-ng
-    medusa
-    sqlmap
-    # Keep gaming utility parity.
-    wine
-    protonup-ng
-    winetricks
-
-    libreoffice
-    google-antigravity
-    kiwix
+    tree
+    cava
+    cmatrix
   ];
 }

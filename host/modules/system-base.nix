@@ -10,6 +10,7 @@
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       allowed-users = [ "@wheel" ];
+      auto-optimise-store = true;
     };
 
     optimise.automatic = true;
@@ -22,8 +23,26 @@
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     loader.systemd-boot.enable = true;
+    loader.systemd-boot.configurationLimit = 5; # Prevent boot menu bloat
     loader.efi.canTouchEfiVariables = true;
+    loader.timeout = 1; # Faster boot
+
+    # Quieter and slightly faster boot
+    consoleLogLevel = 0;
+    initrd.verbose = false;
+    kernelParams = [
+      "quiet"
+      "splash"
+      "boot.shell_on_fail"
+      "loglevel=3"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
   };
+
+  # Compression for RAM (Better than disk swap)
+  zramSwap.enable = true;
 
   nixpkgs.overlays = [
     inputs.antigravity-nix.overlays.default
@@ -47,12 +66,19 @@
     };
   };
 
-  # Agenix secrets
   age.secrets.user-password = {
-    file = ../secrets/user-password.age;
+    file = ../../secrets/user-password.age;
     owner = "root";
     group = "root";
     mode = "0400";
+  };
+
+  age.secrets.github-ssh-key = {
+    file = ../../secrets/github-ssh-key.age;
+    path = "/home/isma/.ssh/id_github";
+    owner = "isma";
+    group = "users";
+    mode = "0600";
   };
 
   users.users.isma = {
@@ -77,13 +103,17 @@
       openvpn
       curl
       wget
-      vim
       home-manager
-      inputs.agenix.packages.${pkgs.system}.default
+      inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
   };
 
-  services.openssh.enable = true;
+  programs.ssh.startAgent = true;
+
+  services.openssh = {
+    enable = true;
+    startWhenNeeded = true;
+  };
   services.openssh.settings = {
     PermitRootLogin = "no";
     PasswordAuthentication = false;

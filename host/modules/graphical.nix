@@ -48,7 +48,5 @@
 
   environment.systemPackages = with pkgs; [
     udiskie
-    openjdk
-    gcc
   ];
 }

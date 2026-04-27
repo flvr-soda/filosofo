@@ -6,9 +6,6 @@ NixOS and Home Manager configuration organized by host and user profiles.
 
     flake.nix
 
-    assets/
-    └── Static assets
-
     host/
     ├── modules/
     │   ├── home-shared.nix ← Shared home config for isma

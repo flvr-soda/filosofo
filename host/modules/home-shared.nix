@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }: {
   home = {
@@ -8,10 +9,8 @@
     homeDirectory = "/home/isma";
     stateVersion = "25.05";
 
-    # Keep only lightweight/shared essentials here.
     packages = with pkgs; [
       nixd
-      tree
       btop
       yazi
       eza
@@ -19,6 +18,12 @@
       ripgrep
       p7zip
       unrar
+      wine
+      protonup-ng
+      winetricks
+      libreoffice
+      google-antigravity
+      kiwix
     ];
   };
 
@@ -38,22 +43,23 @@
         nfmt = "nix fmt";
         nfsync = "nix flake update && nix flake check";
         nrepl = "nix repl";
-
-        # Rebuilds by machine: ns = nixos switch, nb = nixos boot, nt = nixos test
+        # Desktop
         nsd = "sudo nixos-rebuild switch --flake .#desktop";
         nbd = "sudo nixos-rebuild boot --flake .#desktop";
         ntd = "sudo nixos-rebuild test --flake .#desktop";
+        # Laptop
         nsl = "sudo nixos-rebuild switch --flake .#laptop";
         nbl = "sudo nixos-rebuild boot --flake .#laptop";
         ntl = "sudo nixos-rebuild test --flake .#laptop";
+        # Server
         nss = "sudo nixos-rebuild switch --flake .#server";
         nbs = "sudo nixos-rebuild boot --flake .#server";
         nts = "sudo nixos-rebuild test --flake .#server";
-
         # Cleanup
         ngc = "sudo nix-collect-garbage -d";
         nclean = "sudo nix-collect-garbage -d && nix store gc";
         helpnix = "printf '%s\n' 'Alias legend:' '  nf*  -> nix flake tasks (nfup, nfck, nfsync)' '  ns*  -> nixos-rebuild switch' '  nb*  -> nixos-rebuild boot' '  nt*  -> nixos-rebuild test' '  *d/*l/*s -> desktop/laptop/server' 'Examples: nsd, nsl, nss, nbd, ntl'";
+        # Misc
         l = "eza -lh --icons=auto";
         ls = "eza -1 --icons=auto";
         ll = "eza -lha --icons=auto --sort=name --group-directories-first";
@@ -67,6 +73,20 @@
       enableFishIntegration = true;
     };
 
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      matchBlocks = {
+        "*" = {
+          addKeysToAgent = "yes";
+        };
+        "github.com" = {
+          hostname = "github.com";
+          identityFile = "~/.ssh/id_github";
+        };
+      };
+    };
+
     git = {
       enable = true;
       lfs.enable = true;
@@ -74,9 +94,9 @@
         user = {
           name = "flvr-soda";
           email = "iearmada@proton.me";
-          useConfigOnly = false;
         };
         init.defaultBranch = "main";
+        url."git@github.com:".insteadOf = "https://github.com/";
       };
     };
 
@@ -95,6 +115,7 @@
 
     firefox = {
       enable = true;
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles.isma = {
         settings = {
           "dom.security.https_only_mode" = true;
@@ -102,10 +123,14 @@
           "identity.fxaccounts.enabled" = false;
           "signon.rememberSignons" = false;
         };
-        extensions.packages = with inputs.firefox-addons.packages.${pkgs.system}; [
+        extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
           ublock-origin
           bitwarden
         ];
+        search = {
+          force = true;
+          default = "ddg";
+        };
       };
     };
 
