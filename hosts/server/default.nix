@@ -1,6 +1,6 @@
-{ pkgs, ... }:
+{ pkgs, userName, ... }:
 let
-  mods = import ../modules;
+  mods = import ../../modules/system;
 in {
   imports = [
     mods.system-base
@@ -23,7 +23,7 @@ in {
   services.jellyfin = {
     enable = true;
     openFirewall = true;
-    user = "isma";
+    user = userName;
   };
 
   services.ollama = {

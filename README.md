@@ -6,22 +6,26 @@ NixOS and Home Manager configuration organized by host and user profiles.
 
     flake.nix
 
-    host/
-    ├── modules/
+    modules/
+    ├── home/
     │   ├── home-shared.nix ← Shared home config for isma
-    │   ├── system-base.nix ← Shared system base config
-    │   ├── graphical.nix   ← Shared desktop environment config
-    │   ├── gaming.nix      ← Shared gaming config
-    │   ├── development.nix ← Shared development services/tools
     │   └── default.nix     ← Module index/registry
+    └── system/
+        ├── system-base.nix ← Shared system base config
+        ├── graphical.nix   ← Shared desktop environment config
+        ├── gaming.nix      ← Shared gaming config
+        ├── development.nix ← Shared development services/tools
+        └── default.nix     ← Module index/registry
+
+    hosts/
     ├── desktop/
     │   ├── default.nix
     │   ├── hardware-configuration.nix
-    │   └── home.nix        ← imports ../modules/home-shared.nix
+    │   └── home.nix        ← imports ../../modules/home/home-shared.nix
     ├── laptop/
     │   ├── default.nix
     │   ├── hardware-configuration.nix
-    │   └── home.nix        ← imports ../modules/home-shared.nix
+    │   └── home.nix        ← imports ../../modules/home/home-shared.nix
     └── server/
         ├── default.nix
         └── hardware-configuration.nix
@@ -31,7 +35,7 @@ NixOS and Home Manager configuration organized by host and user profiles.
 
 ## Alias Legend
 
-Fish aliases are defined in `host/modules/home-shared.nix`.
+Fish aliases are defined in `modules/home/home-shared.nix`.
 
 - `nf*` = nix flake tasks:
   - `nfup` (update), `nfck` (check), `nfsync` (update + check)

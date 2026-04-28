@@ -2,11 +2,12 @@
   pkgs,
   inputs,
   config,
+  userName,
   ...
 }: {
   home = {
-    username = "isma";
-    homeDirectory = "/home/isma";
+    username = userName;
+    homeDirectory = "/home/${userName}";
     stateVersion = "25.05";
 
     packages = with pkgs; [
@@ -116,7 +117,7 @@
     firefox = {
       enable = true;
       configPath = "${config.xdg.configHome}/mozilla/firefox";
-      profiles.isma = {
+      profiles.${userName} = {
         settings = {
           "dom.security.https_only_mode" = true;
           "browser.download.panel.shown" = true;

@@ -1,6 +1,6 @@
 {pkgs, ... }:
 let
-  mods = import ../modules;
+  mods = import ../../modules/system;
 in {
   imports = [
     mods.system-base

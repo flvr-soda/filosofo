@@ -3,6 +3,7 @@
   lib,
   inputs,
   config,
+  userName,
   ...
 }: {
   nixpkgs.config.allowUnfree = true;
@@ -75,13 +76,13 @@
 
   age.secrets.github-ssh-key = {
     file = ../../secrets/github-ssh-key.age;
-    path = "/home/isma/.ssh/id_github";
-    owner = "isma";
+    path = "/home/${userName}/.ssh/id_github";
+    owner = userName;
     group = "users";
     mode = "0600";
   };
 
-  users.users.isma = {
+  users.users.${userName} = {
     isNormalUser = true;
     description = "Isma";
     extraGroups = [ "networkmanager" "wheel" ];

@@ -31,20 +31,23 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, agenix, firefox-addons, antigravity-nix, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, agenix, firefox-addons, antigravity-nix, ... }@inputs:
+  let
+    userName = "isma";
+  in {
     nixosConfigurations = {
       desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs userName; };
         modules = [
-          ./host/desktop
+          ./hosts/desktop
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.isma = import ./host/desktop/home.nix;
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.${userName} = import ./hosts/desktop/home.nix;
+            home-manager.extraSpecialArgs = { inherit inputs userName; };
             home-manager.backupFileExtension = "backup";
           }
         ];
@@ -52,16 +55,16 @@
 
       laptop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs userName; };
         modules = [
-          ./host/laptop
+          ./hosts/laptop
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.isma = import ./host/laptop/home.nix;
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.${userName} = import ./hosts/laptop/home.nix;
+            home-manager.extraSpecialArgs = { inherit inputs userName; };
             home-manager.backupFileExtension = "backup";
           }
         ];
@@ -69,9 +72,9 @@
 
       server = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs userName; };
         modules = [
-          ./host/server
+          ./hosts/server
           agenix.nixosModules.default
         ];
       };

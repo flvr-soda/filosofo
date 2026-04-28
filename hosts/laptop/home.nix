@@ -3,10 +3,12 @@
   ...
 }:
 let
-  mods = import ../modules;
+  mods = import ../../modules/home;
 in {
   imports = [
     mods.home-shared
+    mods.development
+    mods.gaming
   ];
 
   home.packages = with pkgs; [

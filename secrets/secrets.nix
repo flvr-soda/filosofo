@@ -1,6 +1,6 @@
 let
   # ── User SSH public keys ──────────────────────────────────────────────
-  isma = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDTIEhnJwHOKd+RA7DYa2oMJA75UCpOg+szPqlqRkSmk isma";
+  user_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDTIEhnJwHOKd+RA7DYa2oMJA75UCpOg+szPqlqRkSmk isma";
 
   # ── Host SSH public keys ──────────────────────────────────────────────
   # Replace with: cat /etc/ssh/ssh_host_ed25519_key.pub  (on each host)
@@ -8,7 +8,7 @@ let
   laptop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJDphmjRr4YkhWgPVCj4v/UxKzqZC/PtaO4xHhx+DFD root@filosofo-laptop";
 
   # ── Key groups ────────────────────────────────────────────────────────
-  allUsers = [ isma ];
+  allUsers = [ user_key ];
   allHosts = [ laptop ]; # Add 'desktop' back once you have its real SSH key
   allKeys = allUsers ++ allHosts;
 in

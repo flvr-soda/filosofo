@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, userName, ... }: {
   hardware = {
     enableAllFirmware = true;
     bluetooth = {
@@ -27,7 +27,7 @@
   };
   services.displayManager.autoLogin = {
     enable = true;
-    user = "isma";
+    user = userName;
   };
 
   environment.plasma6.excludePackages = with pkgs; [
@@ -46,7 +46,4 @@
     jack.enable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    udiskie
-  ];
 }
