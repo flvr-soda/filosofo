@@ -1,4 +1,4 @@
-{pkgs, ... }:
+{ pkgs, userName, ... }:
 let
   mods = import ../../modules/system;
 in {
@@ -7,6 +7,7 @@ in {
     mods.graphical
     mods.gaming
     mods.development
+    mods.secrets
     ./hardware-configuration.nix
   ];
 

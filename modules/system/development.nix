@@ -34,4 +34,8 @@
       };
     };
   };
+
+  # Arduino Support
+  users.users.${userName}.extraGroups = [ "dialout" "tty" ];
+  services.udev.packages = [ pkgs.arduino-ide ];
 }

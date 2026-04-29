@@ -7,6 +7,7 @@ in {
     mods.graphical
     mods.gaming
     mods.development
+    mods.secrets
     ./hardware-configuration.nix
   ];
 
@@ -19,10 +20,6 @@ in {
   };
 
   services.xserver.videoDrivers = [ "amdgpu" ];
-
-  environment.systemPackages = with pkgs; [
-    ollama
-  ];
 
   fileSystems."/home/${userName}/storage" = {
     device = "/dev/disk/by-uuid/06bd7b68-b2a4-431a-a48d-0371beed0a71";

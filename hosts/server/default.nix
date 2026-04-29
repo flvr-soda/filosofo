@@ -4,6 +4,7 @@ let
 in {
   imports = [
     mods.system-base
+    mods.secrets
     ./hardware-configuration.nix
   ];
 

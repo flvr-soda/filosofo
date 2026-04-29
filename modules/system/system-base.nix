@@ -67,20 +67,7 @@
     };
   };
 
-  age.secrets.user-password = {
-    file = ../../secrets/user-password.age;
-    owner = "root";
-    group = "root";
-    mode = "0400";
-  };
 
-  age.secrets.github-ssh-key = {
-    file = ../../secrets/github-ssh-key.age;
-    path = "/home/${userName}/.ssh/id_github";
-    owner = userName;
-    group = "users";
-    mode = "0600";
-  };
 
   users.users.${userName} = {
     isNormalUser = true;

@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   config,
+  osConfig,
   userName,
   ...
 }: {
@@ -26,6 +27,10 @@
       google-antigravity
       kiwix
     ];
+
+    file.".ssh/id_github" = {
+      source = config.lib.file.mkOutOfStoreSymlink osConfig.age.secrets.github-ssh-key.path;
+    };
   };
 
   programs = {
@@ -116,8 +121,8 @@
 
     firefox = {
       enable = true;
-      configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles.${userName} = {
+        isDefault = true;
         settings = {
           "dom.security.https_only_mode" = true;
           "browser.download.panel.shown" = true;

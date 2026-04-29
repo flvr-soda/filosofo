@@ -20,6 +20,9 @@
     aircrack-ng
     medusa
     sqlmap
+    # Arduino Development
+    arduino-ide
+    arduino-cli
   ];
 
   # Shared development ergonomics for dev machines.
