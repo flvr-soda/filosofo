@@ -57,6 +57,7 @@
       pkg-config
       openjdk
       python3
+      nixfmt-rfc-style
       code-cursor
       postgresql
       dbeaver-bin

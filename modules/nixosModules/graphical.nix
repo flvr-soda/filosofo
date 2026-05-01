@@ -24,9 +24,20 @@
 
   networking.networkmanager.enable = true;
 
+  # Exclude xterm since Konsole is used
+  services.xserver.desktopManager.xterm.enable = false;
+  services.xserver.excludePackages = [ pkgs.xterm ];
+
   environment.plasma6.excludePackages = with pkgs; [
+    # Replaced by VLC
     kdePackages.elisa
+    # Replaced by Kiwix/Firefox
     kdePackages.khelpcenter
+    # Replaced by VSCodium / nixd
+    kdePackages.kate
+    # Removed because it conflicts with auto-login
+    kdePackages.kwalletmanager
+    kdePackages.kwallet-pam
   ];
 
   # Home Manager User-Level Configuration
@@ -45,17 +56,44 @@
     # Configure Firefox with hardened settings and extensions from NUR
     programs.firefox = {
       enable = true;
+      
+      # Silence warning for Home Manager < 26.05
+      configPath = ".mozilla/firefox";
+      
       profiles.${userName} = {
         isDefault = true;
         settings = {
+          # Privacy & Tracking Protection
           "dom.security.https_only_mode" = true;
-          "browser.download.panel.shown" = true;
+          "privacy.trackingprotection.enabled" = true;
+          "privacy.trackingprotection.socialtracking.enabled" = true;
+          "privacy.firstparty.isolate" = true;
+          "network.cookie.cookieBehavior" = 1;
+
+          # Anti-Fingerprinting & Leaks
+          "geo.enabled" = false;
+          "dom.event.clipboardevents.enabled" = false;
+          "media.peerconnection.enabled" = true; # Kept enabled as per user request
+
+          # Telemetry & Data Collection
+          "toolkit.telemetry.enabled" = false;
+          "browser.newtabpage.activity-stream.feeds.telemetry" = false;
+          "browser.ping-centre.telemetry" = false;
+          "datareporting.healthreport.uploadEnabled" = false;
+
+          # UI Cleanliness
+          "browser.newtabpage.activity-stream.showSponsored" = false;
+          "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+
+          # Credentials
           "identity.fxaccounts.enabled" = false;
           "signon.rememberSignons" = false;
+          "browser.download.panel.shown" = true;
         };
         extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
           ublock-origin
           bitwarden
+          adnauseam
         ];
         search = {
           force = true;

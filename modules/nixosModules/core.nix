@@ -7,5 +7,10 @@
     userEmail = "iearmada@proton.me";
     gitName = "flvr-soda";
     stateVersion = "25.05";
+    timeZone = "America/Caracas";
+    defaultLocale = "en_US.UTF-8";
+    extraLocale = "es_VE.UTF-8";
+    keyMap = "la-latin1";
+    hostPrefix = "filosofo";
   };
 }

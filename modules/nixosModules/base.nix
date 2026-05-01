@@ -9,6 +9,10 @@
     stateVersion,
     userEmail,
     gitName,
+    timeZone,
+    defaultLocale,
+    extraLocale,
+    keyMap,
     ...
   }: {
   # NixOS
@@ -46,7 +50,9 @@
   };
 
   zramSwap.enable = true;
-  nixpkgs.overlays = [inputs.antigravity-nix.overlays.default];
+  nixpkgs.overlays = [
+    inputs.antigravity-nix.overlays.default
+  ];
   networking.firewall.enable = true;
 
   security = {
@@ -88,9 +94,20 @@
     '';
   };
 
-  console.keyMap = "la-latin1";
-  time.timeZone = "America/Caracas";
-  i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = keyMap;
+  time.timeZone = timeZone;
+  i18n.defaultLocale = defaultLocale;
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = extraLocale;
+    LC_IDENTIFICATION = extraLocale;
+    LC_MEASUREMENT = extraLocale;
+    LC_MONETARY = extraLocale;
+    LC_NAME = extraLocale;
+    LC_NUMERIC = extraLocale;
+    LC_PAPER = extraLocale;
+    LC_TELEPHONE = extraLocale;
+    LC_TIME = extraLocale;
+  };
 
   system.stateVersion = stateVersion;
 
@@ -99,22 +116,12 @@
     home.stateVersion = stateVersion;
     home.packages = with pkgs; [
       nixd
-      btop
-      yazi
-      eza
-      bat
-      ripgrep
       p7zip
       unrar
     ];
 
     programs = {
       home-manager.enable = true;
-      starship = {
-        enable = true;
-        enableFishIntegration = true;
-      };
-      fastfetch.enable = true;
       git = {
         enable = true;
         lfs.enable = true;

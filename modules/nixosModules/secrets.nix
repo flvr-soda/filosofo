@@ -19,14 +19,14 @@ in {
   ];
 
   age.secrets.user-password = {
-    file = ../secrets/user-password.age;
+    file = ../../secrets/user-password.age;
     owner = "root";
     group = "root";
     mode = "0400";
   };
 
   age.secrets.github-ssh-key = {
-    file = ../secrets/github-ssh-key.age;
+    file = ../../secrets/github-ssh-key.age;
     owner = userName;
     group = "users";
     mode = "0600";

@@ -1,36 +1,18 @@
-{ self, inputs, userName, userFullName, userEmail, gitName, stateVersion, ... }: {
+{ self, inputs, userName, userFullName, userEmail, gitName, stateVersion, timeZone, defaultLocale, extraLocale, keyMap, hostPrefix, ... }: {
   flake.nixosConfigurations.server = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    specialArgs = { inherit inputs self userName userFullName userEmail gitName stateVersion; };
+    specialArgs = { inherit inputs self userName userFullName userEmail gitName stateVersion timeZone defaultLocale extraLocale keyMap hostPrefix; };
     modules = [
       ./hardware-configuration.nix
       self.nixosModules.base
       self.nixosModules.users
       self.nixosModules.secrets
       self.nixosModules.shared
+      self.nixosModules.jellyfin
+      self.nixosModules.ai
+      self.nixosModules.shell
       ({ pkgs, userName, ... }: {
-        networking.hostName = "filosofo-server";
-
-        services.xserver.enable = false;
-        services.displayManager.sddm.enable = false;
-        services.desktopManager.plasma6.enable = false;
-
-        environment.systemPackages = with pkgs; [
-          jellyfin
-          jellyfin-web
-          jellyfin-ffmpeg
-        ];
-
-        services.jellyfin = {
-          enable = true;
-          openFirewall = true;
-          user = userName;
-        };
-
-        services.ollama = {
-          enable = true;
-          loadModels = ["tinyllama" "deepseek-r1:1.5b" "qwen3.5"];
-        };
+        networking.hostName = "${hostPrefix}-server";
       })
     ];
   };

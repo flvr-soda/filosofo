@@ -26,7 +26,6 @@
       wine
       protonup-ng
       winetricks
-      bottles
     ];
   };
 };
