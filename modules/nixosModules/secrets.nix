@@ -10,8 +10,7 @@
   nixosConfig = config;
 in {
   # NixOS System-Level Configuration
-  # --------------------------------
-  
+
   # Specify the identity keys used to decrypt the secrets on this host
   age.identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
@@ -33,7 +32,7 @@ in {
   };
 
   # Home Manager User-Level Configuration
-  # -------------------------------------
+  
   home-manager.users.${userName} = {config, ...}: {
     # Symlink the decrypted github SSH key into the user's ~/.ssh directory
     home.file.".ssh/id_github" = {

@@ -21,7 +21,9 @@ Every `.nix` file inside the `modules/` directory acts as a top-level `flake-par
     │   ├── development.nix ← Shared development services/tools
     │   ├── secrets.nix     ← Agenix module integration
     │   ├── shared.nix      ← Core Home Manager and Agenix setup
+    │   ├── shell.nix       ← Shell configuration (Fish, Starship, etc)
     │   └── users.nix       ← User accounts and Home Manager profiles
+    │   └── virtualization.nix ← Virtualization configuration
     │
     └── hosts/          ← Configuration for specific system hosts
         ├── desktop/

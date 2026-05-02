@@ -6,8 +6,7 @@
     ...
   }: {
     # NixOS System-Level Configuration
-    # --------------------------------
-
+    
     # Enable and configure the Ollama service
     services.ollama = {
       enable = true;

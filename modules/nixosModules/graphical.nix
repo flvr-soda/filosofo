@@ -3,12 +3,12 @@
 { self, inputs, ... }: {
   flake.nixosModules.graphical = {
     pkgs,
+    lib,
     userName,
     inputs,
     ...
   }: {
   # NixOS System-Level Configuration
-  # --------------------------------
   
   # Enable the X11 windowing system and SDDM display manager with Wayland support
   services.xserver.enable = true;
@@ -21,8 +21,6 @@
     enable = true;
     user = userName;
   };
-
-  networking.networkmanager.enable = true;
 
   # Exclude xterm since Konsole is used
   services.xserver.desktopManager.xterm.enable = false;
@@ -38,10 +36,14 @@
     # Removed because it conflicts with auto-login
     kdePackages.kwalletmanager
     kdePackages.kwallet-pam
+    kdePackages.kwallet
   ];
 
+  # Explicitly disable KWallet PAM integration to stop it from starting
+  security.pam.services.login.kwallet.enable = lib.mkForce false;
+  security.pam.services.sddm.kwallet.enable = lib.mkForce false;
+
   # Home Manager User-Level Configuration
-  # -------------------------------------
   home-manager.users.${userName} = {
     pkgs,
     inputs,
@@ -87,13 +89,12 @@
 
           # Credentials
           "identity.fxaccounts.enabled" = false;
-          "signon.rememberSignons" = false;
+          "signon.rememberSignons" = true;
           "browser.download.panel.shown" = true;
         };
         extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
           ublock-origin
           bitwarden
-          adnauseam
         ];
         search = {
           force = true;
@@ -112,6 +113,14 @@
         "security.workspace.trust.banner" = "never";
         "files.autoSave" = "afterDelay";
         "editor.minimap.autohide" = "mouseover";
+      };
+    };
+
+    programs.alacritty = {
+      enable = true;
+      settings = {
+        window.opacity = 0.9;
+        font.size = 9;
       };
     };
   };

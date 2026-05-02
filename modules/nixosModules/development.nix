@@ -1,5 +1,5 @@
 # Flake-parts module exporting development tools and databases.
-# This module provides a complete development environment including PostgreSQL, MariaDB, and programming languages.
+# This module provides a complete development environment including PostgreSQL, MariaDB, Docker, and programming languages.
 { self, inputs, ... }: {
   flake.nixosModules.development = {
     pkgs,
@@ -7,7 +7,6 @@
     ...
   }: {
   # NixOS System-Level Configuration
-  # --------------------------------
   
   # Configure PostgreSQL with a dedicated development database for the user
   services.postgresql = {
@@ -43,21 +42,28 @@
     };
   };
 
+  # Enable Docker for containerised development
+  virtualisation.docker = {
+    enable = true;
+    autoPrune.enable = true; # Automatically remove unused images/containers
+  };
+
   # Grant the user access to serial ports for hardware development (e.g. Arduino)
-  users.users.${userName}.extraGroups = ["dialout" "tty"];
-  services.udev.packages = [pkgs.arduino-ide];
+  # and the Docker socket for rootless container management and arduino.
+  users.users.${userName}.extraGroups = [ "dialout" "tty" "docker" ];
+  services.udev.packages = [ pkgs.arduino-ide ];
 
   # Home Manager User-Level Configuration
-  # -------------------------------------
   home-manager.users.${userName} = {pkgs, ...}: {
     home.packages = with pkgs; [
+      docker-compose
       gcc
       gnumake
       cmake
       pkg-config
       openjdk
       python3
-      nixfmt-rfc-style
+      nixfmt
       code-cursor
       postgresql
       dbeaver-bin

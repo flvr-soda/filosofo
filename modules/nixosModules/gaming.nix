@@ -7,7 +7,6 @@
     ...
   }: {
   # NixOS System-Level Configuration
-  # --------------------------------
   
   # Enable Steam and open required firewall ports for Remote Play and local transfers
   programs.steam = {
@@ -19,7 +18,6 @@
   };
 
   # Home Manager User-Level Configuration
-  # -------------------------------------
   home-manager.users.${userName} = {pkgs, ...}: {
     # Install Wine and Proton tools for non-Steam gaming
     home.packages = with pkgs; [

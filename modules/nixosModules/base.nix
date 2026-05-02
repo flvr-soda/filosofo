@@ -30,6 +30,10 @@
     gc.options = "--delete-older-than 7d";
   };
 
+  # Disable all system documentation
+  documentation.enable = false;
+  documentation.nixos.enable = false;
+
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     loader.systemd-boot.enable = true;
@@ -54,6 +58,7 @@
     inputs.antigravity-nix.overlays.default
   ];
   networking.firewall.enable = true;
+  networking.networkmanager.enable = true;
 
   security = {
     polkit.enable = true;
@@ -95,6 +100,12 @@
   };
 
   console.keyMap = keyMap;
+
+  services.xserver.xkb = {
+    layout = "latam";
+    options = "";
+  };
+  
   time.timeZone = timeZone;
   i18n.defaultLocale = defaultLocale;
   i18n.extraLocaleSettings = {

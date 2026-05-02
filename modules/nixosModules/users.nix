@@ -9,22 +9,20 @@
     ...
   }: {
   # NixOS System-Level Configuration
-  # --------------------------------
   
   # Define the primary user account and its group memberships
   users.users.${userName} = {
     isNormalUser = true;
     description = userFullName;
     extraGroups = ["networkmanager" "wheel"];
-    shell = pkgs.fish;
     hashedPasswordFile = config.age.secrets.user-password.path;
   };
 
-  programs.fish.enable = true;
+
   programs.ssh.startAgent = true;
 
   # Home Manager User-Level Configuration
-  # -------------------------------------
+  
   home-manager.users.${userName} = {
     programs.ssh = {
       enable = true;

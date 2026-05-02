@@ -7,27 +7,28 @@
     ...
   }: {
     # NixOS System-Level Configuration
-    # --------------------------------
 
-    # Ensure Fish is available globally as a shell option
+    # Ensure Fish is available globally and set it as the user's login shell
     programs.fish.enable = true;
-
-    # Enable system-wide tools
-    environment.systemPackages = with pkgs; [
-      eza
-      bat
-      fd
-      ripgrep
-      fzf
-      zoxide
-      fastfetch
-      btop
-      yazi
-    ];
+    users.users.${userName}.shell = pkgs.fish;
 
     # Home Manager User-Level Configuration
-    # -------------------------------------
+    
     home-manager.users.${userName} = { pkgs, ... }: {
+
+      # Modern CLI tools — co-located with their program configs below
+      home.packages = with pkgs; [
+        eza
+        bat
+        fd
+        ripgrep
+        fzf
+        zoxide
+        fastfetch
+        btop
+        yazi
+      ];
+
       
       # Smart prompt
       programs.starship = {
