@@ -1,4 +1,10 @@
 {
+  systems = [ "x86_64-linux" ];
+
+  perSystem = { pkgs, ... }: {
+    formatter = pkgs.nixfmt;
+  };
+
   # Make common variables available to all other flake-parts modules.
   # This acts as our single source of truth for user details and state versions.
   _module.args = {

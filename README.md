@@ -1,61 +1,69 @@
-# Filosofo
+# Filósofo
 
-NixOS and Home Manager configuration strictly organized using the **Dendritic pattern** and `flake-parts`.
+A modular, highly structured NixOS configuration built on the **Pure Dendritic Pattern** and **`flake-parts`**. This project prioritizes atomic features, declarative program wrapping, and automatic module discovery.
 
-## Architecture & The Dendritic Pattern
+## Architecture
 
-This project structure avoids monolithic, manual import registries. Instead, we use `import-tree` combined with `flake-parts` to automatically evaluate and export self-sufficient modules directly into the flake outputs.
+This repository uses a state-of-the-art Nix architecture:
 
-Every `.nix` file inside the `modules/` directory acts as a top-level `flake-parts` module that independently declares the configuration it exports (`flake.nixosModules.<name>` or `flake.nixosConfigurations.<name>`).
+- **`flake-parts`**: Provides a modular framework for managing flake outputs.
+- **Pure Dendritic Pattern**: Every file in the `modules/` directory is automatically discovered and imported via `import-tree`. No manual import registries are needed.
+- **Wrapper Modules**: Leverages `nix-wrapper-modules` to configure CLI tools like `fastfetch` using structured Nix attribute sets instead of flat config files.
+- **Single Source of Truth**: `modules/features/core/globals.nix` injects global variables (username, timezone, etc.) throughout the entire configuration tree.
 
-## Repository Layout
+## Repository Structure
 
-    flake.nix           ← Flake entrypoint configuring import-tree
+```text
+.
+├── flake.nix               # Minimalist entrypoint using import-tree
+├── modules/
+│   ├── features/           # Atomic, reusable system features
+│   │   ├── core/           # System foundation (Boot, Shell, Secrets, etc.)
+│   │   ├── dev/            # Specialized dev environments (Programming, DBs, etc.)
+│   │   ├── apps/           # GUI Apps & Desktop (Firefox, Plasma, Gaming)
+│   │   └── services/       # Standalone services (Jellyfin, NAS, AI)
+│   └── hosts/              # Machine-specific configurations
+│       ├── desktop/        # Workstation config
+│       ├── laptop/         # Mobile config (Battery optimized)
+│       └── server/         # Media & AI server (Headless optimized)
+└── secrets/                # Encrypted secrets managed by Agenix
+```
 
-    modules/
-    ├── nixosModules/   ← Reusable system and Home Manager modules
-    │   ├── core.nix        ← Exposes global variables (e.g. userName) to all modules
-    │   ├── base.nix        ← Shared system base config
-    │   ├── graphical.nix   ← Shared desktop environment config
-    │   ├── gaming.nix      ← Shared gaming config
-    │   ├── development.nix ← Shared development services/tools
-    │   ├── secrets.nix     ← Agenix module integration
-    │   ├── shared.nix      ← Core Home Manager and Agenix setup
-    │   ├── shell.nix       ← Shell configuration (Fish, Starship, etc)
-    │   └── users.nix       ← User accounts and Home Manager profiles
-    │   └── virtualization.nix ← Virtualization configuration
-    │
-    └── hosts/          ← Configuration for specific system hosts
-        ├── desktop/
-        │   ├── default.nix
-        │   └── hardware-configuration.nix
-        ├── laptop/
-        │   ├── default.nix
-        │   └── hardware-configuration.nix
-        └── server/
-            ├── default.nix
-            └── hardware-configuration.nix
-        
-    secrets/            ← Managed by Agenix (not imported by import-tree)
-    ├── secrets.nix         ← Agenix encryption mapping
-    ├── user-password.age
-    └── github-ssh-key.age
+## Usage
 
-## Alias Legend
+The project includes smart shell aliases (defined in `modules/features/core/shell.nix`) to simplify system management.
 
-Fish aliases are defined in `modules/nixosModules/users.nix`.
+### System Rebuilds
+- `ns`: Switch current host configuration (`nixos-rebuild switch`)
+- `nb`: Boot current host configuration (`nixos-rebuild boot`)
+- `nt`: Test current host configuration (`nixos-rebuild test`)
 
-- `nf*` = nix flake tasks:
-  - `nfup` (update), `nfck` (check), `nfsync` (update + check)
-- `ns*` / `nb*` / `nt*` = `nixos-rebuild` mode:
-  - `ns` = switch, `nb` = boot, `nt` = test
-- Host suffix:
-  - `d` = desktop, `l` = laptop, `s` = server
+### Specific Host Aliases
+- `nsd`: Switch Desktop
+- `nsl`: Switch Laptop
+- `nss`: Switch Server
 
-Examples:
+### Flake Maintenance
+- `nfup`: Update flake inputs
+- `nfck`: Check flake syntax and validity
+- `nfmt`: Format all Nix files
 
-- `nsd` = switch desktop
-- `nsl` = switch laptop
-- `nss` = switch server
-- `nbd` = boot desktop
-- `ntl` = test laptop
+## Key Features
+
+- **Desktop**: Plasma 6 on Wayland with SDDM.
+- **Browsing**: Hardened Firefox with custom privacy settings and bookmarks.
+- **Development**:
+  - Languages: GCC, Python, OpenJDK.
+  - Databases: PostgreSQL, MariaDB (MariaDB).
+  - Containers: Docker & Docker Compose.
+  - Cybersec: Nmap, sqlmap, aircrack-ng, medusa.
+  - Hardware: KiCad, Arduino IDE/CLI.
+- **Services**:
+  - Jellyfin: Media streaming.
+  - Ollama: Local AI models (deepseek, tinyllama).
+  - Virtualization: KVM/QEMU via libvirt and virt-manager.
+- **Security**: Agenix for encrypted secrets, Apparmor, and hardened SSH.
+
+## Hardware Configuration
+
+Hardware configurations (`hardware-configuration.nix`) are wrapped as flake-parts modules. This allows them to be part of the dendritic tree while remaining easy to re-generate if the hardware changes.

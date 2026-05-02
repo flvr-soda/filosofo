@@ -1,5 +1,3 @@
-# Flake-parts module exporting shell and productivity tool configuration.
-# This centralizes Fish, Starship, and modern CLI alternatives (eza, bat, etc.).
 { self, inputs, ... }: {
   flake.nixosModules.shell = {
     pkgs,
@@ -24,12 +22,12 @@
         ripgrep
         fzf
         zoxide
-        fastfetch
         btop
         yazi
+        # Use the wrapped fastfetch from our flake outputs
+        self.packages.${pkgs.stdenv.hostPlatform.system}.fastfetch
       ];
 
-      
       # Smart prompt
       programs.starship = {
         enable = true;
@@ -65,8 +63,6 @@
         enable = true;
         enableFishIntegration = true;
       };
-
-      programs.fastfetch.enable = true;
 
       # Fish Shell Customization
       programs.fish = {
@@ -104,6 +100,55 @@
           nsl = "sudo nixos-rebuild switch --flake .#laptop";
           nss = "sudo nixos-rebuild switch --flake .#server";
         };
+      };
+    };
+  };
+
+  perSystem = { pkgs, ... }: {
+    packages.fastfetch = inputs.wrapper-modules.wrappers.fastfetch.wrap {
+      inherit pkgs;
+      settings = {
+        logo = {
+          source = "nixos";
+          padding = {
+            right = 4;
+          };
+        };
+        display = {
+          size = {
+            binaryPrefix = "jedec";
+          };
+          color = "magenta";
+        };
+        modules = [
+          "title"
+          "separator"
+          "os"
+          "host"
+          "kernel"
+          "uptime"
+          "packages"
+          "shell"
+          "display"
+          "de"
+          "wm"
+          "wmtheme"
+          "theme"
+          "icons"
+          "font"
+          "cursor"
+          "terminal"
+          "terminalfont"
+          "cpu"
+          "gpu"
+          "memory"
+          "disk"
+          "battery"
+          "poweradapter"
+          "locale"
+          "break"
+          "colors"
+        ];
       };
     };
   };
