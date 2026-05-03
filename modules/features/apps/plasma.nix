@@ -25,13 +25,5 @@
 
     security.pam.services.login.kwallet.enable = lib.mkForce false;
     security.pam.services.sddm.kwallet.enable = lib.mkForce false;
-
-    home-manager.users.${userName} = { pkgs, ... }: {
-      home.packages = with pkgs; [
-        google-antigravity
-        kiwix
-        libreoffice
-      ];
-    };
   };
 }

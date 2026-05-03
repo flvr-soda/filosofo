@@ -74,6 +74,7 @@
         vlc
         imagemagick
         ffmpeg
+        onlyoffice-desktopeditors
       ];
 
       xdg.userDirs = {

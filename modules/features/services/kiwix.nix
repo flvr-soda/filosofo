@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+{ self, inputs, userName, ... }: {
   flake.nixosModules.kiwix = { pkgs, ... }: {
     # NixOS System-Level Configuration
     
@@ -27,5 +27,9 @@
     systemd.tmpfiles.rules = [
       "d /var/lib/kiwix 0755 kiwix kiwix - -"
     ];
+
+    home-manager.users.${userName} = { pkgs, ... }: {
+      home.packages = [ pkgs.kiwix ];
+    };
   };
 }

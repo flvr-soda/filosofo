@@ -35,5 +35,11 @@
     environment.systemPackages = with pkgs; [
       brightnessctl
     ];
+
+    home-manager.users.${userName} = { pkgs, ... }: {
+      home.packages = with pkgs; [
+        onlyoffice-desktopeditors
+      ];
+    };
   };
 }

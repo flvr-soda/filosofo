@@ -5,10 +5,6 @@
       rtkit.enable = true;
       sudo.execWheelOnly = true;
 
-      # Audit system activity
-      auditd.enable = true;
-      audit.enable = true;
-
       # Memory protection and kernel hardening
       protectKernelImage = true;
       lockKernelModules = false; # Set to true for maximum security, but can break some hardware/drivers

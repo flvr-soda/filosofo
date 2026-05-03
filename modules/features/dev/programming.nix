@@ -11,6 +11,7 @@
         python3
         nixfmt
         code-cursor
+        google-antigravity
       ];
 
       programs.direnv = {
