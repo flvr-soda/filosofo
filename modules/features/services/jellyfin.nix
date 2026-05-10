@@ -1,37 +1,39 @@
-# Flake-parts module exporting the Jellyfin media server configuration.
-# This module provides the Jellyfin server, necessary hardware acceleration packages,
-# and opens the firewall for local network streaming.
-{ self, inputs, ... }:
-{
-  flake.nixosModules.jellyfin =
+{ lib, pkgs, mediaGroup, mediaPath, ... }: {
+  flake.nixosModules.jellyfin = { config, pkgs, ... }:
+    let
+      cfg = config.filosofo.features.jellyfin;
+    in
     {
-      pkgs,
-      userName,
-      ...
-    }:
-    {
-      # NixOS System-Level Configuration
-
-      # Add the necessary packages for Jellyfin and hardware transcoding
-      environment.systemPackages = with pkgs; [
-        jellyfin
-        jellyfin-web
-        jellyfin-ffmpeg
-        jellyfin-desktop
-      ];
-
-      # Enable and configure the Jellyfin service
-      services.jellyfin = {
-        enable = true;
-        openFirewall = true;
-        user = userName;
+      options.filosofo.features.jellyfin = {
+        enable = lib.mkEnableOption "Enable Jellyfin media server";
       };
 
-      # Hardware Acceleration Tuning
-      # Ensure the user running the service has permission to access the GPU for VA-API
-      users.users.${userName}.extraGroups = [
-        "render"
-        "video"
-      ];
+      config = lib.mkIf cfg.enable {
+        filosofo.services.proxy.jellyfin = {
+          subdomain = "jellyfin";
+          port = 8096;
+        };
+
+        services.jellyfin = {
+          enable = true;
+          openFirewall = false;
+          package = pkgs.jellyfin;
+          user = "jellyfin";
+          group = "jellyfin";
+        };
+
+        users.users.jellyfin.extraGroups = [ "render" "video" mediaGroup ];
+        users.groups.${mediaGroup} = { };
+
+        systemd.services.jellyfin.serviceConfig = {
+          StateDirectory = "jellyfin";
+          CacheDirectory = "jellyfin";
+          NoNewPrivileges = lib.mkDefault true;
+          PrivateTmp = lib.mkDefault true;
+          ProtectSystem = lib.mkDefault "strict";
+          ProtectHome = lib.mkDefault true;
+          ReadWritePaths = [ mediaPath ];
+        };
+      };
     };
 }

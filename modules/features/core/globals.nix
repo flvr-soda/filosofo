@@ -18,5 +18,7 @@
     extraLocale = "es_VE.UTF-8";
     keyMap = "la-latin1";
     hostPrefix = "filosofo";
+    mediaGroup = "media";
+    mediaPath = "/storage/media";
   };
 }

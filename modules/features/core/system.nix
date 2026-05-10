@@ -11,6 +11,17 @@
       inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
+    services.printing.enable = true;
+    services.printing.drivers = [ pkgs.splix pkgs.samsung-unified-linux-driver ];
+    services.ipp-usb.enable = true;
+    hardware.printers.ensurePrinters = [
+      {
+        name = "ML-1660";
+        deviceUri = "usb://Samsung/ML-1660%20Series?serial=Z508BKBZ701777X";
+        model = "samsung/ml1660.ppd";              
+      }
+    ];
+
     system.stateVersion = stateVersion;
 
     # Home Manager

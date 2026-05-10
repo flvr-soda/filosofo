@@ -1,29 +1,26 @@
 { self, inputs, ... }: {
-  flake.nixosModules.laptopConfiguration = { pkgs, userName, hostPrefix, ... }: {
+  flake.nixosModules.laptopConfiguration = { lib, pkgs, userName, hostPrefix, ... }: {
     imports = [
       self.nixosModules.laptopHardware
-      # Core
-      self.nixosModules.system
-      self.nixosModules.boot
-      self.nixosModules.nixConfig
-      self.nixosModules.networking
-      self.nixosModules.security
-      self.nixosModules.locale
-      self.nixosModules.ssh
-      self.nixosModules.users
-      self.nixosModules.secrets
-      self.nixosModules.shared
+      self.nixosModules.base
       # Desktop & Apps
-      self.nixosModules.plasma
+      self.nixosModules.noctaliaDesktop
       self.nixosModules.firefox
       self.nixosModules.vscode
       self.nixosModules.alacritty
       # Development
       self.nixosModules.programming
+      self.nixosModules.databases
       self.nixosModules.containers
       self.nixosModules.gaming
       # Services
-      self.nixosModules.shell
+      self.nixosModules.multimedia
+      self.nixosModules.productivity
+      self.nixosModules.kiwix
+      self.nixosModules.llm
+      self.nixosModules.nextcloud
+      self.nixosModules.pihole
+      self.nixosModules.tailscale
     ];
 
     networking.hostName = "${hostPrefix}-laptop";
@@ -38,8 +35,21 @@
 
     home-manager.users.${userName} = { pkgs, ... }: {
       home.packages = with pkgs; [
-        onlyoffice-desktopeditors
+        # Individual packages
       ];
+    };
+
+    filosofo.features = {
+      desktop.niri.enable = lib.mkDefault true;
+      programming.enable = lib.mkDefault true;
+      databases.enable = lib.mkDefault false;  # Laptop is not a dev DB host
+      multimedia.enable = lib.mkDefault true;
+      productivity.enable = lib.mkDefault true;
+      kiwix.enable = lib.mkDefault false;
+      llm.enable = lib.mkDefault false;
+      nextcloud.enable = lib.mkDefault false;
+      pihole.enable = lib.mkDefault false;
+      tailscale.enable = lib.mkDefault true;
     };
   };
 }

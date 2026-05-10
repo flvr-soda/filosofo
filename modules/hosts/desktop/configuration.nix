@@ -2,19 +2,9 @@
   flake.nixosModules.desktopConfiguration = { pkgs, lib, userName, hostPrefix, ... }: {
     imports = [
       self.nixosModules.desktopHardware
-      # Core
-      self.nixosModules.system
-      self.nixosModules.boot
-      self.nixosModules.nixConfig
-      self.nixosModules.networking
-      self.nixosModules.security
-      self.nixosModules.locale
-      self.nixosModules.ssh
-      self.nixosModules.users
-      self.nixosModules.secrets
-      self.nixosModules.shared
+      self.nixosModules.base
       # Desktop & Apps
-      self.nixosModules.plasma
+      self.nixosModules.noctaliaDesktop
       self.nixosModules.firefox
       self.nixosModules.vscode
       self.nixosModules.alacritty
@@ -24,25 +14,30 @@
       self.nixosModules.containers
       self.nixosModules.cybersec
       self.nixosModules.hardware
-      # Services
-      self.nixosModules.jellyfin
+      # Services (Dual-Role: workstation + background server stack)
+      self.nixosModules.arr-stack
+      self.nixosModules.multimedia
+      self.nixosModules.productivity
       self.nixosModules.gaming
-      self.nixosModules.shell
       self.nixosModules.virtualization
+      self.nixosModules.kiwix
+      self.nixosModules.llm
+      self.nixosModules.nextcloud
+      self.nixosModules.pihole
+      self.nixosModules.tailscale
+      self.nixosModules.caddy
+      self.nixosModules.jellyfin
+      self.nixosModules.navidrome
+      self.nixosModules.kavita
     ];
 
     networking.hostName = "${hostPrefix}-desktop";
-
-    hardware.graphics = {
-      extraPackages = with pkgs; [
-        intel-ocl
-      ];
+    filosofo.hardware = {
+      gpu.type = "amd";
+      powerProfile = "performance";
     };
 
-    services.xserver.videoDrivers = [ "amdgpu" ];
-    hardware.amdgpu.opencl.enable = true;
-
-    fileSystems."/home/${userName}/storage" = {
+    fileSystems."/storage" = {
       device = "/dev/disk/by-uuid/06bd7b68-b2a4-431a-a48d-0371beed0a71";
       fsType = "btrfs";
       options = [
@@ -56,25 +51,21 @@
 
     systemd.tmpfiles.rules =
       let
-        storageDir = "/home/${userName}/storage";
+        storageDir = "/storage";
       in
-      map (dir: "d ${storageDir}/${dir} 0755 ${userName} users -") [
+      [ "L+ /home/${userName}/storage - - - - /storage" ]
+      ++ map (dir: "d ${storageDir}/${dir} 0755 ${userName} users -") [
         "documents"
         "downloads"
         "pictures"
         "music"
         "videos"
         "templates"
-        "media" # Jellyfin library root
       ];
 
     home-manager.users.${userName} = { pkgs, ... }: {
       home.packages = with pkgs; [
-        qbittorrent-enhanced
-        vlc
-        imagemagick
-        ffmpeg
-        onlyoffice-desktopeditors
+        # Individual packages not part of a feature module
       ];
 
       xdg.userDirs = {
@@ -90,6 +81,24 @@
         publicShare = "/home/${userName}/Public";
         setSessionVariables = true;
       };
+    };
+
+    filosofo.features = {
+      desktop.niri.enable = lib.mkDefault true;
+      programming.enable = lib.mkDefault true;
+      databases.enable = lib.mkDefault true;
+      arr-stack.enable = lib.mkDefault true;
+      jellyfin.enable = lib.mkDefault true;
+      navidrome.enable = lib.mkDefault true;
+      kavita.enable = lib.mkDefault true;
+      multimedia.enable = lib.mkDefault true;
+      productivity.enable = lib.mkDefault true;
+      kiwix.enable = lib.mkDefault false;
+      llm.enable = lib.mkDefault false;
+      nextcloud.enable = lib.mkDefault true;
+      pihole.enable = lib.mkDefault false;
+      tailscale.enable = lib.mkDefault true;
+      caddy.enable = lib.mkDefault true;
     };
   };
 }

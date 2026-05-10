@@ -1,9 +1,8 @@
 { self, inputs, ... }: {
   flake.nixosModules.vscode = { pkgs, userName, ... }: {
     home-manager.users.${userName} = { pkgs, ... }: {
-      programs.vscode = {
+      programs.vscodium = {
         enable = true;
-        package = pkgs.vscodium;
         profiles.default.userSettings = {
           "nix.enableLanguageServer" = true;
           "git.autofetch" = true;

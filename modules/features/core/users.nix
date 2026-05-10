@@ -19,8 +19,6 @@
   };
 
 
-  programs.ssh.startAgent = true;
-
   # Home Manager User-Level Configuration
   
   home-manager.users.${userName} = {

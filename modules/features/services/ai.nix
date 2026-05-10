@@ -1,24 +1,42 @@
-# Flake-parts module exporting AI service configuration.
-# This provides the Ollama service for running local LLMs.
-{ self, inputs, ... }: {
-  flake.nixosModules.ai = {
-    pkgs,
-    ...
-  }: {
-    # NixOS System-Level Configuration
-    
-    # Enable and configure the Ollama service
-    services.ollama = {
-      enable = true;
-      # Load models on startup for convenience
-      loadModels = [ "tinyllama" "deepseek-r1:1.5b" "qwen3.5" ];
-    };
+{ self, lib, ... }:
+let
+  llmModule =
+    { config, pkgs, ... }:
+    let
+      cfg = config.filosofo.features.llm;
+      webUiPort = 8080;
+      openLlmPort = 3000;
+    in
+    {
+      options.filosofo.features.llm.enable = lib.mkEnableOption "Enable the local LLM atomic feature";
 
-    # Enable Open WebUI for a beautiful frontend that supports local and API-based models
-    services.open-webui = {
-      enable = true;
-      port = 8080;
-      openFirewall = true;
+      config = lib.mkIf cfg.enable {
+        # ── Reverse Proxy Registration ──────────────────────────────────────
+        filosofo.services.proxy.ai = {
+          subdomain = "ai";
+          port = webUiPort;
+        };
+
+        virtualisation.oci-containers.backend = lib.mkDefault "podman";
+
+        services.ollama = {
+          enable = true;
+          loadModels = [ "tinyllama" "deepseek-r1:1.5b" "qwen3.5" ];
+          # IMPORTANT: By default this runs on CPU! For GPU support, uncomment one of these:
+          # package = pkgs.ollama-cuda; # For NVIDIA GPUs
+          package = pkgs.ollama-rocm; # For AMD GPUs
+        };
+
+        services.open-webui = {
+          enable = true;
+          port = webUiPort;
+          # Caddy reverse-proxies this port, so we don't expose it globally
+          openFirewall = false;
+        };
+      };
     };
-  };
+in
+{
+  flake.nixosModules.llm = llmModule;
+  flake.nixosModules.ai = llmModule;
 }

@@ -38,8 +38,11 @@
                 bookmarks = [
                   { name = "FMHY"; url = "https://fmhy.net"; }
                   { name = "GitHub"; url = "https://github.com"; }
+                  { name = "Gmail"; url = "https://mail.google.com"; }
+                  { name = "Proton Mail"; url = "https://mail.proton.me"; }
                   { name = "YouTube"; url = "https://youtube.com"; }
                   { name = "Gemini"; url = "https://gemini.google.com"; }
+                  { name = "Tailscale"; url = "https://login.tailscale.com/admin/machines"; }
                 ];
               }
             ];

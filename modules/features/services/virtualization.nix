@@ -25,7 +25,7 @@
     # virt-manager requires the spice-vdagent for clipboard and display integration
     virtualisation.spiceUSBRedirection.enable = true;
 
-    # Add the user to the libvirt group for socket access without sudo
+    # Add the user to required virtualization groups
     users.users.${userName}.extraGroups = [ "libvirtd" "kvm" ];
 
     # Home Manager User-Level Configuration
@@ -33,6 +33,7 @@
       home.packages = with pkgs; [
         virt-manager   # GUI frontend for libvirt
         virt-viewer    # Lightweight display viewer for VM consoles
+        rustdesk-flutter # Remote desktop utility
       ];
 
       # Persist the default libvirt connection so virt-manager connects automatically

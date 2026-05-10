@@ -60,5 +60,6 @@
     # General system hardening
     boot.tmp.cleanOnBoot = true;
     boot.tmp.useTmpfs = true;
+
   };
 }
