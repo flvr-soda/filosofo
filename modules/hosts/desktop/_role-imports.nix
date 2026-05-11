@@ -1,4 +1,6 @@
 # Shared import list for filosofo-desktop (role). Kept as a plain list so hosts stay thin.
+# Homelab-style modules (arr-stack, caddy, …) are listed here explicitly too: there is no
+# separate server machine in this fleet yet, so the desktop carries that stack.
 { self }:
 [
   self.nixosModules.noctaliaDesktop

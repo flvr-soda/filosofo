@@ -15,8 +15,8 @@
     llm.enable = lib.mkDefault false;
     nextcloud.enable = lib.mkDefault true;
     pihole.enable = lib.mkDefault false;
-    tailscale.enable = lib.mkDefault true;
-    caddy.enable = lib.mkDefault true;
+    tailscale.enable = lib.mkDefault false;
+    caddy.enable = lib.mkDefault false;
   };
 
   home-manager.users.${userName} = { pkgs, ... }: {

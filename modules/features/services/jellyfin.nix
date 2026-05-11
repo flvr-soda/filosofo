@@ -16,7 +16,7 @@
 
         services.jellyfin = {
           enable = true;
-          openFirewall = false;
+          openFirewall = true;
           package = pkgs.jellyfin;
           user = "jellyfin";
           group = "jellyfin";

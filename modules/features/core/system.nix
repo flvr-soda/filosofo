@@ -29,7 +29,6 @@
     home-manager.users.${userName} = { pkgs, ... }: {
       home.stateVersion = stateVersion;
       home.packages = with pkgs; [
-        nixd
         p7zip
         unrar
       ];
