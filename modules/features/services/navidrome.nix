@@ -14,8 +14,7 @@
           port = 4533;
         };
 
-        age.secrets.navidrome-password = {
-          file = ../../../secrets/navidrome-password.age;
+        sops.secrets.navidrome_password = {
           owner = "navidrome";
           group = "navidrome";
           mode = "0400";
@@ -28,18 +27,10 @@
             MusicFolder = "${mediaPath}/music";
             Address = "127.0.0.1";
             Port = 4533;
-            PasswordEncryptionKey = config.age.secrets.navidrome-password.path;
+            PasswordEncryptionKey = config.sops.secrets.navidrome_password.path;
           };
         };
 
-        systemd.services.navidrome.serviceConfig = {
-          StateDirectory = "navidrome";
-          NoNewPrivileges = lib.mkDefault true;
-          PrivateTmp = lib.mkDefault true;
-          ProtectSystem = lib.mkDefault "strict";
-          ProtectHome = lib.mkDefault true;
-          ReadWritePaths = [ "${mediaPath}/music" ];
-        };
       };
     };
 }

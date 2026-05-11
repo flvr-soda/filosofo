@@ -15,13 +15,15 @@
         enableHardwareDev = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Include Arduino, KiCAD, and embedded tooling";
+          description = ''
+            Arduino IDE/CLI, KiCAD, serial tools (minicom, screen, picocom), udev rules
+            for Arduino boards, and dialout/tty group membership for serial access.
+          '';
         };
       };
 
-      config = lib.mkIf cfg.enable {
-        # ── System-level: nix-ld for running unpatched binaries ───────────
-        programs.nix-ld.enable = true;
+      config = lib.mkMerge [
+        (lib.mkIf cfg.enable {
 
         home-manager.users.${userName} = { pkgs, ... }: {
           home.packages = with pkgs;
@@ -38,17 +40,7 @@
               openjdk
               python3
               python3Packages.pip
-              nodejs_22
               rustup
-              go
-
-              # ── Nix Tooling ────────────────────────────────────────────
-              nixfmt
-              nixd                # Nix language server
-              nil                 # Alternate Nix LSP
-              nix-tree            # Visualize derivation dependencies
-              nix-diff            # Diff two derivations
-              nvd                 # Nix version diff (for system updates)
 
               # ── Version Control ────────────────────────────────────────
               git
@@ -72,6 +64,7 @@
 
               # ── IDEs ───────────────────────────────────────────────────
               # VSCodium is in vscode.nix (always-on app module)
+              code-cursor
             ]
             ++ lib.optional (antigravityPkg != null) antigravityPkg
             ++ lib.optionals cfg.enableHardwareDev (with pkgs; [
@@ -106,12 +99,12 @@
             };
           };
 
-          # ── Direnv (nix-shell auto-loading) ───────────────────────────
-          programs.direnv = {
-            enable = true;
-            nix-direnv.enable = true;
-          };
         };
-      };
+        })
+        (lib.mkIf (cfg.enable && cfg.enableHardwareDev) {
+          users.users.${userName}.extraGroups = [ "dialout" "tty" ];
+          services.udev.packages = [ pkgs.arduino-ide ];
+        })
+      ];
     };
 }

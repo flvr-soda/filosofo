@@ -14,6 +14,9 @@
       self.nixosModules.shell
       self.nixosModules.services-base
       self.nixosModules.hardware-tuning
+      self.nixosModules.theming
+      self.nixosModules.powersave
     ];
+
   };
 }

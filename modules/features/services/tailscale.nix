@@ -13,18 +13,16 @@
           default = "client";
           description = "Enable subnet routing or exit node features";
         };
-        # When true, the agenix-managed tailscale-authkey secret is used
-        # so the node joins the tailnet automatically on first boot.
+        # When true, the sops-managed tailscale_authkey secret is used
         headlessJoin = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Use the agenix tailscale-authkey secret for headless node registration";
+          description = "Use the sops tailscale_authkey secret for headless node registration";
         };
       };
 
       config = lib.mkIf cfg.enable {
-        age.secrets.tailscale-authkey = {
-          file = ../../../secrets/tailscale-authkey.age;
+        sops.secrets.tailscale_authkey = lib.mkIf cfg.headlessJoin {
           owner = "root";
           group = "root";
           mode = "0400";
@@ -34,11 +32,8 @@
           enable = true;
           openFirewall = true;
           useRoutingFeatures = cfg.useRoutingFeatures;
-          # Wire the agenix secret only when headless join is requested.
-          # On interactive machines (laptop/desktop) this stays null so the
-          # user can run `tailscale up` manually with their chosen options.
-          authKeyFile = lib.mkIf cfg.headlessJoin
-            config.age.secrets.tailscale-authkey.path;
+        } // lib.optionalAttrs cfg.headlessJoin {
+          authKeyFile = config.sops.secrets.tailscale_authkey.path;
         };
 
         # Allow Tailscale traffic through the firewall

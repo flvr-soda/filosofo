@@ -35,7 +35,7 @@
             WorkingDirectory = dataDir;
             NoNewPrivileges = true;
             PrivateTmp = true;
-            ProtectSystem = "strict";
+            ProtectSystem = "full";
             ProtectHome = true;
           };
         };

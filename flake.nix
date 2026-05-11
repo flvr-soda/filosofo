@@ -15,8 +15,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    agenix = {
-      url = "github:ryantm/agenix";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -41,8 +41,14 @@
 
     wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
 
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
+    nix-gaming.url = "github:fufexan/nix-gaming";
   };
+
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake
     { inherit inputs; }

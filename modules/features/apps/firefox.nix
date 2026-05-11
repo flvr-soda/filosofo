@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.firefox = { pkgs, userName, inputs, ... }: {
-    home-manager.users.${userName} = { pkgs, inputs, ... }: {
+    home-manager.users.${userName} = { pkgs, ... }: {
       programs.firefox = {
         enable = true;
         configPath = ".mozilla/firefox";

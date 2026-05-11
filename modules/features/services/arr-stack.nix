@@ -22,10 +22,9 @@
           homarr = { subdomain = "homarr"; port = 7575; };
         };
 
-        # ── Service Secrets ──────────────────────────────────────────────────
+        # ── Service Secrets (sops-nix; keys in secrets/secrets.yaml) ───────
 
-        age.secrets.homarr-secret-key = {
-          file = ../../../secrets/homarr-secret-key.age;
+        sops.secrets.homarr_secret_key = {
           owner = "root";
           group = "root";
           mode = "0400";
@@ -97,6 +96,8 @@
           isSystemUser = true;
           group = "qbittorrent-nox";
           extraGroups = [ mediaGroup ];
+          home = "/var/lib/qbittorrent-nox";
+          createHome = true;
         };
         users.groups.qbittorrent-nox = { };
 
@@ -106,20 +107,22 @@
           openFirewall = false;
         };
 
-        # ── Streaming Media Server (Relocated to jellyfin.nix) ────
+        # Automation-only stack: *ARR, downloader, request UI, Homarr dashboard.
+        # Streaming servers live in jellyfin.nix, kavita.nix, navidrome.nix.
 
         # ── Dashboard (OCI — no native NixOS service) ─────────────
         virtualisation.oci-containers.backend = lib.mkDefault "podman";
         virtualisation.oci-containers.containers.homarr = {
-          image = "ghcr.io/homarr-labs/homarr:latest";
+          # Pinned digest (same tag as :latest at pin time); bump intentionally when upgrading Homarr
+          image = "ghcr.io/homarr-labs/homarr@sha256:6a726c72b37d56a7ce271d35498712f90bfd05ee203bc81e069d718489c35b06";
           ports = [ "7575:7575" ];
           volumes = [
             "/var/lib/homarr/configs:/app/data/configs"
             "/var/lib/homarr/icons:/app/public/icons"
             "/var/lib/homarr/data:/data"
           ];
-          # Encryption key from agenix — prevents session hijacking
-          environmentFiles = [ config.age.secrets.homarr-secret-key.path ];
+          # Session encryption (SECRET_ENCRYPTION_KEY=…) from sops
+          environmentFiles = [ config.sops.secrets.homarr_secret_key.path ];
         };
 
         # Firewall: qBittorrent peer port (6881)
@@ -133,30 +136,18 @@
             after = [ "network.target" ];
             wantedBy = [ "multi-user.target" ];
             serviceConfig = {
-              ExecStart = "${pkgs.qbittorrent-enhanced-nox}/bin/qbittorrent-nox --webui-port=8282";
+              ExecStart = "${pkgs.qbittorrent-enhanced-nox}/bin/qbittorrent-nox --webui-port=8282 --confirm-legal-notice";
               User = "qbittorrent-nox";
               Group = "qbittorrent-nox";
               StateDirectory = "qbittorrent-nox";
+              Environment = [
+                "HOME=/var/lib/qbittorrent-nox"
+                "QT_QPA_PLATFORM=offscreen"
+              ];
               Restart = "on-failure";
-              # Basic hardening for qBittorrent
-              NoNewPrivileges = true;
-              PrivateTmp = true;
-              ReadWritePaths = [ mediaPath ];
             };
           };
-        } // lib.genAttrs [
-          "prowlarr" "sonarr" "radarr" "lidarr" "readarr" "bazarr"
-        ] (svc: {
-          serviceConfig = {
-            StateDirectory = lib.mkDefault svc;
-            # Use mkDefault so we don't break upstream module requirements
-            NoNewPrivileges = lib.mkDefault true;
-            PrivateTmp = lib.mkDefault true;
-            ProtectSystem = lib.mkDefault "strict";
-            ProtectHome = lib.mkDefault true;
-            ReadWritePaths = [ mediaPath ];
-          };
-        });
+        };
       };
     };
 }

@@ -1,9 +1,12 @@
 { self, inputs, ... }: {
-  flake.nixosModules.security = { pkgs, ... }: {
+  flake.nixosModules.security = { pkgs, lib, config, ... }: {
     security = {
       polkit.enable = true;
       rtkit.enable = true;
-      sudo.execWheelOnly = true;
+      sudo = {
+        execWheelOnly = true;
+        extraConfig = "Defaults insults";
+      };
 
       # Memory protection and kernel hardening
       protectKernelImage = true;
@@ -23,7 +26,10 @@
     services.fail2ban = {
       enable = true;
       maxretry = 5;
-      ignoreIP = [ "127.0.0.1/8" "192.168.1.0/24" ];
+      ignoreIP = [
+        "127.0.0.1/8"
+        config.filosofo.networking.trustedLanCidr
+      ];
     };
 
     # Kernel sysctl hardening
@@ -46,16 +52,21 @@
       "kernel.perf_event_paranoid" = 3;
     };
 
-    # DNS configuration (Resolved enabled for caching, but DoT/DNSSEC disabled for compatibility)
+    # Audit system (Disabled as it fails on NixOS 26.05 and is redundant hardening)
+    # security.auditd.enable = true;
+
+
+    # DNS configuration (Resolved enabled for caching with basic security)
     services.resolved = {
       enable = true;
       settings = {
         Resolve = {
-          DNSSEC = "false";
-          DNSOverTLS = "false";
+          DNSSEC = "opportunistic";
+          DNSOverTLS = "opportunistic";
         };
       };
     };
+
 
     # General system hardening
     boot.tmp.cleanOnBoot = true;

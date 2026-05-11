@@ -25,15 +25,6 @@
         users.users.jellyfin.extraGroups = [ "render" "video" mediaGroup ];
         users.groups.${mediaGroup} = { };
 
-        systemd.services.jellyfin.serviceConfig = {
-          StateDirectory = "jellyfin";
-          CacheDirectory = "jellyfin";
-          NoNewPrivileges = lib.mkDefault true;
-          PrivateTmp = lib.mkDefault true;
-          ProtectSystem = lib.mkDefault "strict";
-          ProtectHome = lib.mkDefault true;
-          ReadWritePaths = [ mediaPath ];
-        };
       };
     };
 }

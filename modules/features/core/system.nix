@@ -8,7 +8,8 @@
       util-linux
       pciutils
       home-manager
-      inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+      sops
+      age
     ];
 
     services.printing.enable = true;

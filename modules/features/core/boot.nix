@@ -5,11 +5,10 @@
       loader.systemd-boot.enable = true;
       loader.systemd-boot.configurationLimit = 5;
       loader.efi.canTouchEfiVariables = true;
-      loader.timeout = 1;
+      loader.timeout = 3;
       consoleLogLevel = 0;
       initrd.verbose = false;
       kernelParams = [
-        "quiet"
         "splash"
         "boot.shell_on_fail"
         "loglevel=3"

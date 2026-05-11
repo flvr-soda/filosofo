@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ lib, ... }: {
   flake.nixosModules.services-base = { config, pkgs, ... }: {
     options.filosofo.services.proxy = lib.mkOption {
       type = lib.types.attrsOf (lib.types.submodule {
@@ -21,5 +21,9 @@
       default = { };
       description = "Declarative reverse proxy registrations for Caddy";
     };
+    config = {
+      services.upower.enable = true;
+    };
   };
 }
+

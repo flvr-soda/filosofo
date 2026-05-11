@@ -14,8 +14,7 @@
           port = 5000;
         };
 
-        age.secrets.kavita-token = {
-          file = ../../../secrets/kavita-token.age;
+        sops.secrets.kavita_token = {
           owner = "kavita";
           group = "kavita";
           mode = "0400";
@@ -23,21 +22,13 @@
 
         services.kavita = {
           enable = true;
-          tokenKeyFile = config.age.secrets.kavita-token.path;
+          tokenKeyFile = config.sops.secrets.kavita_token.path;
           settings = {
             IpAddresses = "127.0.0.1";
             Port = 5000;
           };
         };
 
-        systemd.services.kavita.serviceConfig = {
-          StateDirectory = "kavita";
-          NoNewPrivileges = lib.mkDefault true;
-          PrivateTmp = lib.mkDefault true;
-          ProtectSystem = lib.mkDefault "strict";
-          ProtectHome = lib.mkDefault true;
-          ReadWritePaths = [ "${mediaPath}/books" "${mediaPath}/comics" ];
-        };
       };
     };
 }

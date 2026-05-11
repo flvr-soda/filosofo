@@ -22,25 +22,10 @@
         };
       };
 
-      # Fonts
-      fonts.packages = with pkgs; [
-        nerd-fonts.jetbrains-mono
-        ubuntu-sans
-        unifont
-      ];
-      fonts.fontconfig.defaultFonts = {
-        serif = [ "Ubuntu Sans" ];
-        sansSerif = [ "Ubuntu Sans" ];
-        monospace = [ "JetBrainsMono Nerd Font" ];
-      };
-
-      # Enable upower for battery widget in Noctalia
-      services.upower.enable = true;
-      security.polkit.enable = true;
-
-      # Bluetooth
+      # Bluetooth configuration for the desktop
       hardware.bluetooth.enable = true;
       hardware.bluetooth.powerOnBoot = true;
     };
+
   };
 }

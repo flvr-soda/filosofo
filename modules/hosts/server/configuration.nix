@@ -1,20 +1,12 @@
 { self, inputs, ... }: {
   flake.nixosModules.serverConfiguration = { lib, userName, hostPrefix, ... }: {
-    imports = [
-      self.nixosModules.serverHardware
-      self.nixosModules.base
-      # Services — server runs the full stack
-      self.nixosModules.arr-stack
-      self.nixosModules.databases
-      self.nixosModules.multimedia
-      self.nixosModules.kiwix
-      self.nixosModules.llm
-      self.nixosModules.nextcloud
-      self.nixosModules.pihole
-      self.nixosModules.tailscale
-      self.nixosModules.caddy
-      self.nixosModules.virtualization
-    ];
+    imports =
+      [
+        self.nixosModules.serverHardware
+        self.nixosModules.base
+      ]
+      ++ import ./_role-imports.nix { inherit self; }
+      ++ [ (import ./_role-defaults.nix) ];
 
     networking.hostName = "${hostPrefix}-server";
 
@@ -28,22 +20,6 @@
     systemd.services.ollama.serviceConfig = lib.mkIf false {
       MemoryLimit = "8G";
       CPUQuota = "400%";
-    };
-
-    filosofo.features = {
-      arr-stack.enable = lib.mkDefault true;
-      databases.enable = lib.mkDefault true;
-      multimedia.enable = lib.mkDefault true;
-      kiwix.enable = lib.mkDefault true;
-      llm.enable = lib.mkDefault true;
-      nextcloud.enable = lib.mkDefault true;
-      pihole.enable = lib.mkDefault true;
-      tailscale = {
-        enable = lib.mkDefault true;
-        useRoutingFeatures = lib.mkDefault "server";
-        headlessJoin = lib.mkDefault true; # Server joins tailnet automatically
-      };
-      caddy.enable = lib.mkDefault true;
     };
   };
 }

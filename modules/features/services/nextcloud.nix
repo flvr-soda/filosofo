@@ -23,8 +23,7 @@
         };
 
         # ── Service Secrets ──────────────────────────────────────────────────
-        age.secrets.nextcloud-admin-password = {
-          file = ../../../secrets/nextcloud-admin-password.age;
+        sops.secrets.nextcloud_admin_password = {
           owner = "nextcloud";
           group = "nextcloud";
           mode = "0400";
@@ -40,9 +39,8 @@
           config = {
             dbtype = "pgsql";
             adminuser = "admin";
-            # Admin password managed by agenix — set on first install only.
-            # Nextcloud reads this file during initial setup.
-            adminpassFile = config.age.secrets.nextcloud-admin-password.path;
+            # Admin password managed by sops — set on first install only.
+            adminpassFile = config.sops.secrets.nextcloud_admin_password.path;
           };
           settings = {
             default_phone_region = "VE";
@@ -72,16 +70,6 @@
           { addr = "127.0.0.1"; port = 8080; }
         ];
 
-        # Systemd Hardening
-        systemd.services = lib.genAttrs [ "phpfpm-nextcloud" "nextcloud-cron" ] (svc: {
-          serviceConfig = {
-            NoNewPrivileges = lib.mkDefault true;
-            PrivateTmp = lib.mkDefault true;
-            ProtectSystem = lib.mkDefault "strict";
-            ProtectHome = lib.mkDefault true;
-            ReadWritePaths = [ dataDir "/var/lib/nextcloud" "/run/nextcloud" ];
-          };
-        });
       };
     };
 }

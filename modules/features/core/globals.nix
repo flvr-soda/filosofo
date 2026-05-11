@@ -1,9 +1,26 @@
 {
+  self,
+  lib,
+  ...
+}:
+{
   systems = [ "x86_64-linux" ];
 
-  perSystem = { pkgs, ... }: {
-    formatter = pkgs.nixfmt;
-  };
+  perSystem =
+    { system, pkgs, ... }:
+    {
+      formatter = pkgs.nixfmt;
+
+      # Light CI: full module evaluation without building the system closure.
+      checks = lib.mapAttrs' (
+        name: cfg:
+        lib.nameValuePair "nixos-${name}-eval" (
+          pkgs.writeText "nixos-${name}-hostName.txt" cfg.config.networking.hostName
+        )
+      ) (
+        lib.filterAttrs (_: cfg: cfg.pkgs.stdenv.hostPlatform.system == system) self.nixosConfigurations
+      );
+    };
 
   # Make common variables available to all other flake-parts modules.
   # This acts as our single source of truth for user details and state versions.

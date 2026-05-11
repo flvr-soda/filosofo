@@ -1,10 +1,10 @@
 # This is a flake-parts module that exports a shared NixOS module.
-# It contains the base configuration for Home Manager and Agenix that all hosts require.
+# It contains the base configuration for Home Manager and sops-nix that all hosts require.
 { self, inputs, userName, userFullName, userEmail, gitName, stateVersion, ... }: {
   flake.nixosModules.shared = { pkgs, ... }: {
     imports = [
       inputs.home-manager.nixosModules.home-manager
-      inputs.agenix.nixosModules.default
+      inputs.sops-nix.nixosModules.default
     ];
 
     # Configure Home Manager to use global packages and pass specialArgs down

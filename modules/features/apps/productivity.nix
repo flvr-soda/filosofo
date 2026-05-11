@@ -7,8 +7,6 @@
         home.packages = with pkgs; [
           onlyoffice-desktopeditors
           obsidian
-          zathura
-          # Add other productivity tools here
         ];
       };
     };
