@@ -1,12 +1,9 @@
 # arr-stack.nix — Full *ARR media automation stack.
-#
-# Includes: Prowlarr, Sonarr, Radarr, Lidarr, Readarr, Bazarr,
-#           qBittorrent-nox (enhanced), Seerr.
-#
+
 # Rules enforced:
 #   ✓ All services bind globally (0.0.0.0) via openFirewall = true or explicit ports
 #   ✓ All required TCP/UDP ports opened atomically in this file
-#   ✓ No reverse proxy references
+
 { lib, mediaGroup, mediaPath, ... }: {
   flake.nixosModules.arr-stack = { config, pkgs, userName, ... }:
     let

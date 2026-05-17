@@ -64,27 +64,17 @@
     home-manager.users.${userName} = { ... }: {
       xdg.userDirs = {
         enable            = true;
-        createDirectories = false;
-        documents  = "/home/${userName}/storage/documents";
-        download   = "/home/${userName}/storage/downloads";
-        pictures   = "/home/${userName}/storage/pictures";
-        music      = "/home/${userName}/storage/music";
-        videos     = "/home/${userName}/storage/videos";
-        templates  = "/home/${userName}/storage/templates";
-        desktop    = "/home/${userName}/Desktop";
-        publicShare = "/home/${userName}/Public";
-        setSessionVariables = true;
+        createDirectories = true;
       };
     };
 
-    # ── /storage user directory symlinks + subdirectory scaffold ─────────────
-    systemd.tmpfiles.rules =
-      let storageDir = "/storage"; in
-      [ "L+ /home/${userName}/storage - - - - /storage" ]
-      ++ map (dir: "d ${storageDir}/${dir} 0755 ${userName} users -") [
-        "documents" "downloads" "pictures" "music"
-        "videos"    "templates" "media"
-      ];
+    # ── /storage user directory bind mount ───────────────────────────────────
+    fileSystems."/home/${userName}/storage" = {
+      device = "/storage";
+      fsType = "none";
+      options = [ "bind" ];
+      depends = [ "/storage" ];
+    };
 
     # ── Printing (host-specific: Samsung ML-1660 via USB) ──────────────────
     services.printing.enable = true;

@@ -42,6 +42,14 @@
           { directory = "/var/lib/containers";                inInitrd = false; }
           { directory = "/var/lib/flatpak";                   inInitrd = false; }
           { directory = "/var/log";                           inInitrd = false; }
+          { directory = "/var/lib/fail2ban";                  inInitrd = false; }
+          { directory = "/var/lib/crowdsec";                  inInitrd = false; }
+          { directory = "/etc/crowdsec";                      inInitrd = false; }
+          { directory = "/var/lib/docker";                    inInitrd = false; }
+          { directory = "/var/lib/rancher/k3s";               inInitrd = false; }
+          { directory = "/etc/rancher";                       inInitrd = false; }
+          { directory = "/var/lib/redis-main";                inInitrd = false; }
+          { directory = "/var/lib/cups";                      inInitrd = false; }
 
           # ── User critical dot-dirs ───────────────────────────────────────
           # /home is its own persistent BTRFS subvol; these bind-mounts are a
