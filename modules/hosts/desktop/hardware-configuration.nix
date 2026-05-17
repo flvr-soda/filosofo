@@ -7,19 +7,8 @@
     boot.kernelModules = [ "kvm-intel" ];
     boot.extraModulePackages = [ ];
 
-    fileSystems."/" = {
-      device = "/dev/disk/by-uuid/55cca912-c494-4c29-a26a-e091b5fa4181";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
-    };
-
-    fileSystems."/boot" = {
-      device = "/dev/disk/by-uuid/3CBE-6768";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
-
-    swapDevices = [ ];
+    # NOTE: fileSystems and swapDevices are managed declaratively by Disko.
+    # Do not declare them here — see disko.nix + desktop/configuration.nix.
     networking.useDHCP = lib.mkDefault true;
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

@@ -1,7 +1,5 @@
-# Databases — atomic feature for development database services.
-# PostgreSQL and MongoDB with pgAdmin/Compass GUI clients.
-# Uses lib.mkDefault so nextcloud.nix can merge its own DB ensurements
-# without conflicting (nextcloud sets ensureDatabases at mkDefault priority).
+# databases.nix — Centralised PostgreSQL instance
+
 { self, inputs, lib, ... }: {
   flake.nixosModules.databases = { config, pkgs, userName, ... }:
     let
@@ -9,40 +7,67 @@
     in
     {
       options.filosofo.features.databases.enable =
-        lib.mkEnableOption "Enable development database services (PostgreSQL, MongoDB)";
+        lib.mkEnableOption "Enable development database services (PostgreSQL + GUI clients)";
 
       config = lib.mkIf cfg.enable {
         # ── PostgreSQL ─────────────────────────────────────────────────────
         services.postgresql = {
-          enable = true;
-          package = pkgs.postgresql;
-          # mkDefault so that nextcloud/other services can add their own DBs
-          # without triggering a merge conflict on this list.
-          ensureDatabases = lib.mkDefault [ "${userName}" "${userName}_dev" ];
-          ensureUsers = lib.mkDefault [
-            {
-              name = userName;
-              ensureDBOwnership = true;
-            }
-          ];
+          enable  = true;
+          package = pkgs.postgresql_16;
+
+          ensureDatabases = lib.mkDefault (
+            [ "${userName}" "${userName}_dev" ]
+            ++ lib.optional config.filosofo.features.nextcloud.enable "nextcloud"
+            ++ lib.optional config.filosofo.services.ai.local-inference "open-webui"
+          );
+          ensureUsers     = lib.mkDefault (
+            [
+              {
+                name              = userName;
+                ensureDBOwnership = true;
+              }
+            ]
+            ++ lib.optionals config.filosofo.features.nextcloud.enable [
+              {
+                name              = "nextcloud";
+                ensureDBOwnership = true;
+              }
+            ]
+            ++ lib.optionals config.filosofo.services.ai.local-inference [
+              {
+                name              = "open-webui";
+                ensureDBOwnership = true;
+              }
+            ]
+          );
+
           settings = {
-            max_connections = 50;
-            shared_buffers = "256MB";
-            # Log slow queries for development
-            log_min_duration_statement = 500;
+            max_connections       = 100;
+            shared_buffers        = "512MB";
+            effective_cache_size  = "1536MB";
+            maintenance_work_mem  = "128MB";
+            log_min_duration_statement = 1000;
           };
+
+          enableTCPIP = true;
+          authentication = lib.mkOverride 10 ''
+            # TYPE  DATABASE  USER  ADDRESS         METHOD
+            local   all       all                   trust
+            host    all       all   127.0.0.1/32    scram-sha-256
+            host    all       all   ::1/128         scram-sha-256
+          '';
         };
 
-        # ── Home Manager — GUI clients ─────────────────────────────────────
-        home-manager.users.${userName} = { pkgs, ... }: {
-          home.packages = with pkgs; [
-            # PostgreSQL CLI + GUI
-            postgresql
-            pgadmin4-desktopmode
-            # Universal DB client
-            dbeaver-bin
-          ];
+        # ── Redis (Shared Cache) ───────────────────────────────────────────
+        services.redis.servers."main" = {
+          enable = true;
+          port = 6379;
+          bind = "0.0.0.0"; # Simplicidad de Red: Bind global for LAN/Tailnet
         };
+
+        # Open database ports inside the host firewall
+        networking.firewall.allowedTCPPorts = lib.mkIf cfg.enable [ 5432 6379 ];
+
       };
     };
 }

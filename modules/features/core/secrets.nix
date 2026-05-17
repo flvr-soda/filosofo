@@ -1,34 +1,24 @@
-# Flake-parts module: sops-nix secrets (single file: secrets/secrets.yaml).
-# Edit with: sops secrets/secrets.yaml
-# Add a host: extend .sops.yaml age recipients, then sops updatekeys secrets/secrets.yaml
+# secrets.nix — SOPS-nix configuration and user secrets
 { self, inputs, ... }: {
-  flake.nixosModules.secrets = {
-    config,
-    lib,
-    userName,
-    ...
-  }: let
-    nixosConfig = config;
-  in
-  {
-    sops.defaultSopsFile = ../../../secrets/secrets.yaml;
-    sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  flake.nixosModules.secrets = { config, userName, ... }: {
+    imports = [ inputs.sops-nix.nixosModules.default ];
 
-    sops.secrets.user_password = {
-      neededForUsers = true;
-      mode = "0400";
+    sops = {
+      defaultSopsFile = ../../../secrets/secrets.yaml;
+      validateSopsFiles = false;
+      age.keyFile = "/persist/var/lib/sops/age/keys.txt";
     };
+
+    sops.secrets.user_password.neededForUsers = true;
 
     sops.secrets.github_ssh_key = {
+      path  = "/home/${userName}/.ssh/id_github";
       owner = userName;
-      group = "users";
-      mode = "0600";
+      mode  = "0400";
     };
 
-    home-manager.users.${userName} = { config, ... }: {
-      home.file.".ssh/id_github" = {
-        source = config.lib.file.mkOutOfStoreSymlink nixosConfig.sops.secrets.github_ssh_key.path;
-      };
-    };
+    systemd.tmpfiles.rules = [
+      "d /home/${userName}/.ssh 0700 ${userName} users - -"
+    ];
   };
 }

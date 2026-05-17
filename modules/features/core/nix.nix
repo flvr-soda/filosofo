@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.nixConfig = { pkgs, inputs, ... }: {
+  flake.nixosModules.nixConfig = { pkgs, inputs, userName, ... }: {
     imports = [
       inputs.nix-index-database.nixosModules.nix-index
     ];
@@ -14,6 +14,14 @@
 
     programs.nix-ld.enable = true;
 
+
+    programs.nh = {
+      enable = true;
+      clean.enable = true;
+      clean.extraArgs = "--keep-since 4d --keep 3";
+      flake = "/home/${userName}/filosofo";
+    };
+
     nixpkgs.config.allowUnfree = true;
     nix = {
       settings = {
@@ -23,9 +31,6 @@
       };
       optimise.automatic = true;
       optimise.dates = [ "03:45" ];
-      gc.automatic = true;
-      gc.dates = "weekly";
-      gc.options = "--delete-older-than 7d";
     };
 
     environment.systemPackages = with pkgs; [

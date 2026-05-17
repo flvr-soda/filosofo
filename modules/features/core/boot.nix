@@ -16,7 +16,27 @@
         "rd.udev.log_level=3"
         "udev.log_priority=3"
       ];
+
+      # ── Security Hardening ──────────────────────────────────────────────
+      kernel.sysctl = {
+        "kernel.kptr_restrict" = 1;
+        "kernel.perf_event_paranoid" = 3;
+      };
+      tmp.cleanOnBoot = true;
+      tmp.useTmpfs = true;
     };
-    zramSwap.enable = true;
+
+    security = {
+      protectKernelImage = true;
+      lockKernelModules = false;
+      apparmor = {
+        enable = true;
+        killUnconfinedConfinables = true;
+        packages = with pkgs; [ apparmor-utils apparmor-profiles ];
+      };
+    };
+    # Swap is explicitly prohibited — impermanence uses BTRFS compression instead.
+    zramSwap.enable = false;
+    swapDevices = [];
   };
 }

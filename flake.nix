@@ -35,6 +35,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    preservation = {
+      url = "github:nix-community/preservation";
+    };
+
+    colmena = {
+      url = "github:zhaofengli/colmena";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     import-tree.url = "github:vic/import-tree";
@@ -52,5 +61,45 @@
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake
     { inherit inputs; }
-    (inputs.import-tree ./modules);
+    ({ self, lib, userName, userFullName, userEmail, gitName, stateVersion, timeZone, defaultLocale, extraLocale, keyMap, hostPrefix, mediaGroup, mediaPath, ... }: {
+      imports = [
+        (inputs.import-tree ./modules)
+      ];
+
+      flake.colmena = {
+        meta = {
+          nixpkgs      = import inputs.nixpkgs { system = "x86_64-linux"; };
+          specialArgs  = {
+            inherit inputs self userName userFullName userEmail gitName
+                    stateVersion timeZone defaultLocale extraLocale keyMap hostPrefix mediaGroup mediaPath;
+          };
+        };
+
+        desktop = {
+          deployment = {
+            targetHost           = "localhost";
+            targetUser           = "root";
+            allowLocalDeployment = true;
+          };
+          imports = [ self.nixosModules.desktopConfiguration ];
+        };
+
+        server = {
+          deployment = {
+            targetHost = "${hostPrefix}-server";
+            targetUser = "root";
+          };
+          imports = [ self.nixosModules.serverConfiguration ];
+        };
+
+        laptop = {
+          deployment = {
+            targetHost           = "${hostPrefix}-laptop";
+            targetUser           = "root";
+            allowLocalDeployment = true;
+          };
+          imports = [ self.nixosModules.laptopConfiguration ];
+        };
+      };
+    });
 }

@@ -1,9 +1,6 @@
 creation_rules:
-  # Recipients = ssh-to-age of keys from former secrets.nix (user + desktop + laptop host keys).
-  # Add server host key here when provisioned, then re-run: sops updatekeys secrets/secrets.yaml
-  - path_regex: secrets/secrets\.yaml$
+  - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:
-          - age1djsf2vq83qmxdjcf0h3t7eqjyt2hq5j6nmp5h9qs87t7q5z3hu7syuynwn
+          - age1y8gf84j9dxeccl8num4adnj6qjf7l9kjxl83d3nmp4elkywfg9asn7ggyl
           - age180s83z56enfaa0z3xn0pqzuh54gvgd8cl5epxvrsxd7pqk6u559qjzv8ne
-          - age1qgn0trkkm253rvvuh8lheyrftfhx6c5m3p6jt0huklrnwsyyjumqae6ks8
