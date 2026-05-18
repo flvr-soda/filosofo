@@ -12,12 +12,6 @@
 
   # Pre-load critical offline installation utilities
   environment.systemPackages = with pkgs; [
-    git
-    cryptsetup
-    wipefs
-    parted
-    btrfs-progs
-    # Include Disko CLI directly so 'disko' is an offline command
     inputs.disko.packages.x86_64-linux.disko
   ];
 
