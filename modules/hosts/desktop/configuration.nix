@@ -25,7 +25,7 @@
         # Disko layout: OS SSD (BTRFS-on-LUKS) + mass storage HDD
         (self.lib.mkDiskoConfigDesktop {
           systemDevice  = "/dev/disk/by-id/nvme-NVME_256GB_SSD_C2024101001028";
-          storageDevice = "/dev/disk/by-uuid/06bd7b68-b2a4-431a-a48d-0371beed0a71";
+          storageDevice = "/dev/disk/by-id/ata-GB0500EAFYL_WCASY909853";
         })
       ];
 
