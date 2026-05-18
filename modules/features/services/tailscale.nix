@@ -13,7 +13,6 @@
           default = "client";
           description = "Enable subnet routing or exit node features";
         };
-        # When true, the sops-managed tailscale_authkey secret is used
         headlessJoin = lib.mkOption {
           type = lib.types.bool;
           default = false;
@@ -36,10 +35,8 @@
           authKeyFile = config.sops.secrets.tailscale_authkey.path;
         };
 
-        # Allow Tailscale traffic through the firewall
         networking.firewall = {
           trustedInterfaces = [ "tailscale0" ];
-          # Allow incoming connections from Tailscale network
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
 

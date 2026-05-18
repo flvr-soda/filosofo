@@ -24,14 +24,12 @@
       };
 
       config = lib.mkIf cfg.enable {
-        # ── Sops secret ───────────────────────────────────────────────────
         sops.secrets.nextcloud_admin_password = {
           owner = "nextcloud";
           group = "nextcloud";
           mode  = "0400";
         };
 
-        # ── Nextcloud ─────────────────────────────────────────────────────
         services.nextcloud = {
           enable    = true;
           package   = pkgs.nextcloud30;
@@ -50,7 +48,7 @@
           settings = {
             default_phone_region = "VE";
             trusted_domains      = [ cfg.hostName "localhost" "0.0.0.0" ];
-            log_type             = "errorlog";  # use journald
+            log_type             = "errorlog";  # Direct logs to systemd journald
           };
           maxUploadSize = "16G";
           datadir       = dataDir;
@@ -70,7 +68,6 @@
           { addr = "[::]";    port = port; ssl = false; }
         ];
 
-        # Atomic firewall rule
         networking.firewall.allowedTCPPorts = [ port ];
       };
     };

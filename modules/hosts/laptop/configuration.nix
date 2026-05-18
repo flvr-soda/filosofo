@@ -19,7 +19,7 @@
         self.nixosModules.ollama
         self.nixosModules.open-webui
         self.nixosModules.opencode
-        # Disko layout: single SSD, BTRFS-on-LUKS
+        # Declaration of Disko layout using the single-SSD laptop blueprint.
         (self.lib.mkDiskoConfigLaptop {
           device = "/dev/disk/by-id/ata-addlink_SATA_SSD_2023080802000521";
         })
@@ -27,13 +27,11 @@
 
     networking.hostName = "${hostPrefix}-laptop";
 
-    # ── Hardware profile: AMD iGPU, power-save by default ───────────────────
     filosofo.hardware = {
       gpu.type     = "amd";
       powerProfile = "powersave";
     };
 
-    # ── Features Toggles ────────────────────────────────────────────────────
     filosofo.features = {
       desktop.niri.enable             = lib.mkDefault true;
       dev-tools.enable                = lib.mkDefault true;

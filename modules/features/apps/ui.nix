@@ -26,13 +26,11 @@
         lib.mkEnableOption "Enable the Niri + Noctalia desktop environment";
 
       config = lib.mkIf cfg.enable {
-        # ── Niri window manager ─────────────────────────────────────────────
         programs.niri = {
           enable  = true;
           package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
         };
 
-        # ── Login manager (tuigreet → niri) ─────────────────────────────────
         services.greetd = {
           enable   = true;
           settings.default_session = {
@@ -41,11 +39,9 @@
           };
         };
 
-        # ── Bluetooth ───────────────────────────────────────────────────────
         hardware.bluetooth.enable      = true;
         hardware.bluetooth.powerOnBoot = true;
 
-        # ── System packages: Noctalia shell + Niri companions ───────────────
         environment.systemPackages = with pkgs; [
           self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell
           self.packages.${pkgs.stdenv.hostPlatform.system}.which-key
@@ -61,7 +57,6 @@
           adwaita-icon-theme
         ];
 
-        # ── GTK/QT Styling ──────────────────────────────────────────────────
         environment.etc = {
           "xdg/gtk-3.0/settings.ini".text = gtkIni;
           "xdg/gtk-4.0/settings.ini".text = gtkIni;
@@ -86,7 +81,6 @@
           }];
         };
 
-        # ── Fastfetch Custom Premium Theme ────────────────────────────────────
         home-manager.users.${userName} = { pkgs, ... }: {
           xdg.configFile."fastfetch/config.jsonc".text = ''
             {
@@ -185,7 +179,6 @@
           '';
         };
 
-        # ── Audio Stack (Pipewire + Denoising) ──────────────────────────────
         services.pipewire = {
           enable = true;
           alsa.enable = true;
@@ -227,7 +220,6 @@
         };
         services.pulseaudio.enable = false;
 
-        # ── Fonts ───────────────────────────────────────────────────────────
         fonts = {
           packages = with pkgs; [
             font-awesome
@@ -247,7 +239,6 @@
           };
         };
 
-        # ── Required services ───────────────────────────────────────────────
         services.dbus.enable = true;
         services.flatpak.enable = true;
         xdg.portal = {
@@ -260,7 +251,6 @@
 
   perSystem = { pkgs, ... }: {
     packages = {
-      # Wrapped Noctalia Shell 
       noctalia-shell = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
         inherit pkgs;
         package = pkgs.noctalia-shell.overrideAttrs (old: {

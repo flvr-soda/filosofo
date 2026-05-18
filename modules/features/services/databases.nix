@@ -10,7 +10,6 @@
         lib.mkEnableOption "Enable development database services (PostgreSQL + GUI clients)";
 
       config = lib.mkIf cfg.enable {
-        # ── PostgreSQL ─────────────────────────────────────────────────────
         services.postgresql = {
           enable  = true;
           package = pkgs.postgresql_16;
@@ -58,14 +57,12 @@
           '';
         };
 
-        # ── Redis (Shared Cache) ───────────────────────────────────────────
         services.redis.servers."main" = {
           enable = true;
           port = 6379;
-          bind = "0.0.0.0"; # Simplicidad de Red: Bind global for LAN/Tailnet
+          bind = "0.0.0.0"; # Bind to all interfaces for LAN/Tailnet cache sharing
         };
 
-        # Open database ports inside the host firewall
         networking.firewall.allowedTCPPorts = lib.mkIf cfg.enable [ 5432 6379 ];
 
       };

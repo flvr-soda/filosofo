@@ -24,7 +24,6 @@
           };
         };
 
-        # Atomic firewall rule — only active when this module is enabled
         networking.firewall.allowedTCPPorts = [ 4533 ];
       };
     };

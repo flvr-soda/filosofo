@@ -15,7 +15,6 @@
       };
 
       config = lib.mkIf cfg.enable {
-        # ── Shared media group ─────────────────────────────────────────────
         users.groups.${mediaGroup} = { };
 
         systemd.tmpfiles.rules = [
@@ -29,54 +28,45 @@
           "d ${mediaPath}/comics                0775 ${userName} ${mediaGroup} - -"
         ];
 
-        # ── Indexers ───────────────────────────────────────────────────────
         services.prowlarr = {
           enable      = true;
-          openFirewall = true; # port 9696
+          openFirewall = true;
         };
 
-        # ── TV ────────────────────────────────────────────────────────────
         services.sonarr = {
           enable      = true;
-          openFirewall = true; # port 8989
+          openFirewall = true;
           group       = mediaGroup;
         };
 
-        # ── Movies ────────────────────────────────────────────────────────
         services.radarr = {
           enable      = true;
-          openFirewall = true; # port 7878
+          openFirewall = true;
           group       = mediaGroup;
         };
 
-        # ── Music ─────────────────────────────────────────────────────────
         services.lidarr = {
           enable      = true;
-          openFirewall = true; # port 8686
+          openFirewall = true;
           group       = mediaGroup;
         };
 
-        # ── Books ─────────────────────────────────────────────────────────
         services.readarr = {
           enable      = true;
-          openFirewall = true; # port 8787
+          openFirewall = true;
           group       = mediaGroup;
         };
 
-        # ── Subtitles ─────────────────────────────────────────────────────
         services.bazarr = {
           enable      = true;
-          openFirewall = true; # port 6767
+          openFirewall = true;
           group       = mediaGroup;
         };
 
-        # ── Request management (Overseerr fork) ───────────────────────────
         services.seerr = {
           enable      = true;
-          openFirewall = true; # port 5055
+          openFirewall = true;
         };
-
-        # Firewall: all services above use openFirewall = true.
       };
     };
 }

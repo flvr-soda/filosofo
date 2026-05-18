@@ -2,8 +2,7 @@
 { inputs, lib, ... }:
 
 let
-  # The physical Btrfs subvolumes on the SSD.
-  # We no longer need an explicit root subvolume here because "/" is in RAM!
+  # We do not need a root subvolume because "/" is mounted as a tmpfs in RAM.
   mkBtrfsSubvolumes = {
     "home" = {
       mountpoint    = "/home";
@@ -19,7 +18,7 @@ let
     };
   };
 
-  # Server matching set (no /home)
+  # Servers isolate state entirely under /persist without utilizing /home.
   mkBtrfsSubvolumesServer = {
     "nix" = {
       mountpoint    = "/nix";
@@ -52,7 +51,7 @@ let
     };
   };
 
-  # Shared nodev block that mounts an ultra-fast, clean root partition in RAM
+  # Mounting the ephemeral root in RAM guarantees it resets on every reboot.
   tmpfsRoot = {
     disko.devices.nodev."/" = {
       fsType = "tmpfs";
@@ -70,7 +69,7 @@ in
     fileSystems."/persist".neededForBoot = true;
   };
 
-  # ── Laptop: Single SSD with RAM Root ──────────────────────────────────────
+  # Laptop blueprint: Single SSD with ephemeral RAM root.
   flake.lib.mkDiskoConfigLaptop = { device }: 
     lib.recursiveUpdate tmpfsRoot {
       disko.devices.disk.main = {
@@ -89,7 +88,7 @@ in
       };
     };
 
-  # ── Desktop: OS SSD + Mass Storage with RAM Root ──────────────────────────
+  # Desktop blueprint: High-performance SSD system disk and a separate BTRFS mass storage disk.
   flake.lib.mkDiskoConfigDesktop = { systemDevice, storageDevice }:
     lib.recursiveUpdate tmpfsRoot {
       disko.devices.disk = {
@@ -132,7 +131,7 @@ in
       };
     };
 
-  # ── Server Blueprint: OS SSD + Storage Array with RAM Root ────────────────
+  # Server blueprint: Ephemeral system disk and multiple RAID devices.
   flake.lib.mkDiskoConfigServer = { systemDevice, raidDevices }:
     let
       raidPartitions = builtins.map (dev: "${dev}-part1") raidDevices;

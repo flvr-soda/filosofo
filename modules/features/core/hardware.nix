@@ -15,7 +15,6 @@
     };
 
     config = lib.mkMerge [
-      # ── AMD GPU — amdgpu driver + ROCm + VA-API + Vulkan ──────────────────
       (lib.mkIf (config.filosofo.hardware.gpu.type == "amd") {
         services.xserver.videoDrivers = [ "amdgpu" ];
 
@@ -45,11 +44,9 @@
           rocmPackages.rocminfo
           clinfo
           vulkan-tools
-          # libva-utils already in hardware.graphics.extraPackages
         ];
       })
 
-      # ── Generic tuning (all profiles) ─────────────────────────────────────
       {
         # thermald is Intel-only; skip on AMD hosts
         services.thermald.enable   = lib.mkDefault (config.filosofo.hardware.gpu.type != "amd");

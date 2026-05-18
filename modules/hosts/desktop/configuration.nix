@@ -31,13 +31,11 @@
 
     networking.hostName = "${hostPrefix}-desktop";
 
-    # ── Hardware profile ─────────────────────────────────────────────────────
     filosofo.hardware = {
       gpu.type     = "amd";
       powerProfile = "performance";
     };
 
-    # ── Features Toggles ────────────────────────────────────────────────────
     filosofo.features = {
       desktop.niri.enable             = lib.mkDefault true;
       dev-tools.enable                = lib.mkDefault true;
@@ -60,7 +58,6 @@
       forceCpu = true; # Bypasses ROCm to prevent crashes on the legacy RX 470
     };
 
-    # ── User Directories ────────────────────────────────────────────────────
     home-manager.users.${userName} = { ... }: {
       xdg.userDirs = {
         enable            = true;
@@ -69,7 +66,6 @@
       };
     };
 
-    # ── /storage user directory bind mount ───────────────────────────────────
     fileSystems."/home/${userName}/storage" = {
       device = "/storage";
       fsType = "none";
@@ -77,7 +73,7 @@
       depends = [ "/storage" ];
     };
 
-    # ── Printing (host-specific: Samsung ML-1660 via USB) ──────────────────
+    # Host-specific printing configuration for Samsung ML-1660 via USB
     services.printing.enable = true;
     services.printing.drivers = [ pkgs.splix pkgs.samsung-unified-linux-driver ];
     services.ipp-usb.enable = true;

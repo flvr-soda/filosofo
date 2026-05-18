@@ -14,7 +14,6 @@
         # udev rules so the user can flash boards without root
         services.udev.packages = [ pkgs.arduino-ide ];
 
-        # Serial port access
         users.users.${userName}.extraGroups = [ "dialout" "tty" ];
 
         home-manager.users.${userName} = { pkgs, ... }: {
@@ -22,9 +21,9 @@
             arduino-ide
             arduino-cli
             kicad
-            minicom   # serial terminal
-            screen    # alternate serial terminal
-            picocom   # minimal serial client
+            minicom
+            screen
+            picocom
           ];
         };
       };

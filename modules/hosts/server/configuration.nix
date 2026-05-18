@@ -13,7 +13,7 @@
         self.nixosModules.open-webui
         self.nixosModules.opencode
         self.nixosModules.searxng
-        # Disko layout: OS SSD (BTRFS-on-LUKS) + RAID5 storage pool
+        # Declares the Disko blueprint for OS SSD and server RAID5 storage pool.
         (self.lib.mkDiskoConfigServer {
           systemDevice = "/dev/disk/by-id/ata-PUT-YOUR-SSD-ID-HERE";
           raidDevices  = [
@@ -27,7 +27,6 @@
 
     networking.hostName = "${hostPrefix}-server";
 
-    # ── Hardware profile: no GPU ─────────────────────────────────────────────
     filosofo.hardware = {
       gpu.type     = "none";
       powerProfile = "balanced";
@@ -46,20 +45,18 @@
 
     filosofo.services.searxng.enable     = lib.mkDefault true;
 
-    # ── AI Services Configuration ───────────────────────────────────────────
     # AI suite active on server in CPU mode (no AMD GPU on server)
     filosofo.services.ai = {
       local-inference = lib.mkDefault true;
       models          = lib.mkDefault [ "llama3.1" "llama3.2" ];
     };
 
-    # ── Serial console for headless crash recovery ────────────────────────────
+    # Enables serial console ttyS0 for out-of-band crash recovery on headless hardware.
     boot.kernelParams = lib.mkAfter [ "console=ttyS0,115200" ];
 
-    # ── SSH hardening: no root login ──────────────────────────────────────────
     services.openssh.settings.PermitRootLogin = lib.mkForce "no";
 
-    # ── Resource bounds for CPU-only Ollama inference ─────────────────────────
+    # Limits resource usage of Ollama to prevent inference from starving host operations.
     systemd.services.ollama.serviceConfig = {
       MemoryMax = "12G";
       CPUQuota  = "600%"; # allow up to 6 logical cores

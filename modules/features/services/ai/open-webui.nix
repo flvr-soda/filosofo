@@ -16,7 +16,6 @@
             DATABASE_URL           = "postgresql:///open-webui?host=/run/postgresql";
             ENABLE_SIGNUP          = "false";
             DEFAULT_USER_ROLE      = "user";
-            # ── SearXNG Integration (RAG) ──────────────────────────────────
             ENABLE_RAG_WEB_SEARCH  = "true";
             RAG_WEB_SEARCH_ENGINE  = "searxng";
             SEARXNG_QUERY_URL      = "http://127.0.0.1:8888/search?q=<query>";

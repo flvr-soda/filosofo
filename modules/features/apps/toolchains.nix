@@ -13,25 +13,20 @@
       config = lib.mkIf cfg.enable {
         home-manager.users.${userName} = { pkgs, ... }: {
           home.packages = with pkgs; [
-            # ── Compilers & Build Systems ──────────────────────────────────
             gcc
             gnumake
             cmake
             pkg-config
             meson
             ninja
-
-            # ── Language Runtimes ──────────────────────────────────────────
             openjdk
             python3
             python3Packages.pip
             rustup
-
-            # ── Debugging & Profiling ──────────────────────────────────────
             gdb
             lldb
             valgrind
-            hyperfine    # CLI benchmarking
+            hyperfine
             strace
             ltrace
 

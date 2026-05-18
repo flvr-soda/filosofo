@@ -2,7 +2,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.security = { config, pkgs, lib, ... }: {
     config = {
-      # ── Fail2ban: Local pattern-based protection ────────────────────────
       services.fail2ban = {
         enable = true;
         maxretry = 5;

@@ -11,7 +11,6 @@
     stateVersion,
     ...
   }: {
-  # NixOS System-Level Configuration
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
@@ -39,7 +38,6 @@
     };
   };
 
-  # Define the primary user account and its group memberships
   users.users.${userName} = {
     isNormalUser = true;
     description = userFullName;
@@ -48,7 +46,6 @@
   };
 
 
-  # Home Manager User-Level Configuration
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.extraSpecialArgs = { inherit inputs self userName userFullName userEmail gitName; stateVersion = config.system.stateVersion; };

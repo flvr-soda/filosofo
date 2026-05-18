@@ -3,22 +3,19 @@
   flake.nixosModules.preservation = { lib, userName, ... }: {
     imports = [ inputs.preservation.nixosModules.preservation ];
 
-    # ── Ephemeral root: enable systemd-based initrd ────────────────────────
+    # Preservation requires systemd-based initrd to mount the persistent root during boot.
     boot.initrd.systemd.enable = lib.mkDefault true;
 
-    # ── Everything that must survive a reboot lives under /persist ─────────
+    # Items that must survive a reboot are mapped under /persist.
     preservation = {
       enable = true;
       preserveAt."/persist" = {
         directories = [
-          # ── System identity ─────────────────────────────────────────────
           { directory = "/etc/ssh";                            inInitrd = true;  }
           { directory = "/var/lib/systemd";                   inInitrd = false; }
           { directory = "/var/lib/bluetooth";                 inInitrd = false; }
           { directory = "/etc/NetworkManager/system-connections"; inInitrd = false; }
           { directory = "/var/lib/sops-nix";                  inInitrd = false; }
-
-          # ── Service state ────────────────────────────────────────────────
           { directory = "/var/lib/postgresql";                inInitrd = false; }
           { directory = "/var/lib/jellyfin";                  inInitrd = false; }
           { directory = "/var/lib/sonarr";                    inInitrd = false; }
@@ -50,8 +47,6 @@
           { directory = "/etc/rancher";                       inInitrd = false; }
           { directory = "/var/lib/redis-main";                inInitrd = false; }
           { directory = "/var/lib/cups";                      inInitrd = false; }
-
-          # ── User critical dot-dirs ───────────────────────────────────────
           # /home is its own persistent BTRFS subvol; these bind-mounts are a
           # safety net in case the home subvol is ever intentionally wiped.
           { directory = "/home/${userName}/.config";          inInitrd = false; }

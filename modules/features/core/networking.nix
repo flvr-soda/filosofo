@@ -14,7 +14,6 @@
         wget
       ];
 
-      # ── SSH ─────────────────────────────────────────────────────────────
       services.openssh = {
         enable = true;
         startWhenNeeded = true;
@@ -31,7 +30,6 @@
         '';
       };
 
-      # ── Network Security & Hardening ─────────────────────────────────────
       programs.firejail.enable = true;
 
 

@@ -34,13 +34,13 @@
     };
 
     environment.systemPackages = with pkgs; [
-      # LSPs & Formatters (flake formatter is nixfmt — see globals.nix)
+      # Flake formatter is nixfmt (configured globally)
       nil
       nixd
       nixfmt
       statix
 
-      # Quality of Life
+
       manix
       nix-tree
       nix-diff

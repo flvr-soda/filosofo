@@ -15,7 +15,6 @@
       config = lib.mkIf cfg.enable {
         home-manager.users.${userName} = { pkgs, ... }: {
 
-          # ── VSCodium ────────────────────────────────────────────────────
           programs.vscodium = {
             enable = true;
             profiles.default.userSettings = {
@@ -28,7 +27,6 @@
             };
           };
 
-          # ── Git global config ───────────────────────────────────────────
           programs.git = {
             enable   = true;
             settings = {
@@ -52,8 +50,7 @@
               lazygit
               gitflow
               git-lfs
-              gh          # GitHub CLI
-              # CLI Tools
+              gh
               eza
               bat
               fd
@@ -63,7 +60,6 @@
               btop
               yazi
               fastfetch
-              # Cybersec
               nmap
               burpsuite
               wireshark
@@ -79,7 +75,6 @@
             ]
             ++ lib.optional (antigravityPkg != null) antigravityPkg;
 
-          # ── Smart prompt ──────────────────────────────────────────────────
           programs.starship = {
             enable = true;
             enableFishIntegration = true;
@@ -113,7 +108,6 @@
             enableFishIntegration = true;
           };
 
-          # ── Fish Shell ────────────────────────────────────────────────────
           programs.fish = {
             enable = true;
             interactiveShellInit = ''
@@ -121,7 +115,6 @@
               set -U fish_greeting ""
             '';
             shellAliases = {
-              # ── Quality of Life ─────────────────────────────────────────────
               ls = "eza --icons --group-directories-first";
               ll = "eza -lh --icons --group-directories-first";
               la = "eza -a --icons --group-directories-first";
@@ -136,7 +129,6 @@
               find = "fd";
               fzf-hist = "history | fzf";
 
-              # ── NixOS & Maintenance ─────────────────────────────────────────
               nfup = "nix flake update";
               nfck = "nix flake check";
               nfmt = "nix fmt";
@@ -151,7 +143,6 @@
               nsys = "systemctl list-units --failed";
               nlog = "journalctl -xeu";
 
-              # ── Development & Git ───────────────────────────────────────────
               g = "git";
               gs = "git status -sb";
               gd = "git diff";
@@ -160,7 +151,6 @@
               gl = "git log --oneline --graph --decorate --all";
               nsh = "nix develop -c \$SHELL";
 
-              # ── Cybersecurity & Networking ─────────────────────────────────
               ports = "sudo ss -tulpn";
               myip = "curl -s https://ipinfo.io/ip; echo";
               localip = "ip -brief address";

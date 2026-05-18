@@ -38,10 +38,8 @@
 
         systemd.tmpfiles.rules = [ "d ${dataDir} 0755 kiwix kiwix - -" ];
 
-        # Atomic firewall rule — only active when this module is enabled
         networking.firewall.allowedTCPPorts = [ port ];
 
-        # kiwix GUI client for managing ZIM files
         home-manager.users.${userName} = { pkgs, ... }: {
           home.packages = [ pkgs.kiwix ];
         };

@@ -10,6 +10,7 @@
       initrd.verbose = false;
       kernelParams = [
         "splash"
+        "quiet"
         "boot.shell_on_fail"
         "loglevel=3"
         "rd.systemd.show_status=false"
@@ -17,7 +18,6 @@
         "udev.log_priority=3"
       ];
 
-      # ── Security Hardening ──────────────────────────────────────────────
       kernel.sysctl = {
         "kernel.kptr_restrict" = 1;
         "kernel.perf_event_paranoid" = 3;
@@ -35,8 +35,14 @@
         packages = with pkgs; [ apparmor-utils apparmor-profiles ];
       };
     };
-    # Swap is explicitly prohibited — impermanence uses BTRFS compression instead.
-    zramSwap.enable = false;
+    # Enable ZRAM swap to prevent OOM crashes during heavy Nix builds/compilations
+    # and to complement the tmpfs root used for impermanence.
+    zramSwap = {
+      enable = true;
+      algorithm = "zstd";
+      memoryPercent = 50;
+      priority = 100;
+    };
     swapDevices = [];
   };
 }

@@ -33,7 +33,6 @@
         # Ensure media group exists (may already be declared by arr-stack)
         users.groups.${mediaGroup} = { };
 
-        # Ensure media path exists with correct ownership
         systemd.tmpfiles.rules = [
           "d ${mediaPath} 0775 jellyfin ${mediaGroup} - -"
         ];
