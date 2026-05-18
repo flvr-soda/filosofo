@@ -563,7 +563,7 @@
         };
       };
 
-      # Wrapped which-key (Reference from .agents/default.nix)
+      # Wrapped which-key 
       which-key = inputs.wrapper-modules.wrappers.wlr-which-key.wrap {
         inherit pkgs;
         settings = {

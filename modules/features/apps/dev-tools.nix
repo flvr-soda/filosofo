@@ -121,6 +121,7 @@
               set -U fish_greeting ""
             '';
             shellAliases = {
+              # ── Quality of Life ─────────────────────────────────────────────
               ls = "eza --icons --group-directories-first";
               ll = "eza -lh --icons --group-directories-first";
               la = "eza -a --icons --group-directories-first";
@@ -129,6 +130,13 @@
               top = "btop";
               grep = "rg";
               cd = "z";
+              lzg = "lazygit";
+              yz = "yazi";
+              ff = "fastfetch";
+              find = "fd";
+              fzf-hist = "history | fzf";
+
+              # ── NixOS & Maintenance ─────────────────────────────────────────
               nfup = "nix flake update";
               nfck = "nix flake check";
               nfmt = "nix fmt";
@@ -137,6 +145,32 @@
               nclean = "nh clean all";
               nb = "nh os build";
               ns = "nh os switch";
+              nsd = "nh os switch --dry";
+              nboot = "nh os boot";
+              nstat = "nix-store --gc --print-dead";
+              nsys = "systemctl list-units --failed";
+              nlog = "journalctl -xeu";
+
+              # ── Development & Git ───────────────────────────────────────────
+              g = "git";
+              gs = "git status -sb";
+              gd = "git diff";
+              gco = "git checkout";
+              gcl = "git clone";
+              gl = "git log --oneline --graph --decorate --all";
+              nsh = "nix develop -c \$SHELL";
+
+              # ── Cybersecurity & Networking ─────────────────────────────────
+              ports = "sudo ss -tulpn";
+              myip = "curl -s https://ipinfo.io/ip; echo";
+              localip = "ip -brief address";
+              msf = "msfconsole -q";
+              proxy = "proxychains4";
+              nscan = "nmap -T4 -F";
+              nscan-full = "nmap -p- -A -T4 -v";
+              nscan-vuln = "nmap -sV --script=vuln";
+              sniff = "sudo tcpdump -i any -c 100 -nn";
+              hasher = "sha256sum";
             };
           };
         };
