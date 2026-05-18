@@ -59,7 +59,7 @@
         };
       };
       storage = {
-        device  = "/dev/disk/by-id/ata-GB0500EAFYL_WCASY909853";
+        device  = "/dev/disk/by-id/ata-GB0500EAFYL_WCASY9098253";
         type    = "disk";
         content = {
           type       = "gpt";

@@ -22,8 +22,10 @@
       '';
     in
     {
-      options.filosofo.features.desktop.niri.enable =
-        lib.mkEnableOption "Enable the Niri + Noctalia desktop environment";
+      options.filosofo.features.desktop = {
+        niri.enable = lib.mkEnableOption "Enable the Niri + Noctalia desktop environment";
+        autologin.enable = lib.mkEnableOption "Enable automatic login for the primary user";
+      };
 
       config = lib.mkIf cfg.enable {
         programs.niri = {
@@ -33,9 +35,15 @@
 
         services.greetd = {
           enable   = true;
-          settings.default_session = {
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri";
-            user    = "greeter";
+          settings = {
+            initial_session = lib.mkIf config.filosofo.features.desktop.autologin.enable {
+              command = "niri";
+              user    = userName;
+            };
+            default_session = {
+              command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri";
+              user    = "greeter";
+            };
           };
         };
 

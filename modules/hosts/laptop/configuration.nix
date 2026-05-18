@@ -32,6 +32,7 @@
 
     filosofo.features = {
       desktop.niri.enable             = lib.mkDefault true;
+      desktop.autologin.enable        = lib.mkDefault true;
       dev-tools.enable                = lib.mkDefault true;
       toolchains.enable               = lib.mkDefault true;
       engineering.enable              = lib.mkDefault false;
