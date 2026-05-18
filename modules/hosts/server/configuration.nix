@@ -14,15 +14,7 @@
         self.nixosModules.opencode
         self.nixosModules.searxng
         # Declares the Disko blueprint for OS SSD and server RAID5 storage pool.
-        (self.lib.mkDiskoConfigServer {
-          systemDevice = "/dev/disk/by-id/ata-PUT-YOUR-SSD-ID-HERE";
-          raidDevices  = [
-            "/dev/disk/by-id/ata-HDD-1-ID"
-            "/dev/disk/by-id/ata-HDD-2-ID"
-            "/dev/disk/by-id/ata-HDD-3-ID"
-            # "/dev/disk/by-id/ata-HDD-4-ID"  # uncomment for 4-drive RAID5
-          ];
-        })
+        ./_disko.nix
       ];
 
     networking.hostName = "${hostPrefix}-server";

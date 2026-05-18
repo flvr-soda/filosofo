@@ -8,7 +8,6 @@
       self.nixosModules.nixConfig
       self.nixosModules.secrets
       self.nixosModules.hardware
-      self.nixosModules.disko
       self.nixosModules.preservation
       self.nixosModules.security
     ];

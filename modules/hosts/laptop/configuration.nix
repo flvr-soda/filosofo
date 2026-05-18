@@ -20,9 +20,7 @@
         self.nixosModules.open-webui
         self.nixosModules.opencode
         # Declaration of Disko layout using the single-SSD laptop blueprint.
-        (self.lib.mkDiskoConfigLaptop {
-          device = "/dev/disk/by-id/ata-addlink_SATA_SSD_2023080802000521";
-        })
+        ./_disko.nix
       ];
 
     networking.hostName = "${hostPrefix}-laptop";

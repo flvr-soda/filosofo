@@ -23,10 +23,7 @@
         self.nixosModules.opencode
         self.nixosModules.searxng
         # Disko layout: OS SSD (BTRFS-on-LUKS) + mass storage HDD
-        (self.lib.mkDiskoConfigDesktop {
-          systemDevice  = "/dev/disk/by-id/nvme-NVME_256GB_SSD_C2024101001028";
-          storageDevice = "/dev/disk/by-id/ata-GB0500EAFYL_WCASY909853";
-        })
+        ./_disko.nix
       ];
 
     networking.hostName = "${hostPrefix}-desktop";
