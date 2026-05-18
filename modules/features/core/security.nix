@@ -14,7 +14,16 @@
 
       services.crowdsec = {
         enable = true;
+        localConfig.acquisitions = [
+          {
+            source = "journalctl";
+            journalctl_filter = [ "_SYSTEMD_UNIT=sshd.service" ];
+            labels.type = "syslog";
+          }
+        ];
       };
+
+      users.users.crowdsec.extraGroups = [ "systemd-journal" ];
 
       # Ensure logs are persistent for analysis
       environment.systemPackages = [ pkgs.crowdsec ];

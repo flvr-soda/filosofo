@@ -50,7 +50,7 @@
           self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell
           self.packages.${pkgs.stdenv.hostPlatform.system}.which-key
           kitty
-          swww # Wallpaper daemon
+          awww # Wallpaper daemon
           wayland-utils
           wl-clipboard
           libnotify
@@ -464,6 +464,7 @@
       # Wrapped Niri 
       niri = inputs.wrapper-modules.wrappers.niri.wrap {
         inherit pkgs;
+        v2-settings = true;
         settings = {
           input = {
             keyboard = {
@@ -472,8 +473,8 @@
               };
             };
             touchpad = {
-              tap = true;
-              dwt = true;
+              tap = {};
+              dwt = {};
             };
             mouse = {
               accel-speed = 0.2;
@@ -490,20 +491,19 @@
             ];
             default-column-width = { proportion = 1.0 / 2.0; };
             focus-ring = {
-              enable = true;
               width = 4;
               active-color = "#fabd2f";
               inactive-color = "#504945";
             };
             border = {
-              enable = false;
+              off = {};
             };
           };
 
           spawn-at-startup = [
             [ "noctalia-shell" ]
-            [ "swww-daemon" ]
-            [ "swww" "img" "${./assets/walls/w10.jpg}" ]
+            [ "awww-daemon" ]
+            [ "awww" "img" "${./assets/walls/w10.jpg}" ]
           ];
 
           environment = {
@@ -519,23 +519,23 @@
             "Mod+Return".spawn = "kitty";
             "Mod+D".spawn = [ "noctalia-shell" "app-launcher" "toggle" ];
             "Mod+Shift+Slash".spawn = "which-key";
-            "Mod+Q".close-window = null;
-            "Mod+F".maximize-column = null;
-            "Mod+Shift+F".fullscreen-window = null;
-            "Mod+C".center-column = null;
+            "Mod+Q".close-window = _: {};
+            "Mod+F".maximize-column = _: {};
+            "Mod+Shift+F".fullscreen-window = _: {};
+            "Mod+C".center-column = _: {};
  
-            "Mod+Left".focus-column-left = null;
-            "Mod+Right".focus-column-right = null;
-            "Mod+Up".focus-window-up = null;
-            "Mod+Down".focus-window-down = null;
+            "Mod+Left".focus-column-left = _: {};
+            "Mod+Right".focus-column-right = _: {};
+            "Mod+Up".focus-window-up = _: {};
+            "Mod+Down".focus-window-down = _: {};
  
-            "Mod+Shift+Left".move-column-left = null;
-            "Mod+Shift+Right".move-column-right = null;
-            "Mod+Shift+Up".move-window-up = null;
-            "Mod+Shift+Down".move-window-down = null;
+            "Mod+Shift+Left".move-column-left = _: {};
+            "Mod+Shift+Right".move-column-right = _: {};
+            "Mod+Shift+Up".move-window-up = _: {};
+            "Mod+Shift+Down".move-window-down = _: {};
  
-            "Mod+WheelScrollDown".focus-column-right = null;
-            "Mod+WheelScrollUp".focus-column-left = null;
+            "Mod+WheelScrollDown".focus-column-right = _: {};
+            "Mod+WheelScrollUp".focus-column-left = _: {};
  
             "Mod+1".focus-workspace = 1;
             "Mod+2".focus-workspace = 2;
@@ -557,8 +557,8 @@
             "Mod+Shift+8".move-column-to-workspace = 8;
             "Mod+Shift+9".move-column-to-workspace = 9;
  
-            "Mod+Shift+E".quit = null;
-            "Mod+Shift+P".power-off-monitors = null;
+            "Mod+Shift+E".quit = _: {};
+            "Mod+Shift+P".power-off-monitors = _: {};
           };
         };
       };
