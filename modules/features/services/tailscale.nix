@@ -21,18 +21,12 @@
       };
 
       config = lib.mkIf cfg.enable {
-        sops.secrets.tailscale_authkey = lib.mkIf cfg.headlessJoin {
-          owner = "root";
-          group = "root";
-          mode = "0400";
-        };
-
         services.tailscale = {
           enable = true;
           openFirewall = true;
           useRoutingFeatures = cfg.useRoutingFeatures;
         } // lib.optionalAttrs cfg.headlessJoin {
-          authKeyFile = config.sops.secrets.tailscale_authkey.path;
+          authKeyFile = "/persist/secrets/tailscale-authkey";
         };
 
         networking.firewall = {

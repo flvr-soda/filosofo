@@ -21,6 +21,8 @@
         hardware.amdgpu = {
           opencl.enable  = true;
         };
+        # Load amdgpu during initrd for early graphics initialization
+        boot.initrd.kernelModules = [ "amdgpu" ];
 
         hardware.graphics = {
           enable       = true;
@@ -49,6 +51,10 @@
 
       (lib.mkIf (config.filosofo.hardware.gpu.type == "intel") {
         services.xserver.videoDrivers = [ "modesetting" ];
+        # Load i915 during initrd for early graphics initialization
+        boot.initrd.kernelModules = [ "i915" ];
+        # Enable fastboot for Intel to avoid display flicker
+        boot.kernelParams = [ "i915.fastboot=1" ];
 
         hardware.graphics = {
           enable       = true;
@@ -72,10 +78,25 @@
         services.irqbalance.enable = lib.mkDefault true;
         services.upower.enable     = true;
 
+        # Clean unused blocks on SSDs weekly to keep write performance high
+        services.fstrim.enable     = lib.mkDefault true;
+
         # power-profiles-daemon manages governors dynamically — do NOT set
         # cpuFreqGovernor at the same time (they conflict).
         services.power-profiles-daemon.enable = lib.mkDefault true;
         powerManagement.powertop.enable = true;
+
+        # Set the active profile at boot according to the configured option
+        systemd.services.set-power-profile = {
+          description = "Set default system power profile";
+          wantedBy = [ "multi-user.target" ];
+          after = [ "power-profiles-daemon.service" ];
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${pkgs.power-profiles-daemon}/bin/powerprofilesctl set ${config.filosofo.hardware.powerProfile}";
+            RemainAfterExit = true;
+          };
+        };
       }
     ];
   };

@@ -22,14 +22,7 @@
           };
         };
 
-        systemd.services.open-webui.serviceConfig.EnvironmentFile = config.sops.secrets.open_webui_secret_key.path;
-
-
-        sops.secrets.open_webui_secret_key = {
-          owner = "open-webui";
-          group = "open-webui";
-          mode  = "0400";
-        };
+        systemd.services.open-webui.serviceConfig.EnvironmentFile = "/persist/secrets/open-webui";
 
         networking.firewall.allowedTCPPorts = [ openWebPort ];
       };

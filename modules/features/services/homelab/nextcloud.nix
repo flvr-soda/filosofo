@@ -24,12 +24,6 @@
       };
 
       config = lib.mkIf cfg.enable {
-        sops.secrets.nextcloud_admin_password = {
-          owner = "nextcloud";
-          group = "nextcloud";
-          mode  = "0400";
-        };
-
         services.nextcloud = {
           enable    = true;
           package   = pkgs.nextcloud30;
@@ -43,7 +37,7 @@
             dbuser        = "nextcloud";
             dbhost        = "/run/postgresql";
             adminuser     = "admin";
-            adminpassFile = config.sops.secrets.nextcloud_admin_password.path;
+            adminpassFile = "/persist/secrets/nextcloud-admin-password";
           };
           settings = {
             default_phone_region = "VE";

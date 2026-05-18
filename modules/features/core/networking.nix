@@ -55,6 +55,9 @@
         "net.ipv4.conf.default.accept_redirects" = 0;
         "net.ipv4.tcp_syncookies" = 1;
         "net.ipv4.tcp_rfc1337" = 1;
+        # Enable BBR congestion control and Fair Queueing packet scheduling
+        "net.core.default_qdisc" = "fq";
+        "net.ipv4.tcp_congestion_control" = "bbr";
       };
     };
   };

@@ -224,7 +224,7 @@
               nscan-vuln = "nmap -sV --script=vuln";
               sniff = "sudo tcpdump -i any -c 100 -nn";
               hasher = "sha256sum";
-               list-aliases = "alias";
+              list-aliases = "alias";
             };
           };
         };

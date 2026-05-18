@@ -13,6 +13,7 @@
       self.nixosModules.audio
       self.nixosModules.bluetooth
       self.nixosModules.dbus
+      self.nixosModules.responsiveness
     ];
   };
 }

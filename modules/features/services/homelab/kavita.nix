@@ -14,15 +14,9 @@
       };
 
       config = lib.mkIf cfg.enable {
-        sops.secrets.kavita_token = {
-          owner = "kavita";
-          group = "kavita";
-          mode  = "0400";
-        };
-
         services.kavita = {
           enable       = true;
-          tokenKeyFile = config.sops.secrets.kavita_token.path;
+          tokenKeyFile = "/persist/secrets/kavita-token";
           settings     = {
             # Bind globally — direct LAN + Tailscale access
             IpAddresses = "0.0.0.0,::";

@@ -21,6 +21,12 @@
       kernel.sysctl = {
         "kernel.kptr_restrict" = 1;
         "kernel.perf_event_paranoid" = 3;
+        # Aggressively swap idle pages to ZRAM to maximize hot RAM availability
+        "vm.swappiness" = 180;
+        # Disable sequential read-ahead swap pages to eliminate CPU ZRAM overhead
+        "vm.page-cluster" = 0;
+        # Keep file system metadata in memory longer for faster directory listing
+        "vm.vfs_cache_pressure" = 50;
       };
       tmp.cleanOnBoot = true;
       tmp.useTmpfs = true;

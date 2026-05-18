@@ -15,7 +15,6 @@
           { directory = "/var/lib/systemd";                   inInitrd = false; }
           { directory = "/var/lib/bluetooth";                 inInitrd = false; }
           { directory = "/etc/NetworkManager/system-connections"; inInitrd = false; }
-          { directory = "/var/lib/sops-nix";                  inInitrd = false; }
           { directory = "/var/lib/postgresql";                inInitrd = false; }
           { directory = "/var/lib/jellyfin";                  inInitrd = false; }
           { directory = "/var/lib/sonarr";                    inInitrd = false; }
