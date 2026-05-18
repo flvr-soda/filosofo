@@ -34,8 +34,8 @@
     defaultLocale = "en_US.UTF-8";
     extraLocale = "es_VE.UTF-8";
     keyMap = "la-latin1";
-    xkbLayout = "latam";
-    xkbOptions = "";
+    xkbLayout = "us,latam";
+    xkbOptions = "grp:alt_shift_toggle";
     hostPrefix = "filosofo";
     servicesHost = "${hostPrefix}-desktop";
     sshKeyName = "id_github";

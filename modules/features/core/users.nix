@@ -44,7 +44,6 @@
     description = userFullName;
     extraGroups = ["networkmanager" "wheel" "video" "render"];
     hashedPasswordFile = "/persist/passwd";
-    initialPassword = "12345";
   };
 
 

@@ -6,9 +6,6 @@
   # Enable Flakes and nix-commands by default in the live environment
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Configure NetworkManager (providing nmtui) and disable wpa_supplicant conflicts
-  networking.networkmanager.enable = true;
-  networking.wireless.enable       = false;
 
   # Define automated installation scripts to format disks and install NixOS in one command
   environment.shellAliases = {

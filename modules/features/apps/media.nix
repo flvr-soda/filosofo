@@ -12,6 +12,9 @@
           home.packages = with pkgs; [
             pear-desktop
             blanket
+            loupe
+            file-roller
+            evince
           ];
 
           programs.mpv = {

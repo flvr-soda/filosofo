@@ -55,6 +55,7 @@
                         { name = "Proton Mail"; url = "https://mail.proton.me"; }
                         { name = "YouTube";     url = "https://youtube.com"; }
                         { name = "Gemini";      url = "https://gemini.google.com"; }
+                        { name = "Sci-Hub";     url = "https://sci-hub.st"; }
                       ];
                     }
                     {

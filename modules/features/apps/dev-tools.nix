@@ -74,6 +74,61 @@
             ]
             ++ lib.optional (antigravityPkg != null) antigravityPkg;
 
+          programs.kitty = {
+            enable = true;
+            font = {
+              name = "JetBrainsMono Nerd Font";
+              size = 15;
+            };
+            settings = {
+              enable_audio_bell = "no";
+              cursor_text_color = "background";
+              allow_remote_control = "yes";
+              shell_integration = "enabled";
+              cursor_trail = 3;
+
+              background = "#242424";
+              foreground = "#ebdbb2";
+              cursor = "#ebdbb2";
+              selection_foreground = "#504945";
+              selection_background = "#3c3836";
+              active_tab_foreground = "#b8bb26";
+              active_tab_background = "#665c54";
+              inactive_tab_background = "#3c3836";
+
+              color0 = "#242424";
+              color8 = "#504945";
+              color1 = "#fb4934";
+              color9 = "#fb4934";
+              color2 = "#b8bb26";
+              color10 = "#b8bb26";
+              color3 = "#fabd2f";
+              color11 = "#fabd2f";
+              color4 = "#7daea3";
+              color12 = "#7daea3";
+              color5 = "#e089a1";
+              color13 = "#e089a1";
+              color6 = "#8ec07c";
+              color14 = "#8ec07c";
+              color7 = "#665c54";
+              color15 = "#665c54";
+            };
+            keybindings = {
+              "alt+1" = "goto_tab 1";
+              "alt+2" = "goto_tab 2";
+              "alt+3" = "goto_tab 3";
+              "alt+4" = "goto_tab 4";
+              "alt+5" = "goto_tab 5";
+              "alt+6" = "goto_tab 6";
+              "alt+7" = "goto_tab 7";
+              "alt+8" = "goto_tab 8";
+              "alt+9" = "goto_tab 9";
+              "ctrl+shift+w" = "close_tab";
+              "ctrl+t" = "new_tab_with_cwd";
+              "ctrl+shift+t" = "new_tab";
+            };
+          };
+
           programs.starship = {
             enable = true;
             enableFishIntegration = true;
@@ -169,6 +224,7 @@
               nscan-vuln = "nmap -sV --script=vuln";
               sniff = "sudo tcpdump -i any -c 100 -nn";
               hasher = "sha256sum";
+               list-aliases = "alias";
             };
           };
         };

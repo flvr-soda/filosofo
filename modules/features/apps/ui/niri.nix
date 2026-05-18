@@ -1,5 +1,5 @@
 # apps/ui/niri.nix — Niri WM and wlr-which-key wrapper
-{ self, inputs, ... }: {
+{ self, inputs, xkbLayout, xkbOptions, lib, ... }: {
   flake.nixosModules.ui-niri = { config, pkgs, lib, ... }:
     let
       cfg = config.filosofo.features.desktop.niri;
@@ -13,13 +13,15 @@
 
         environment.systemPackages = with pkgs; [
           self.packages.${pkgs.stdenv.hostPlatform.system}.which-key
-          kitty
           nautilus
           awww # Wallpaper daemon
           wayland-utils
           wl-clipboard
           libnotify
           brightnessctl
+          grim
+          slurp
+          swappy
         ];
       };
     };
@@ -33,7 +35,8 @@
           input = {
             keyboard = {
               xkb = {
-                layout = "us";
+                layout = xkbLayout;
+                options = xkbOptions;
               };
             };
             touchpad = {
@@ -82,9 +85,20 @@
           
           binds = {
             "Mod+Return".spawn = "kitty";
-            "Mod+D".spawn = [ "noctalia-shell" "app-launcher" "toggle" ];
+            "Mod+Space".spawn = [ "noctalia-shell" "app-launcher" "toggle" ];
+            "Mod+Shift+Space".switch-preset-keyboard-layout = "next";
             "Mod+Shift+Slash".spawn = "which-key";
             "Mod+Q".close-window = _: {};
+
+            "Mod+Ctrl+H".set-column-width = "-5%";
+            "Mod+Ctrl+L".set-column-width = "+5%";
+            "Mod+Ctrl+J".set-window-height = "-5%";
+            "Mod+Ctrl+K".set-window-height = "+5%";
+            "Mod+Shift+T".toggle-window-floating = _: {};
+
+            "Mod+Ctrl+S".spawn = [ "sh" "-c" "${lib.getExe pkgs.grim} -l 0 - | ${pkgs.wl-clipboard}/bin/wl-copy" ];
+            "Mod+Shift+E".spawn = [ "sh" "-c" "${pkgs.wl-clipboard}/bin/wl-paste | ${lib.getExe pkgs.swappy} -f -" ];
+            "Mod+Shift+S".spawn = [ "sh" "-c" "${lib.getExe pkgs.grim} -g \"$(${lib.getExe pkgs.slurp} -w 0)\" - | ${pkgs.wl-clipboard}/bin/wl-copy" ];
             "Mod+F".maximize-column = _: {};
             "Mod+Shift+F".fullscreen-window = _: {};
             "Mod+C".center-column = _: {};
@@ -148,6 +162,9 @@
             { key = "f"; label = "Firefox"; exec = "firefox"; }
             { key = "k"; label = "Kitty"; exec = "kitty"; }
             { key = "y"; label = "Yazi"; exec = "kitty -e yazi"; }
+            { key = "b"; label = "Bluetooth Panel"; exec = "noctalia-shell ipc call bluetooth togglePanel"; }
+            { key = "w"; label = "WiFi Panel"; exec = "noctalia-shell ipc call wifi togglePanel"; }
+            { key = "s"; label = "Volume Control"; exec = "pavucontrol"; }
             { key = "e"; label = "Exit Niri"; exec = "niri msg action quit"; }
           ];
         };
