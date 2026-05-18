@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.locale = { pkgs, timeZone, defaultLocale, extraLocale, keyMap, ... }: {
+  flake.nixosModules.locale = { pkgs, timeZone, defaultLocale, extraLocale, keyMap, xkbLayout, xkbOptions, ... }: {
     time.timeZone = timeZone;
     i18n.defaultLocale = defaultLocale;
     i18n.extraLocaleSettings = {
@@ -15,8 +15,8 @@
     };
     console.keyMap = keyMap;
     services.xserver.xkb = {
-      layout = "latam";
-      options = "";
+      layout = xkbLayout;
+      options = xkbOptions;
     };
   };
 }

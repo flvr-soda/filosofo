@@ -47,6 +47,25 @@
         ];
       })
 
+      (lib.mkIf (config.filosofo.hardware.gpu.type == "intel") {
+        services.xserver.videoDrivers = [ "modesetting" ];
+
+        hardware.graphics = {
+          enable       = true;
+          enable32Bit  = true;
+          extraPackages = with pkgs; [
+            intel-media-driver
+            intel-vaapi-driver
+            libva-vdpau-driver
+            libvdpau-va-gl
+          ];
+        };
+
+        environment.sessionVariables = {
+          LIBVA_DRIVER_NAME = "iHD";
+        };
+      })
+
       {
         # thermald is Intel-only; skip on AMD hosts
         services.thermald.enable   = lib.mkDefault (config.filosofo.hardware.gpu.type != "amd");

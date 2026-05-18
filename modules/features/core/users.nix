@@ -9,6 +9,7 @@
     userEmail,
     gitName,
     stateVersion,
+    sshKeyName,
     ...
   }: {
   imports = [
@@ -42,7 +43,8 @@
     isNormalUser = true;
     description = userFullName;
     extraGroups = ["networkmanager" "wheel" "video" "render"];
-    hashedPasswordFile = config.sops.secrets.user_password.path;
+    hashedPasswordFile = "/persist/passwd";
+    initialPassword = "12345";
   };
 
 
@@ -74,7 +76,7 @@
         };
         "github.com" = {
           hostname = "github.com";
-          identityFile = "~/.ssh/id_github";
+          identityFile = "~/.ssh/${sshKeyName}";
         };
       };
     };

@@ -61,7 +61,6 @@
               yazi
               fastfetch
               nmap
-              burpsuite
               wireshark
               tcpdump
               whois
@@ -142,6 +141,15 @@
               nstat = "nix-store --gc --print-dead";
               nsys = "systemctl list-units --failed";
               nlog = "journalctl -xeu";
+
+              col = "colmena";
+              ca = "colmena apply";
+              cab = "colmena apply --build-on-target";
+              cbl = "colmena build";
+              ce = "colmena eval";
+              cad = "colmena apply --on desktop";
+              cas = "colmena apply --on server";
+              cal = "colmena apply --on laptop";
 
               g = "git";
               gs = "git status -sb";

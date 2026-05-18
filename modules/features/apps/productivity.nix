@@ -5,7 +5,7 @@
     in
     {
       options.filosofo.features.productivity.enable =
-        lib.mkEnableOption "Enable productivity tools (OnlyOffice, Obsidian)";
+        lib.mkEnableOption "Enable productivity tools";
 
       config = lib.mkIf cfg.enable {
         home-manager.users.${userName} = { pkgs, ... }: {

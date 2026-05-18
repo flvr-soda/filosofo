@@ -47,18 +47,36 @@
           { directory = "/etc/rancher";                       inInitrd = false; }
           { directory = "/var/lib/redis-main";                inInitrd = false; }
           { directory = "/var/lib/cups";                      inInitrd = false; }
-          # /home is its own persistent BTRFS subvol; these bind-mounts are a
-          # safety net in case the home subvol is ever intentionally wiped.
-          { directory = "/home/${userName}/.config";          inInitrd = false; }
-          { directory = "/home/${userName}/.local";           inInitrd = false; }
-          { directory = "/home/${userName}/.ssh";             inInitrd = false; }
-          { directory = "/home/${userName}/.gnupg";           inInitrd = false; }
         ];
 
         files = [
           # Stable machine-id (journald cursor, systemd-id128)
           "/etc/machine-id"
         ];
+
+        users.${userName} = {
+          directories = [
+            # Core Configs
+            ".config"
+            ".local"
+            ".ssh"
+            ".gnupg"
+            ".steam"
+            ".var"
+            ".wine"
+            # Gaming and Applications
+            "Games"
+            # XDG User Directories
+            "Desktop"
+            "Documents"
+            "Downloads"
+            "Music"
+            "Pictures"
+            "Public"
+            "Templates"
+            "Videos"
+          ];
+        };
       };
     };
   };

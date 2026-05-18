@@ -8,7 +8,7 @@
     in
     {
       options.filosofo.features.gaming.enable =
-        lib.mkEnableOption "Enable gaming suite (Steam, Wine, Lutris, Gamescope)";
+        lib.mkEnableOption "Enable gaming suite";
 
       config = lib.mkIf cfg.enable {
     hardware.graphics.enable = lib.mkDefault true;
@@ -29,24 +29,21 @@
     environment.systemPackages = with pkgs; [
       lutris
       steam-run
+      itch
       dxvk
       gamescope
       mangohud
       r2modman
       heroic
-      er-patcher
-      bottles
       steamtinkerlaunch
-      prismlauncher
       lsfg-vk
       lsfg-vk-ui
+      bastet
+      airshipper
+      veloren
     ];
 
-    # Cache substituters for nix-gaming
-    nix.settings = {
-      substituters = [ "https://nix-gaming.cachix.org" ];
-      trusted-public-keys = [ "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];
-    };
+
 
     home-manager.users.${userName} = { pkgs, ... }: {
       home.packages = with pkgs; [

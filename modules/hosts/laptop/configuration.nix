@@ -26,7 +26,7 @@
     networking.hostName = "${hostPrefix}-laptop";
 
     filosofo.hardware = {
-      gpu.type     = "amd";
+      gpu.type     = "intel";
       powerProfile = "powersave";
     };
 

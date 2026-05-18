@@ -10,6 +10,9 @@
       self.nixosModules.hardware
       self.nixosModules.preservation
       self.nixosModules.security
+      self.nixosModules.audio
+      self.nixosModules.bluetooth
+      self.nixosModules.dbus
     ];
   };
 }

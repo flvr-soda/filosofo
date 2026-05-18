@@ -1,6 +1,6 @@
 # secrets.nix — SOPS-nix configuration and user secrets
 { self, inputs, ... }: {
-  flake.nixosModules.secrets = { config, userName, ... }: {
+  flake.nixosModules.secrets = { config, userName, sshKeyName, ... }: {
     imports = [ inputs.sops-nix.nixosModules.default ];
 
     sops = {
@@ -9,10 +9,8 @@
       age.keyFile = "/persist/var/lib/sops/age/keys.txt";
     };
 
-    sops.secrets.user_password.neededForUsers = true;
-
     sops.secrets.github_ssh_key = {
-      path  = "/home/${userName}/.ssh/id_github";
+      path  = "/home/${userName}/.ssh/${sshKeyName}";
       owner = userName;
       mode  = "0400";
     };

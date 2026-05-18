@@ -8,7 +8,7 @@
     in
     {
       options.filosofo.features.engineering.enable =
-        lib.mkEnableOption "Enable hardware engineering tools (Arduino, KiCad, serial comms)";
+        lib.mkEnableOption "Enable hardware engineering tools";
 
       config = lib.mkIf cfg.enable {
         # udev rules so the user can flash boards without root
