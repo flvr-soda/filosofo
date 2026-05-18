@@ -86,7 +86,6 @@
           binds = {
             "Mod+Return".spawn = "kitty";
             "Mod+Space".spawn = [ "noctalia-shell" "app-launcher" "toggle" ];
-            "Mod+Shift+Space".switch-preset-keyboard-layout = "next";
             "Mod+Shift+Slash".spawn = "which-key";
             "Mod+Q".close-window = _: {};
 
@@ -97,7 +96,7 @@
             "Mod+Shift+T".toggle-window-floating = _: {};
 
             "Mod+Ctrl+S".spawn = [ "sh" "-c" "${lib.getExe pkgs.grim} -l 0 - | ${pkgs.wl-clipboard}/bin/wl-copy" ];
-            "Mod+Shift+E".spawn = [ "sh" "-c" "${pkgs.wl-clipboard}/bin/wl-paste | ${lib.getExe pkgs.swappy} -f -" ];
+            "Mod+Shift+A".spawn = [ "sh" "-c" "${pkgs.wl-clipboard}/bin/wl-paste | ${lib.getExe pkgs.swappy} -f -" ];
             "Mod+Shift+S".spawn = [ "sh" "-c" "${lib.getExe pkgs.grim} -g \"$(${lib.getExe pkgs.slurp} -w 0)\" - | ${pkgs.wl-clipboard}/bin/wl-copy" ];
             "Mod+F".maximize-column = _: {};
             "Mod+Shift+F".fullscreen-window = _: {};

@@ -24,6 +24,7 @@
               "security.workspace.trust.banner"    = "never";
               "files.autoSave"                     = "afterDelay";
               "editor.minimap.autohide"            = "mouseover";
+              "http.systemCertificatesNode"        = true;
             };
           };
 
