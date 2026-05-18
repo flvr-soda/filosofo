@@ -44,6 +44,15 @@
     description = userFullName;
     extraGroups = ["networkmanager" "wheel" "video" "render"];
     hashedPasswordFile = "/persist/passwd";
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpIr3NFsdj5GVlB8HpVGL7pmvrotbrOD8cPBvC6u1sO isma@filosofo-admin"
+    ];
+  };
+
+  users.users.root = {
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpIr3NFsdj5GVlB8HpVGL7pmvrotbrOD8cPBvC6u1sO isma@filosofo-admin"
+    ];
   };
 
 
@@ -76,6 +85,9 @@
         "github.com" = {
           hostname = "github.com";
           identityFile = "~/.ssh/${sshKeyName}";
+        };
+        "filosofo-* *.local *.lan" = {
+          identityFile = "~/.ssh/id_filosofo";
         };
       };
     };

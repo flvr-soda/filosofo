@@ -46,7 +46,7 @@
     # Enables serial console ttyS0 for out-of-band crash recovery on headless hardware.
     boot.kernelParams = lib.mkAfter [ "console=ttyS0,115200" ];
 
-    services.openssh.settings.PermitRootLogin = lib.mkForce "no";
+    services.openssh.settings.PermitRootLogin = lib.mkForce "prohibit-password";
 
     # Limits resource usage of Ollama to prevent inference from starving host operations.
     systemd.services.ollama.serviceConfig = {
