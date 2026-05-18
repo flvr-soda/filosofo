@@ -73,7 +73,7 @@
 
     # Host-specific printing configuration for Samsung ML-1660 via USB
     services.printing.enable = true;
-    services.printing.drivers = [ pkgs.splix pkgs.samsung-unified-linux-driver ];
+    services.printing.drivers = [ pkgs.splix ];
     services.ipp-usb.enable = true;
     hardware.printers.ensurePrinters = [
       {

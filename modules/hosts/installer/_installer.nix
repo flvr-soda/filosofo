@@ -1,5 +1,5 @@
 # modules/hosts/installer/_installer.nix — Custom installer configuration
-{ pkgs, inputs, ... }: {
+{ pkgs, inputs, keyMap, ... }: {
   # target platform
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -18,6 +18,6 @@
   # Console keyboard layout and font
   console = {
     font   = "Lat2-Terminus16";
-    keyMap = "us";
+    keyMap = "keyMap";
   };
 }
