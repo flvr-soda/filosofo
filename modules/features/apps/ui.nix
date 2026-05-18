@@ -54,6 +54,7 @@
           self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell
           self.packages.${pkgs.stdenv.hostPlatform.system}.which-key
           kitty
+          nautilus
           awww # Wallpaper daemon
           wayland-utils
           wl-clipboard
