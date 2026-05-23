@@ -1,18 +1,28 @@
 { self, inputs, ... }: {
-  flake.nixosModules.locale = { pkgs, timeZone, defaultLocale, extraLocale, keyMap, xkbLayout, xkbOptions, ... }: {
+  flake.nixosModules.locale = { pkgs, timeZone, locale1, locale2, keyMap, xkbLayout, xkbOptions, ... }: {
     time.timeZone = timeZone;
-    i18n.defaultLocale = defaultLocale;
-    i18n.extraLocaleSettings = {
-      LC_ADDRESS = extraLocale;
-      LC_IDENTIFICATION = extraLocale;
-      LC_MEASUREMENT = extraLocale;
-      LC_MONETARY = extraLocale;
-      LC_NAME = extraLocale;
-      LC_NUMERIC = extraLocale;
-      LC_PAPER = extraLocale;
-      LC_TELEPHONE = extraLocale;
-      LC_TIME = extraLocale;
+    
+    i18n = {
+      defaultLocale = locale1;
+
+      supportedLocales = [
+        "${locale1}/UTF-8"
+        "${locale2}/UTF-8"
+      ];
+
+      extraLocaleSettings = {
+        LC_ADDRESS = locale2;
+        LC_IDENTIFICATION = locale2;
+        LC_MEASUREMENT = locale2;
+        LC_MONETARY = locale2;
+        LC_NAME = locale2;
+        LC_NUMERIC = locale2;
+        LC_PAPER = locale2;
+        LC_TELEPHONE = locale2;
+        LC_TIME = locale2;
+      };
     };
+
     console.keyMap = keyMap;
     services.xserver.xkb = {
       layout = xkbLayout;

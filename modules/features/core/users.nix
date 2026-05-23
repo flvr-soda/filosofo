@@ -50,6 +50,7 @@
   };
 
   users.users.root = {
+    hashedPasswordFile = "/persist/root-passwd";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpIr3NFsdj5GVlB8HpVGL7pmvrotbrOD8cPBvC6u1sO isma@filosofo-admin"
     ];

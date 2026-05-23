@@ -63,9 +63,11 @@
             ".steam"
             ".var"
             ".wine"
+            ".cache/noctalia"
             # Gaming and Applications
             "Games"
             # XDG User Directories
+            "Development"
             "Desktop"
             "Documents"
             "Downloads"

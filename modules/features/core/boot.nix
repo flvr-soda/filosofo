@@ -3,6 +3,7 @@
     boot = {
       kernelPackages = pkgs.linuxPackages_latest;
       loader.systemd-boot.enable = true;
+      loader.systemd-boot.consoleMode = "max";
       loader.systemd-boot.configurationLimit = 5;
       loader.efi.canTouchEfiVariables = true;
       loader.timeout = 3;
@@ -23,7 +24,7 @@
         "kernel.perf_event_paranoid" = 3;
         # Aggressively swap idle pages to ZRAM to maximize hot RAM availability
         "vm.swappiness" = 180;
-        # Disable sequential read-ahead swap pages to eliminate CPU ZRAM overhead
+        # Disables cluster readahead, which is ideal for zram setups.
         "vm.page-cluster" = 0;
         # Keep file system metadata in memory longer for faster directory listing
         "vm.vfs_cache_pressure" = 50;
@@ -41,14 +42,24 @@
         packages = with pkgs; [ apparmor-utils apparmor-profiles ];
       };
     };
-    # Enable ZRAM swap to prevent OOM crashes during heavy Nix builds/compilations
-    # and to complement the tmpfs root used for impermanence.
+    # Enable ZRAM swap to prevent OOM crashes 
     zramSwap = {
       enable = true;
       algorithm = "zstd";
       memoryPercent = 50;
       priority = 100;
     };
-    swapDevices = [];
+
+    # Limit shutdown delays caused by hung services on ephemeral sessions
+    systemd.settings.Manager = {
+      DefaultTimeoutStartSec = "15s";
+      DefaultTimeoutStopSec = "10s";
+    };
+
+    # Prevent boot journals from accumulating endlessly and filling up persistent storage
+    services.journald.extraConfig = ''
+      SystemMaxUse=100M
+      MaxRetentionSec=1month
+    '';
   };
 }

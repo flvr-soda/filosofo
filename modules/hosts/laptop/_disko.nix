@@ -28,6 +28,14 @@
               mountpoint = "/boot";
             };
           };
+          swap = {
+            size = "16G";
+            content = {
+              type = "swap";
+              priority = 10;
+              randomEncryption = true;
+            };
+          };
           luks = {
             size    = "100%";
             content = {

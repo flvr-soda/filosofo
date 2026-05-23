@@ -82,45 +82,34 @@ We implement a clean Impermanence setup to ensure system purity:
 3.  Drive Partitioning: Declarative partition systems are specified via disko:
     *   Laptop: Single SSD layout with LUKS encryption.
     *   Desktop: High-performance OS SSD and mapped high-capacity HDD /storage drive.
+4.  Hybrid Swap System: A 16GB encrypted physical swap partition (configured with low priority 10 and `vm.page-cluster = 0` kernel optimization to prevent aggressive disk read-ahead) is paired with a high-priority zram swap device (priority 100) to ensure system stability during heavy compilations without disk-thrashing overhead.
 
 ---
 
 ## Installation on New Devices
 
-Installing Filosofo on a new machine is fully automated via our custom Live CD:
+Installing Filosofo on a new machine is fully automated via our custom `install.sh` script, which handles Disko partitioning, BTRFS subvolumes, and secret hydration.
 
-1.  Boot the Installer: Burn and boot the custom installer Live ISO.
-2.  Cloning Configuration: Use the custom alias to pull your configuration:
+1.  **Boot an Official Installer**: Burn and boot the official NixOS Minimal ISO.
+2.  **Clone the Repository**:
     ```bash
-    clone-repo
+    nix-shell -p git --run "git clone https://github.com/flvr-soda/filosofo.git /tmp/filosofo"
+    cd /tmp/filosofo
     ```
-3.  Run Partitioning & Installation: Run the automated setup helper matching your target device:
+3.  **Run the Installer**: Run the automated setup helper matching your target device (it will interactively prompt you to map your physical drives via `by-path` and ask for your encrypted USB containing your secrets):
     *   To install on a desktop:
         ```bash
-        install-desktop
+        sudo ./install.sh desktop
         ```
     *   To install on a laptop:
         ```bash
-        install-laptop
+        sudo ./install.sh laptop
         ```
     *   To install on a headless server:
         ```bash
-        install-server
+        sudo ./install.sh server
         ```
-4.  **Reboot**: Once finished, reboot the device. Your ephemeral system will boot cleanly into a fully-configured Niri/Noctalia environment!
-
----
-
-## Custom Live CD Shell Aliases
-
-Our custom Live environment registers these helpful shell commands inside _installer.nix:
-
-| Shell Alias | Command | Description |
-| :--- | :--- | :--- |
-| clone-repo | git clone https://github.com/flvr-soda/filosofo.git | Clones this repository into the live session. |
-| install-desktop | sudo nix run github:nix-community/disko/latest -- --mode disko --flake .#desktop && sudo nixos-install --flake .#desktop | Partition drive via Disko and bootstrap Desktop system. |
-| install-laptop | sudo nix run github:nix-community/disko/latest -- --mode disko --flake .#laptop && sudo nixos-install --flake .#laptop | Partition drive via Disko and bootstrap Laptop system. |
-| install-server | sudo nix run github:nix-community/disko/latest -- --mode disko --flake .#server && sudo nixos-install --flake .#server | Partition drive via Disko and bootstrap Homelab Server system. |
+4.  **Reboot**: Once finished, remove the USB drive and reboot the device. Your system will boot cleanly into a fully-configured Niri/Noctalia environment!
 
 ---
 

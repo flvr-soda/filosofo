@@ -67,6 +67,23 @@
             };
           };
 
+          blur = {
+            passes = 3;
+            offset = 3.0;
+            noise = 0.02;
+            saturation = 1.2;
+          };
+
+          window-rules = [
+            {
+              matches = [ { is-active = false; } ];
+              opacity = 0.90;
+              background-effect = {
+                blur = true;
+              };
+            }
+          ];
+
           spawn-at-startup = [
             [ "noctalia-shell" ]
             [ "awww-daemon" ]

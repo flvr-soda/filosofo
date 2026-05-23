@@ -20,7 +20,7 @@
           name = "filosofo-noctalia";
         });
         env = {
-          "NOCTALIA_CACHE_DIR" = "/tmp/filosofo-noctalia-cache/";
+          "NOCTALIA_CACHE_DIR" = "$HOME/.cache/noctalia/";
         };
         colors = {
           mError = "#fb4934";
@@ -55,6 +55,25 @@
             useApp2Unit = false;
             viewMode = "list";
           };
+
+          dock = {
+            enabled = true;
+            position = "bottom";       
+            displayMode = "auto_hide";  
+            dockType = "floating";     
+            pinnedApps = [
+              "firefox.desktop"
+              "steam.desktop"
+              "vscodium.desktop"
+              "kitty.desktop"
+              "org.gnome.Nautilus.desktop"
+            ];
+            pinnedStatic = true;
+            groupApps = true;
+            showLauncherIcon = true;
+            launcherPosition = "start";
+          };
+
           audio = {
             cavaFrameRate = 30;
             externalMixer = "pavucontrol";

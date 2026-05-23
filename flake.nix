@@ -56,7 +56,7 @@
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake
     { inherit inputs; }
-    ({ self, lib, userName, userFullName, userEmail, gitName, stateVersion, timeZone, defaultLocale, extraLocale, keyMap, xkbLayout, xkbOptions, hostPrefix, servicesHost, sshKeyName, mediaGroup, mediaPath, ... }: {
+    ({ self, lib, userName, userFullName, userEmail, gitName, stateVersion, timeZone, locale1, locale2, keyMap, xkbLayout, xkbOptions, hostPrefix, servicesHost, sshKeyName, mediaGroup, mediaPath, ... }: {
       imports = [
         (inputs.import-tree ./modules)
       ];
@@ -66,7 +66,7 @@
           nixpkgs      = import inputs.nixpkgs { system = "x86_64-linux"; };
           specialArgs  = {
             inherit inputs self userName userFullName userEmail gitName
-                    stateVersion timeZone defaultLocale extraLocale keyMap
+                    stateVersion timeZone locale1 locale2 keyMap
                     xkbLayout xkbOptions hostPrefix servicesHost sshKeyName mediaGroup mediaPath;
           };
         };
