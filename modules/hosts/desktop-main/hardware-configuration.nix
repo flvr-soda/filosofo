@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.desktopHardware = { config, lib, pkgs, modulesPath, ... }: {
+  flake.nixosModules.desktopMainHardware = { config, lib, pkgs, modulesPath, ... }: {
     imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
     boot.initrd.availableKernelModules = [ "ehci_pci" "ahci" "nvme" "usb_storage" "sd_mod" ];
@@ -8,7 +8,7 @@
     boot.extraModulePackages = [ ];
 
     # NOTE: fileSystems and swapDevices are managed declaratively by Disko.
-    # Do not declare them here — see disko.nix + desktop/configuration.nix.
+    # Do not declare them here — see _disko.nix + desktop-main/configuration.nix.
     networking.useDHCP = lib.mkDefault true;
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

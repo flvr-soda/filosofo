@@ -31,9 +31,10 @@
     # virt-manager requires the spice-vdagent for clipboard and display integration
     virtualisation.spiceUSBRedirection.enable = true;
 
-    virtualisation.docker = {
+    virtualisation.podman = {
       enable = true;
-      logDriver = "json-file";
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
     };
 
     services.k3s = {
@@ -42,7 +43,7 @@
       extraFlags = "--disable traefik --disable local-storage";
     };
 
-    users.users.${userName}.extraGroups = [ "libvirtd" "kvm" "docker" ];
+    users.users.${userName}.extraGroups = [ "libvirtd" "kvm" "podman" ];
 
     # Home Manager User-Level Configuration
     home-manager.users.${userName} = { pkgs, ... }: {

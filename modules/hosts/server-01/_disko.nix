@@ -1,4 +1,4 @@
-# modules/hosts/server/disko.nix — Server Disko Layout
+# modules/hosts/server-01/_disko.nix — Server Disko Layout
 { inputs, ... }: {
   imports = [ inputs.disko.nixosModules.disko ];
 

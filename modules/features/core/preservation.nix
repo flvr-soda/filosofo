@@ -41,7 +41,7 @@
           { directory = "/var/lib/fail2ban";                  inInitrd = false; }
           { directory = "/var/lib/crowdsec";                  inInitrd = false; }
           { directory = "/etc/crowdsec";                      inInitrd = false; }
-          { directory = "/var/lib/docker";                    inInitrd = false; }
+
           { directory = "/var/lib/rancher/k3s";               inInitrd = false; }
           { directory = "/etc/rancher";                       inInitrd = false; }
           { directory = "/var/lib/redis-main";                inInitrd = false; }

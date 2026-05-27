@@ -20,8 +20,8 @@ fi
 
 HOST=$1
 
-if [[ "$HOST" != "desktop" && "$HOST" != "laptop" && "$HOST" != "server" ]]; then
-  echo -e "Usage: ${BOLD}$0 [desktop|laptop|server]${NC}"
+if [[ "$HOST" != "desktop-main" && "$HOST" != "laptop-dev" && "$HOST" != "laptop-basic" && "$HOST" != "server-01" && "$HOST" != "server-02" && "$HOST" != "server-03" ]]; then
+  echo -e "Usage: ${BOLD}$0 [desktop-main|laptop-dev|laptop-basic|server-01|server-02|server-03]${NC}"
   exit 1
 fi
 

@@ -14,7 +14,6 @@
 
     programs.nix-ld.enable = true;
 
-
     programs.nh = {
       enable = true;
       clean.enable = true;
@@ -53,24 +52,11 @@
       nixfmt
       statix
 
-
       manix
       nix-tree
       nix-diff
       nvd
     ];
-
-    nixpkgs.overlays = [
-      inputs.antigravity-nix.overlays.default
-      (final: prev: {
-        # OpenLDAP: disable tests; test017-syncreplication-refresh flakes on some builders.
-        # Revisit when bumping nixpkgs if upstream fixes the test.
-        openldap = prev.openldap.overrideAttrs (oldAttrs: {
-          doCheck = false;
-        });
-      })
-    ];
-
   };
 }
 

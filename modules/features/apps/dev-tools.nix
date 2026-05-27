@@ -1,12 +1,12 @@
 # apps/dev-tools.nix — Developer tooling suite.
 # Taxonomy: features/apps/dev-tools.nix
-# Covers: Git, Lazygit, VSCodium, Google Antigravity (FHS-isolated).
+# Covers: Git, Lazygit, VSCodium, LLM Agents, Google Antigravity (FHS-wrapped via jacopone/antigravity-nix).
 { self, inputs, lib, ... }: {
   flake.nixosModules.dev-tools = { config, pkgs, userName, userEmail, gitName, ... }:
     let
       cfg = config.filosofo.features.dev-tools;
-      antigravityPkg =
-        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default or null;
+      agents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+      antigravityPkgs = inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system};
     in
     {
       options.filosofo.features.dev-tools.enable =
@@ -72,8 +72,18 @@
               metasploit
               ghidra
               john
-            ]
-            ++ lib.optional (antigravityPkg != null) antigravityPkg;
+
+              # AI Agents
+              agents.goose-cli
+              agents.jules
+              agents.crush
+              agents.hermes
+
+              # Google Antigravity (dedicated FHS-wrapped packages)
+              antigravityPkgs.google-antigravity      # Base App 2.0
+              antigravityPkgs.google-antigravity-ide   # IDE
+              antigravityPkgs.google-antigravity-cli   # agy CLI
+            ];
 
           programs.kitty = {
             enable = true;

@@ -56,10 +56,12 @@ Background processes and server stacks:
 
 ## Fleet Hosts & Deployment
 
-We define and target three core environments, plus a custom builder:
-*   desktop: Powerful workstation utilizing Core + Apps + Homelab + AI inference + massive AMD GPU acceleration.
-*   laptop: Portable station optimized for single SSD layouts, using local desktop applications and remote AI.
-*   server: Headless, pure-software homelab container server configured remotely.
+*   **desktop-main**: Powerful workstation utilizing Core + Apps + Homelab + AI inference + massive AMD GPU acceleration.
+*   **laptop-dev**: Portable development station optimized for single SSD layouts.
+*   **laptop-basic**: Lightweight portable station without development or gaming overhead.
+*   **server-01**: Headless storage/NAS node.
+*   **server-02**: Headless compute/container node.
+*   **server-03**: Headless AI inference node with GPU acceleration.
 *   installer: Custom GNOME graphical installation Live CD containing pre-loaded installation shell scripts.
 
 ### Rebuild and Fleet Deployment Commands:
@@ -69,7 +71,7 @@ We define and target three core environments, plus a custom builder:
     ```
 *   Fleet Deployments: Use colmena to securely push updates from your laptop or desktop directly onto remote servers (like the headless homelab server):
     ```bash
-    colmena apply --on server
+    colmena apply --on server-01
     ```
 
 ---
@@ -97,18 +99,14 @@ Installing Filosofo on a new machine is fully automated via our custom `install.
     cd /tmp/filosofo
     ```
 3.  **Run the Installer**: Run the automated setup helper matching your target device (it will interactively prompt you to map your physical drives via `by-path` and ask for your encrypted USB containing your secrets):
-    *   To install on a desktop:
-        ```bash
-        sudo ./install.sh desktop
-        ```
-    *   To install on a laptop:
-        ```bash
-        sudo ./install.sh laptop
-        ```
-    *   To install on a headless server:
-        ```bash
-        sudo ./install.sh server
-        ```
+    *   To install on desktop-main:
+        sudo ./install.sh desktop-main
+
+    *   To install on laptop-dev:
+        sudo ./install.sh laptop-dev
+
+    *   To install on a headless server (e.g. server-01):
+        sudo ./install.sh server-01
 4.  **Reboot**: Once finished, remove the USB drive and reboot the device. Your system will boot cleanly into a fully-configured Niri/Noctalia environment!
 
 ---
@@ -159,9 +157,9 @@ Here is the complete categorized reference of the defined aliases:
 *   `cab`: `colmena apply --build-on-target` (Build closures directly on the target host)
 *   `cbl`: `colmena build` (Test-build all hosts closures locally)
 *   `ce`: `colmena eval` (Run dry evaluations on nodes)
-*   `cad`: `colmena apply --on desktop` (Deploy configuration to desktop)
-*   `cas`: `colmena apply --on server` (Deploy configuration to server)
-*   `cal`: `colmena apply --on laptop` (Deploy configuration to laptop)
+*   `cad`: `colmena apply --on desktop-main` (Deploy configuration to desktop-main)
+*   `cas1`: `colmena apply --on server-01` (Deploy configuration to server-01)
+*   `cal`: `colmena apply --on laptop-dev` (Deploy configuration to laptop-dev)
 
 ### 4. Version Control (Git) Shortcuts
 *   `g`: `git`

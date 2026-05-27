@@ -13,27 +13,7 @@
       config = lib.mkIf cfg.enable {
         home-manager.users.${userName} = { pkgs, ... }: {
           home.packages = with pkgs; [
-            gcc
-            gnumake
-            cmake
-            pkg-config
-            meson
-            ninja
-            openjdk
-            python3
-            python3Packages.pip
-            rustup
-            gdb
-            lldb
-            valgrind
             hyperfine
-            strace
-            ltrace
-
-            # ── DevOps ────────────────────────────────────────────────────
-            act        # Run GitHub Actions locally
-            k9s        # Kubernetes TUI
-            kubectl
           ];
         };
       };

@@ -1,4 +1,4 @@
-# modules/hosts/laptop/disko.nix — Laptop Disko Layout
+# modules/hosts/laptop-dev/_disko.nix — Laptop Disko Layout
 { inputs, ... }: {
   imports = [ inputs.disko.nixosModules.disko ];
 

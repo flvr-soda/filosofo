@@ -1,9 +1,9 @@
-# desktop/configuration.nix — AMD Desktop Workstation
+# desktop-main/configuration.nix — AMD Desktop Workstation
 { self, inputs, ... }: {
-  flake.nixosModules.desktopConfiguration = { lib, pkgs, userName, hostPrefix, ... }: {
+  flake.nixosModules.desktopMainConfiguration = { lib, pkgs, userName, ... }: {
     imports =
       [
-        self.nixosModules.desktopHardware
+        self.nixosModules.desktopMainHardware
         self.nixosModules.core
         self.nixosModules.ui
         self.nixosModules.dev-tools
@@ -26,7 +26,7 @@
         ./_disko.nix
       ];
 
-    networking.hostName = "${hostPrefix}-desktop";
+    networking.hostName = "desktop-main";
 
     filosofo.hardware = {
       gpu.type     = "amd";
@@ -45,7 +45,11 @@
       media.enable                    = lib.mkDefault true;
       productivity.enable             = lib.mkDefault true;
       gaming.enable                   = lib.mkDefault true;
+      
+      # Master switch for all homelab services (Jellyfin, Nextcloud, etc.)
+      homelab.full-stack.enable       = lib.mkDefault true;
       arr-stack.enable                = lib.mkDefault true;
+      
       virtualization.enable           = lib.mkDefault true;
       tailscale.enable                = lib.mkDefault true;
     };

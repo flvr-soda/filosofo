@@ -19,11 +19,9 @@
         home-manager.users.${userName} = { pkgs, ... }: {
           home.packages = with pkgs; [
             arduino-ide
-            arduino-cli
             kicad
             minicom
             screen
-            picocom
           ];
         };
       };

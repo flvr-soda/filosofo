@@ -29,21 +29,16 @@
     environment.systemPackages = with pkgs; [
       lutris
       steam-run
+      heroic
       itch
       dxvk
       gamescope
       mangohud
       r2modman
-      heroic
       steamtinkerlaunch
       lsfg-vk
       lsfg-vk-ui
-      bastet
-      airshipper
-      veloren
     ];
-
-
 
     home-manager.users.${userName} = { pkgs, ... }: {
       home.packages = with pkgs; [

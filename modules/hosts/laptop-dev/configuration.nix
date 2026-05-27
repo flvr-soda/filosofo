@@ -1,9 +1,9 @@
-# laptop/configuration.nix — Portable Workstation
+# laptop-dev/configuration.nix — Portable Workstation
 { self, inputs, ... }: {
-  flake.nixosModules.laptopConfiguration = { lib, pkgs, hostPrefix, ... }: {
+  flake.nixosModules.laptopDevConfiguration = { lib, pkgs, ... }: {
     imports =
       [
-        self.nixosModules.laptopHardware
+        self.nixosModules.laptopDevHardware
         self.nixosModules.core
         self.nixosModules.ui
         self.nixosModules.dev-tools
@@ -23,7 +23,7 @@
         ./_disko.nix
       ];
 
-    networking.hostName = "${hostPrefix}-laptop";
+    networking.hostName = "laptop-dev";
 
     filosofo.hardware = {
       gpu.type     = "intel";

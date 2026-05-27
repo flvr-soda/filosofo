@@ -1,5 +1,5 @@
 { self, inputs, lib, ... }: {
-  flake.nixosModules.browsers = { config, pkgs, userName, servicesHost, ... }:
+  flake.nixosModules.browsers = { config, pkgs, userName, ... }:
     let
       cfg = config.filosofo.features.browsers;
     in
@@ -37,10 +37,7 @@
                 "signon.rememberSignons"                             = true;
                 "browser.download.panel.shown"                       = true;
               };
-              extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
-                ublock-origin
-                bitwarden
-              ];
+
               bookmarks = {
                 force = true;
                 settings = [{
@@ -71,36 +68,36 @@
                     {
                       name = "Homelab";
                       bookmarks = [
-                        { name = "Nextcloud";   url = "http://${servicesHost}:80"; }
-                        { name = "qBittorrent"; url = "http://${servicesHost}:8282"; }
+                        { name = "Nextcloud";   url = "http://localhost:80"; }
+                        { name = "qBittorrent"; url = "http://localhost:8282"; }
                       ];
                     }
                     {
                       name = "Media & Arr";
                       bookmarks = [
-                        { name = "Jellyfin";    url = "http://${servicesHost}:8096"; }
-                        { name = "Seerr";       url = "http://${servicesHost}:5055"; }
-                        { name = "Prowlarr";    url = "http://${servicesHost}:9696"; }
-                        { name = "Sonarr";      url = "http://${servicesHost}:8989"; }
-                        { name = "Radarr";      url = "http://${servicesHost}:7878"; }
-                        { name = "Lidarr";      url = "http://${servicesHost}:8686"; }
-                        { name = "Readarr";     url = "http://${servicesHost}:8787"; }
-                        { name = "Bazarr";      url = "http://${servicesHost}:6767"; }
+                        { name = "Jellyfin";    url = "http://localhost:8096"; }
+                        { name = "Seerr";       url = "http://localhost:5055"; }
+                        { name = "Prowlarr";    url = "http://localhost:9696"; }
+                        { name = "Sonarr";      url = "http://localhost:8989"; }
+                        { name = "Radarr";      url = "http://localhost:7878"; }
+                        { name = "Lidarr";      url = "http://localhost:8686"; }
+                        { name = "Readarr";     url = "http://localhost:8787"; }
+                        { name = "Bazarr";      url = "http://localhost:6767"; }
                       ];
                     }
                     {
                       name = "Library & Audio";
                       bookmarks = [
-                        { name = "Navidrome";   url = "http://${servicesHost}:4533"; }
-                        { name = "Kavita";      url = "http://${servicesHost}:5000"; }
-                        { name = "Kiwix";       url = "http://${servicesHost}:8081"; }
+                        { name = "Navidrome";   url = "http://localhost:4533"; }
+                        { name = "Kavita";      url = "http://localhost:5000"; }
+                        { name = "Kiwix";       url = "http://localhost:8081"; }
                       ];
                     }
                     {
                       name = "AI Services";
                       bookmarks = [
-                        { name = "Open-WebUI";  url = "http://${servicesHost}:8080"; }
-                        { name = "SearXNG";     url = "http://${servicesHost}:8888"; }
+                        { name = "Open-WebUI";  url = "http://localhost:8080"; }
+                        { name = "SearXNG";     url = "http://localhost:8888"; }
                       ];
                     }
                   ];
