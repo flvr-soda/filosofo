@@ -1,6 +1,8 @@
 # apps/dev-tools.nix — Developer tooling suite.
 # Taxonomy: features/apps/dev-tools.nix
 # Covers: Git, Lazygit, VSCodium, LLM Agents, Google Antigravity (FHS-wrapped via jacopone/antigravity-nix).
+#          Also includes: benchmarking (hyperfine) and database clients (beekeeper-studio, psql).
+#          Supersedes: toolchains.nix, database-clients.nix (merged here; those files are deleted).
 { self, inputs, lib, ... }: {
   flake.nixosModules.dev-tools = { config, pkgs, userName, userEmail, gitName, ... }:
     let
@@ -72,6 +74,13 @@
               metasploit
               ghidra
               john
+
+              # Benchmarking (merged from toolchains.nix)
+              hyperfine
+
+              # Database clients (merged from database-clients.nix)
+              beekeeper-studio
+              postgresql_16 # psql CLI
 
               # AI Agents
               agents.goose-cli
@@ -235,7 +244,6 @@
               nscan-vuln = "nmap -sV --script=vuln";
               sniff = "sudo tcpdump -i any -c 100 -nn";
               hasher = "sha256sum";
-              list-aliases = "alias";
             };
           };
         };

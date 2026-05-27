@@ -7,13 +7,11 @@
         self.nixosModules.core
         self.nixosModules.ui
         self.nixosModules.dev-tools
-        self.nixosModules.toolchains
         self.nixosModules.engineering
         self.nixosModules.gaming
         self.nixosModules.browsers
         self.nixosModules.media
         self.nixosModules.productivity
-        self.nixosModules.database-clients
         self.nixosModules.databases
         self.nixosModules.tailscale
         self.nixosModules.virtualization
@@ -37,10 +35,8 @@
       desktop.niri.enable             = lib.mkDefault true;
       desktop.autologin.enable        = lib.mkDefault true;
       dev-tools.enable                = lib.mkDefault true;
-      toolchains.enable               = lib.mkDefault true;
       engineering.enable              = lib.mkDefault true;
       databases.enable                = lib.mkDefault true;
-      database-clients.enable         = lib.mkDefault true;
       browsers.enable                 = lib.mkDefault true;
       media.enable                    = lib.mkDefault true;
       productivity.enable             = lib.mkDefault true;

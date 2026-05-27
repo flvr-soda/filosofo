@@ -27,13 +27,6 @@
       media.enable                    = lib.mkDefault true;
       productivity.enable             = lib.mkDefault true;
       tailscale.enable                = lib.mkDefault true;
-      
-      # Disabled features for basic user
-      dev-tools.enable                = lib.mkDefault false;
-      toolchains.enable               = lib.mkDefault false;
-      engineering.enable              = lib.mkDefault false;
-      gaming.enable                   = lib.mkDefault false;
-      virtualization.enable           = lib.mkDefault false;
     };
   };
 }

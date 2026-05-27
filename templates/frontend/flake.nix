@@ -17,11 +17,9 @@
       default = pkgs.mkShell {
         packages = with pkgs; [
           nodejs
-          nodePackages.pnpm
-          nodePackages.typescript
-          nodePackages.vite
-          eslint_d
-          git
+          pnpm
+          typescript
+          eslint
         ];
         
         shellHook = ''

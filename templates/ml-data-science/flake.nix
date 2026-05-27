@@ -15,7 +15,7 @@
       };
       pythonEnv = pkgs.python3.withPackages (ps: with ps; [
         jupyterlab
-        pytorch
+        torch
         pandas
         scikit-learn
         matplotlib

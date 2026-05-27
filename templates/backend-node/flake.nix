@@ -19,8 +19,8 @@
         packages = with pkgs; [
           # Node.js Toolchain
           nodejs
-          nodePackages.pnpm
-          nodePackages.typescript
+          pnpm
+          typescript
 
           # API Development
           postman

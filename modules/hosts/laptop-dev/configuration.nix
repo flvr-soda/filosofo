@@ -7,7 +7,6 @@
         self.nixosModules.core
         self.nixosModules.ui
         self.nixosModules.dev-tools
-        self.nixosModules.toolchains
         self.nixosModules.engineering
         self.nixosModules.gaming
         self.nixosModules.browsers
@@ -34,7 +33,6 @@
       desktop.niri.enable             = lib.mkDefault true;
       desktop.autologin.enable        = lib.mkDefault true;
       dev-tools.enable                = lib.mkDefault true;
-      toolchains.enable               = lib.mkDefault true;
       engineering.enable              = lib.mkDefault false;
       browsers.enable                 = lib.mkDefault true;
       media.enable                    = lib.mkDefault true;
