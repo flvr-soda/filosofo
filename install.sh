@@ -77,7 +77,7 @@ mount "$usb_dev" /mnt/usb
 mkdir -p /mnt/persist/secrets
 chmod 0751 /mnt/persist/secrets
 
-for f in nextcloud-admin-password kavita-token searxng open-webui tailscale-authkey; do
+for f in nextcloud-admin-password kavita-token searxng open-webui netbird-setup-key; do
   if [ -f "/mnt/usb/$f" ]; then
     cp "/mnt/usb/$f" /mnt/persist/secrets/
     echo "  Copied $f"
@@ -85,7 +85,7 @@ for f in nextcloud-admin-password kavita-token searxng open-webui tailscale-auth
 done
 
 chmod 0640 /mnt/persist/secrets/* 2>/dev/null || true
-chmod 0600 /mnt/persist/secrets/tailscale-authkey 2>/dev/null || true
+chmod 0600 /mnt/persist/secrets/netbird-setup-key 2>/dev/null || true
 
 # SSH keys
 mkdir -p /mnt/persist/home/isma/.ssh

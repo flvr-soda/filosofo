@@ -6,7 +6,7 @@
         self.nixosModules.core
         self.nixosModules.databases
         self.nixosModules.homelab
-        self.nixosModules.tailscale
+        self.nixosModules.netbird
         self.nixosModules.virtualization
         ./_disko.nix
       ];
@@ -23,10 +23,9 @@
       homelab.full-stack.enable = lib.mkDefault true;
       arr-stack.enable          = lib.mkDefault true;
       virtualization.enable     = lib.mkDefault true;
-      tailscale = {
+      netbird = {
         enable             = lib.mkDefault true;
         useRoutingFeatures = lib.mkDefault "server";
-        headlessJoin       = lib.mkDefault true;
       };
     };
 

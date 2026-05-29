@@ -18,6 +18,11 @@
         self.nixosModules.kavita
         self.nixosModules.kiwix
         self.nixosModules.nextcloud
+        self.nixosModules.authentik
+        self.nixosModules.homepage
+        self.nixosModules.vaultwarden
+        self.nixosModules.immich
+        self.nixosModules.paperless
       ];
 
       options.filosofo.features.homelab.full-stack.enable =
@@ -32,6 +37,11 @@
           kavita.enable      = lib.mkDefault true;
           kiwix.enable       = lib.mkDefault true;
           nextcloud.enable   = lib.mkDefault true;
+          authentik.enable   = lib.mkDefault true;
+          homepage.enable    = lib.mkDefault true;
+          vaultwarden.enable = lib.mkDefault true;
+          immich.enable      = lib.mkDefault true;
+          paperless.enable   = lib.mkDefault true;
         };
       };
     };

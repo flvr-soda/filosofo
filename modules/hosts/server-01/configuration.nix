@@ -5,7 +5,7 @@
       [
         self.nixosModules.core
         self.nixosModules.databases
-        self.nixosModules.tailscale
+        self.nixosModules.netbird
         ./_disko.nix
       ];
 
@@ -18,10 +18,9 @@
 
     filosofo.features = {
       databases.enable          = lib.mkDefault true;
-      tailscale = {
+      netbird = {
         enable             = lib.mkDefault true;
         useRoutingFeatures = lib.mkDefault "server";
-        headlessJoin       = lib.mkDefault true;
       };
     };
 

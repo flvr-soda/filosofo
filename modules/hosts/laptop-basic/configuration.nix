@@ -9,7 +9,7 @@
         self.nixosModules.browsers
         self.nixosModules.media
         self.nixosModules.productivity
-        self.nixosModules.tailscale
+        self.nixosModules.netbird
         ./_disko.nix
       ];
 
@@ -26,7 +26,7 @@
       browsers.enable                 = lib.mkDefault true;
       media.enable                    = lib.mkDefault true;
       productivity.enable             = lib.mkDefault true;
-      tailscale.enable                = lib.mkDefault true;
+      netbird.enable                  = lib.mkDefault true;
     };
   };
 }

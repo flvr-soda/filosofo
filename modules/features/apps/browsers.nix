@@ -61,8 +61,8 @@
                         { name = "GitHub";      url = "https://github.com"; }
                         { name = "Overleaf";    url = "https://www.overleaf.com"; }
                         { name = "Distro sea";  url = "https://distrosea.com"; }
-                        { name = "FMHY";        url = "https://fmhy.net"; }
-                        { name = "Tailscale";   url = "https://login.tailscale.com/admin/machines"; }
+                        { name = "Proxmox";     url = "https://192.168.1.10:8006"; }
+                        { name = "Netbird";     url = "https://app.netbird.io/peers"; }
                       ];
                     }
                     {

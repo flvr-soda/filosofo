@@ -12,9 +12,9 @@
         self.nixosModules.browsers
         self.nixosModules.media
         self.nixosModules.productivity
-        self.nixosModules.tailscale
+        self.nixosModules.netbird
         self.nixosModules.virtualization
-        # AI and DB are accessed remotely via Tailscale — not run locally, but module is included just in case
+        # AI and DB are accessed remotely via Netbird — not run locally, but module is included just in case
         self.nixosModules.ollama
         self.nixosModules.open-webui
         self.nixosModules.opencode
@@ -39,7 +39,7 @@
       productivity.enable             = lib.mkDefault true;
       gaming.enable                   = lib.mkDefault true;
       virtualization.enable           = lib.mkDefault true;
-      tailscale.enable                = lib.mkDefault true;
+      netbird.enable                  = lib.mkDefault true;
     };
     filosofo.services.ai.local-inference = lib.mkDefault false;
   };

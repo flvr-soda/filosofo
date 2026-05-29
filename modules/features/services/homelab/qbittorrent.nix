@@ -1,7 +1,25 @@
-{ lib, mediaGroup, ... }: {
+{ lib, mediaGroup, pkgs, ... }: {
   flake.nixosModules.qbittorrent = { config, pkgs, ... }:
     let
-      cfg = config.filosofo.features.qbittorrent;
+      cfg     = config.filosofo.features.qbittorrent;
+      warp    = config.filosofo.features.cloudflare-warp;
+      cfgDir  = "/var/lib/qbittorrent-nox/.config/qBittorrent";
+      cfgFile = "${cfgDir}/qBittorrent.conf";
+
+      # Pre-start script that injects the interface binding into qBittorrent's
+      # config file. Runs only when WARP is active.
+      bindToWarpScript = pkgs.writeShellScript "qbittorrent-bind-warp" ''
+        mkdir -p ${cfgDir}
+        # Ensure the section header exists
+        grep -q '^\[BitTorrent\]' ${cfgFile} 2>/dev/null || echo '[BitTorrent]' >> ${cfgFile}
+
+        # Update or insert the interface name key
+        if grep -q '^Session\\InterfaceName=' ${cfgFile} 2>/dev/null; then
+          sed -i 's|^Session\\InterfaceName=.*|Session\\InterfaceName=${warp.interfaceName}|' ${cfgFile}
+        else
+          sed -i '/^\[BitTorrent\]/a Session\\InterfaceName=${warp.interfaceName}' ${cfgFile}
+        fi
+      '';
     in
     {
       options.filosofo.features.qbittorrent.enable =
@@ -19,10 +37,13 @@
 
         systemd.services.qbittorrent-nox = {
           description = "qBittorrent-nox BitTorrent client";
-          after       = [ "network.target" ];
+          after       = [ "network.target" ]
+            ++ lib.optionals warp.enable [ "cloudflare-warp.service" ];
+          wants       = lib.optionals warp.enable [ "cloudflare-warp.service" ];
           wantedBy    = [ "multi-user.target" ];
           serviceConfig = {
-            ExecStart = "${pkgs.qbittorrent-enhanced-nox}/bin/qbittorrent-nox --webui-port=8282 --confirm-legal-notice";
+            ExecStartPre = lib.mkIf warp.enable "+${bindToWarpScript}";
+            ExecStart    = "${pkgs.qbittorrent-enhanced-nox}/bin/qbittorrent-nox --webui-port=8282 --confirm-legal-notice";
             User           = "qbittorrent-nox";
             Group          = "qbittorrent-nox";
             StateDirectory = "qbittorrent-nox";
@@ -39,3 +60,4 @@
       };
     };
 }
+

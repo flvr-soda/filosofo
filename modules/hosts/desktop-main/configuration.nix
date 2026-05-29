@@ -13,7 +13,7 @@
         self.nixosModules.media
         self.nixosModules.productivity
         self.nixosModules.databases
-        self.nixosModules.tailscale
+        self.nixosModules.netbird
         self.nixosModules.virtualization
         self.nixosModules.homelab
         self.nixosModules.ollama
@@ -47,7 +47,7 @@
       arr-stack.enable                = lib.mkDefault true;
       
       virtualization.enable           = lib.mkDefault true;
-      tailscale.enable                = lib.mkDefault true;
+      netbird.enable                  = lib.mkDefault true;
     };
     filosofo.services.searxng.enable     = lib.mkDefault true;
     

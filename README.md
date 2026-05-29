@@ -46,9 +46,9 @@ The user-facing interactive graphical workspace:
 
 ### 3. features/services/
 Background processes and server stacks:
-*   databases.nix: Global single-instance PostgreSQL database that other services conditionally inject schemas/users into.
-*   tailscale.nix: Zero-trust mesh VPN linking all devices securely.
-*   virtualization.nix: Declarative container running (Docker, Kubernetes).
+*   databases.nix: PostgreSQL, Redis.
+*   netbird.nix: Zero-trust mesh VPN linking all devices securely.
+*   virtualization.nix: Docker, Podman, and Libvirt/KVM.
 *   homelab/ (master switch services.homelab.full-stack): Media suite containing Jellyfin (with hardware acceleration), Sonarr, Radarr, Lidarr, Bazarr, qBittorrent, and Nextcloud.
 *   ai/ (master switch services.ai.local-inference): Inferences via Ollama (configured with AMD ROCm acceleration), Open-WebUI (backed by local PostgreSQL), and SearXNG search engine.
 

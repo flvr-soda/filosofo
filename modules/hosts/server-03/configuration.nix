@@ -4,7 +4,7 @@
     imports =
       [
         self.nixosModules.core
-        self.nixosModules.tailscale
+        self.nixosModules.netbird
         self.nixosModules.virtualization
         self.nixosModules.ollama
         self.nixosModules.open-webui
@@ -22,10 +22,9 @@
 
     filosofo.features = {
       virtualization.enable     = lib.mkDefault true;
-      tailscale = {
+      netbird = {
         enable             = lib.mkDefault true;
         useRoutingFeatures = lib.mkDefault "server";
-        headlessJoin       = lib.mkDefault true;
       };
     };
 
