@@ -114,32 +114,6 @@
               allow_remote_control = "yes";
               shell_integration = "enabled";
               cursor_trail = 3;
-
-              background = "#242424";
-              foreground = "#ebdbb2";
-              cursor = "#ebdbb2";
-              selection_foreground = "#504945";
-              selection_background = "#3c3836";
-              active_tab_foreground = "#b8bb26";
-              active_tab_background = "#665c54";
-              inactive_tab_background = "#3c3836";
-
-              color0 = "#242424";
-              color8 = "#504945";
-              color1 = "#fb4934";
-              color9 = "#fb4934";
-              color2 = "#b8bb26";
-              color10 = "#b8bb26";
-              color3 = "#fabd2f";
-              color11 = "#fabd2f";
-              color4 = "#7daea3";
-              color12 = "#7daea3";
-              color5 = "#e089a1";
-              color13 = "#e089a1";
-              color6 = "#8ec07c";
-              color14 = "#8ec07c";
-              color7 = "#665c54";
-              color15 = "#665c54";
             };
             keybindings = {
               "alt+1" = "goto_tab 1";

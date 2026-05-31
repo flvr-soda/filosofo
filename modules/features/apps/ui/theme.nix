@@ -4,13 +4,8 @@
     let
       cfg = config.filosofo.features.desktop.niri;
 
-      themeName    = "Gruvbox-Green-Dark-Medium";
-      themePackage = pkgs.gruvbox-gtk-theme.override {
-        colorVariants = [ "dark" ];
-        sizeVariants  = [ "standard" ];
-        themeVariants  = [ "green" ];
-        tweakVariants  = [ "medium" "macos" ];
-      };
+      themeName    = "adw-gtk3-dark";
+      themePackage = pkgs.adw-gtk3;
       iconName     = "Gruvbox-Plus-Dark";
       iconPackage  = pkgs.gruvbox-plus-icons;
       gtkIni       = ''

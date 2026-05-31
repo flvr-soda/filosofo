@@ -14,7 +14,6 @@
         environment.systemPackages = with pkgs; [
           self.packages.${pkgs.stdenv.hostPlatform.system}.which-key
           nautilus
-          awww # Wallpaper daemon
           wayland-utils
           wl-clipboard
           libnotify
@@ -86,8 +85,6 @@
 
           spawn-at-startup = [
             [ "noctalia-shell" ]
-            [ "awww-daemon" ]
-            [ "awww" "img" "${./../assets/walls/w10.jpg}" ]
           ];
 
           environment = {

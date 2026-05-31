@@ -46,54 +46,7 @@ grep 'device' "$DISKO_FILE" | grep -v '#' | sed 's/^[[:space:]]*//'
 echo ""
 
 echo -e "${RED}${BOLD}⚠  WARNING: This will WIPE the disks listed above.${NC}"
-#!/usr/bin/env bash
-# install.sh — Automated Filosofo NixOS Installer
-# Disk IDs are hardcoded in each host's _disko.nix file.
-# Edit those files before running this script if your hardware differs.
 
-set -e
-
-export NIX_CONFIG="experimental-features = nix-command flakes"
-
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m'
-
-if [ "$EUID" -ne 0 ]; then
-  echo -e "${RED}❌ Please run as root.${NC}"
-  exit 1
-fi
-
-HOST=$1
-
-if [[ "$HOST" != "desktop-main" && "$HOST" != "laptop-dev" && "$HOST" != "laptop-basic" && "$HOST" != "server-01" && "$HOST" != "server-02" && "$HOST" != "server-03" ]]; then
-  echo -e "Usage: ${BOLD}$0 [desktop-main|laptop-dev|laptop-basic|server-01|server-02|server-03]${NC}"
-  exit 1
-fi
-
-DISKO_FILE="modules/hosts/$HOST/_disko.nix"
-
-echo -e "${BOLD}======================================${NC}"
-echo -e "${BOLD}    Filosofo NixOS Installer ($HOST)  ${NC}"
-echo -e "${BOLD}======================================${NC}"
-echo ""
-
-# Show current hardware
-echo -e "${CYAN}--- Your Disks ---${NC}"
-lsblk -o NAME,SIZE,TYPE,MOUNTPOINT
-echo ""
-echo -e "${CYAN}--- by-id Links ---${NC}"
-ls /dev/disk/by-id/ 2>/dev/null || echo "(none found)"
-echo ""
-
-# Show what the disko config expects
-echo -e "${CYAN}--- Configured Disk IDs in $DISKO_FILE ---${NC}"
-grep 'device' "$DISKO_FILE" | grep -v '#' | sed 's/^[[:space:]]*//'
-echo ""
-
-echo -e "${RED}${BOLD}⚠  WARNING: This will WIPE the disks listed above.${NC}"
 read -p "Do the configured disk IDs match your hardware? [y/N]: " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
   echo "Aborted. Edit $DISKO_FILE with the correct disk IDs and try again."
@@ -105,40 +58,6 @@ echo ""
 echo -e "${GREEN}▶ Starting Disko partitioning...${NC}"
 nix run github:nix-community/disko/latest -- --mode disko --flake .#$HOST
 
-# --- Phase 2: SSH Keys from USB ---
-echo ""
-echo -e "${GREEN}▶ Partitioning complete. Now preparing SSH keys...${NC}"
-echo -e "${CYAN}--- Available Partitions ---${NC}"
-lsblk -o NAME,SIZE,TYPE,MOUNTPOINT
-echo ""
-read -p "Enter your USB partition device containing personal SSH keys (e.g. /dev/sdc1), or press Enter to skip: " usb_dev
-
-if [ -n "$usb_dev" ]; then
-  if [ ! -e "$usb_dev" ]; then
-    echo -e "${RED}❌ USB device $usb_dev not found.${NC}"
-    exit 1
-  fi
-
-  mkdir -p /mnt/usb
-  mount "$usb_dev" /mnt/usb
-
-  # SSH keys
-  mkdir -p /mnt/persist/home/isma/.ssh
-  chmod 0700 /mnt/persist/home/isma/.ssh
-
-  for key in id_filosofo id_github; do
-    if [ -f "/mnt/usb/$key" ]; then
-      cp "/mnt/usb/$key" /mnt/persist/home/isma/.ssh/
-      echo "  Copied $key"
-    fi
-  done
-
-  chmod 0600 /mnt/persist/home/isma/.ssh/id_filosofo 2>/dev/null || true
-  chmod 0400 /mnt/persist/home/isma/.ssh/id_github 2>/dev/null || true
-  chown -R 1000:100 /mnt/persist/home/isma/.ssh
-
-  umount /mnt/usb
-fi
 
 # --- Phase 3: Passwords ---
 echo ""
@@ -167,10 +86,12 @@ echo -e "${GREEN}${BOLD}✅ Installation complete!${NC}"
 echo ""
 echo -e "${CYAN}--- Next Steps ---${NC}"
 echo -e "1. Reboot the system and unplug the USB."
-echo -e "2. ${BOLD}SOPS-NIX Secrets:${NC} To decrypt secrets, you need to add this new machine's Age key to .sops.yaml."
+echo -e "2. ${BOLD}Personal SSH Keys:${NC} Since we skipped the USB, securely copy your private keys over from another machine:"
+echo -e "   ${BOLD}scp ~/.ssh/id_filosofo ~/.ssh/id_github isma@<new-ip>:~/.ssh/${NC}"
+echo -e "3. ${BOLD}SOPS-NIX Secrets:${NC} To decrypt secrets, you need to add this new machine's Age key to .sops.yaml."
 echo -e "   Run this on your main machine after the new host is up:"
 echo -e "   ${BOLD}ssh-keyscan <ip-address> | ssh-to-age${NC}"
 echo -e "   Then add it to .sops.yaml and run: ${BOLD}sops updatekeys secrets/secrets.yaml${NC}"
-echo -e "3. ${BOLD}Nextcloud Setup:${NC} Set the admin password manually via occ:"
+echo -e "4. ${BOLD}Nextcloud Setup:${NC} Set the admin password manually via occ:"
 echo -e "   ${BOLD}sudo nextcloud-occ user:resetpassword admin${NC}"
 echo ""
