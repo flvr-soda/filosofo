@@ -13,7 +13,7 @@
         # fallback to the OCI container method from the reference.
         services.authentik = {
           enable = true;
-          environmentFile = "/persist/secrets/authentik-env";
+          environmentFile = config.sops.secrets."authentik-secret-key".path;
           # Port setup (default is usually 9000 for http)
           settings = {
             disable_startup_analytics = true;

@@ -34,7 +34,7 @@
           };
         };
 
-        systemd.services.searx.serviceConfig.EnvironmentFile = "/persist/secrets/searxng";
+        systemd.services.searx.serviceConfig.EnvironmentFile = config.sops.secrets."searxng-secret-key".path;
 
         networking.firewall.allowedTCPPorts = [ port ];
       };

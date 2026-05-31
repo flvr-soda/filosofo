@@ -37,7 +37,6 @@
             dbuser        = "nextcloud";
             dbhost        = "/run/postgresql";
             adminuser     = "admin";
-            adminpassFile = "/persist/secrets/nextcloud-admin-password";
           };
           settings = {
             default_phone_region = "VE";

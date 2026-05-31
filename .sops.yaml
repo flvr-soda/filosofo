@@ -1,0 +1,31 @@
+# SOPS Key Routing Configuration
+#
+# This file tells sops which Age keys are allowed to decrypt the secrets.yaml file.
+# The keys below are templates. Replace them with the actual public Age keys
+# derived from each host's SSH host key.
+#
+# To get a host's Age key, run this on the host:
+#   ssh-keyscan localhost | ssh-to-age
+#
+keys:
+  - &desktop-main   age1_REPLACE_WITH_DESKTOP_MAIN_AGE_PUBKEY
+  - &server-01      age1_REPLACE_WITH_SERVER_01_AGE_PUBKEY
+  - &server-02      age1_REPLACE_WITH_SERVER_02_AGE_PUBKEY
+  - &server-03      age1_REPLACE_WITH_SERVER_03_AGE_PUBKEY
+  - &laptop-dev     age1_REPLACE_WITH_LAPTOP_DEV_AGE_PUBKEY
+  - &laptop-basic   age1_REPLACE_WITH_LAPTOP_BASIC_AGE_PUBKEY
+  # You should also add your personal Age key here (derived from ~/.ssh/id_ed25519)
+  # so you can edit the secrets file from your daily driver:
+  - &admin-isma     age1_REPLACE_WITH_ISMA_PERSONAL_AGE_PUBKEY
+
+creation_rules:
+  - path_regex: secrets/secrets.yaml$
+    key_groups:
+      - age:
+          - *desktop-main
+          - *server-01
+          - *server-02
+          - *server-03
+          - *laptop-dev
+          - *laptop-basic
+          - *admin-isma

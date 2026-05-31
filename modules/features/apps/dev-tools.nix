@@ -17,6 +17,23 @@
       config = lib.mkIf cfg.enable {
         home-manager.users.${userName} = { pkgs, ... }: {
 
+          xdg.configFile = {
+            "devenv/ml/devenv.nix".source = ../../../devenv/ml/devenv.nix;
+            "devenv/ml/devenv.yaml".source = ../../../devenv/ml/devenv.yaml;
+
+            "devenv/embedded/devenv.nix".source = ../../../devenv/embedded/devenv.nix;
+            "devenv/embedded/devenv.yaml".source = ../../../devenv/embedded/devenv.yaml;
+
+            "devenv/fullstack/devenv.nix".source = ../../../devenv/fullstack/devenv.nix;
+            "devenv/fullstack/devenv.yaml".source = ../../../devenv/fullstack/devenv.yaml;
+
+            "devenv/pentest/devenv.nix".source = ../../../devenv/pentest/devenv.nix;
+            "devenv/pentest/devenv.yaml".source = ../../../devenv/pentest/devenv.yaml;
+
+            "devenv/rust/devenv.nix".source = ../../../devenv/rust/devenv.nix;
+            "devenv/rust/devenv.yaml".source = ../../../devenv/rust/devenv.yaml;
+          };
+
           programs.vscodium = {
             enable = true;
             profiles.default.userSettings = {
@@ -63,31 +80,22 @@
               btop
               yazi
               fastfetch
-              nmap
+              devenv
               wireshark
               tcpdump
               whois
               proxychains
-              aircrack-ng
               medusa
-              sqlmap
-              metasploit
+              hashcat
               ghidra
-              john
-
-              # Benchmarking (merged from toolchains.nix)
               hyperfine
-
-              # Database clients (merged from database-clients.nix)
               beekeeper-studio
               postgresql_16 # psql CLI
-
               # AI Agents
               agents.goose-cli
               agents.jules
               agents.crush
               agents.hermes
-
               # Google Antigravity (dedicated FHS-wrapped packages)
               antigravityPkgs.google-antigravity      # Base App 2.0
               antigravityPkgs.google-antigravity-ide   # IDE
@@ -234,16 +242,12 @@
               gl = "git log --oneline --graph --decorate --all";
               nsh = "nix develop -c \$SHELL";
 
-              ports = "sudo ss -tulpn";
-              myip = "curl -s https://ipinfo.io/ip; echo";
-              localip = "ip -brief address";
-              msf = "msfconsole -q";
-              proxy = "proxychains4";
-              nscan = "nmap -T4 -F";
-              nscan-full = "nmap -p- -A -T4 -v";
-              nscan-vuln = "nmap -sV --script=vuln";
-              sniff = "sudo tcpdump -i any -c 100 -nn";
-              hasher = "sha256sum";
+              # Devenv quick environment launch aliases
+              devenv-ml = "devenv shell --config ~/.config/devenv/ml/devenv.yaml";
+              devenv-embedded = "devenv shell --config ~/.config/devenv/embedded/devenv.yaml";
+              devenv-fullstack = "devenv shell --config ~/.config/devenv/fullstack/devenv.yaml";
+              devenv-pentest = "devenv shell --config ~/.config/devenv/pentest/devenv.yaml";
+              devenv-rust = "devenv shell --config ~/.config/devenv/rust/devenv.yaml";
             };
           };
         };

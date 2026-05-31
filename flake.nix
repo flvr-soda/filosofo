@@ -51,6 +51,11 @@
     };
 
     nix-gaming.url = "github:fufexan/nix-gaming";
+
+    sops-nix = {
+      url = "github:mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
 

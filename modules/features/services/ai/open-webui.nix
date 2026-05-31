@@ -22,7 +22,7 @@
           };
         };
 
-        systemd.services.open-webui.serviceConfig.EnvironmentFile = "/persist/secrets/open-webui";
+        systemd.services.open-webui.serviceConfig.EnvironmentFile = config.sops.secrets."open-webui-secret-key".path;
 
         networking.firewall.allowedTCPPorts = [ openWebPort ];
       };
